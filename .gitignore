@@ -1,0 +1,18 @@
+# Python cache and test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# OS/editor artifacts
+.DS_Store
+Thumbs.db
+
+# Render and local environment files
+.env
+.env.*
+!.env.example
