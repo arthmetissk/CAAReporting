@@ -1,0 +1,139 @@
+{% extends 'layout.html' %}
+{% block title %}CAA Campaign Summary{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <span class="section-kicker">Campaign performance review</span>
+    <h1>August 2026 Campaign Summary</h1>
+  </div>
+  <div class="header-actions">
+    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary HTML</a>
+  </div>
+</section>
+
+<section class="kpi-grid">
+  <article class="kpi-card">
+    <span class="kpi-label">Activated Programs</span>
+    <span class="kpi-value">04</span>
+    <span class="kpi-foot">Core campaign reports</span>
+  </article>
+  <article class="kpi-card">
+    <span class="kpi-label">Priority Focus</span>
+    <span class="kpi-value">Loyalty</span>
+    <span class="kpi-foot">Repeat purchase growth</span>
+  </article>
+  <article class="kpi-card">
+    <span class="kpi-label">Recommendation</span>
+    <span class="kpi-value eta">Scale</span>
+    <span class="kpi-foot">High-performing funnels</span>
+  </article>
+  <article class="kpi-card">
+    <span class="kpi-label">Insight Mode</span>
+    <span class="kpi-value">AI</span>
+    <span class="kpi-foot">Concise strategic query</span>
+  </article>
+</section>
+
+<section class="summary-grid">
+  <article class="panel summary-panel">
+    <div class="panel-title">
+      <span>Executive Summary</span>
+      <span class="panel-chip positive">Overall momentum</span>
+    </div>
+    <div class="summary-copy">
+      <p>
+        The August campaign portfolio shows a measurable shift toward loyalty-driven behavior. 
+        The strongest improvement is visible in programs that combine carded customer behavior, 
+        repeat purchase frequency, and targeted offers.
+      </p>
+      <div class="highlights">
+        {% for item in highlights %}
+        <div class="highlight-row">
+          <span class="check">✓</span>
+          <span>{{ item }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </article>
+
+  <article class="panel insight-panel">
+    <div class="panel-title">
+      <span>Campaign Signals</span>
+      <span class="panel-chip">Signals</span>
+    </div>
+    <div class="signal-list">
+      <div class="signal-row">
+        <span class="signal-label">Fireworks</span>
+        <span class="signal-bar"><span class="bar-fill bar-fireworks" style="width:72%"></span></span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">Vape Loyalty</span>
+        <span class="signal-bar"><span class="bar-fill bar-vape" style="width:90%"></span></span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">FoodToGo</span>
+        <span class="signal-bar"><span class="bar-fill bar-food" style="width:74%"></span></span>
+      </div>
+      <div class="signal-row">
+        <span class="signal-label">Bagel Combo</span>
+        <span class="signal-bar"><span class="bar-fill bar-bagel" style="width:64%"></span></span>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section class="section-title">
+  <span>Recommendations</span>
+</section>
+<section id="recommendations" class="recommendation-grid">
+  {% for rec in recommendations %}
+  <article class="recommendation-card">
+    <div class="recommendation-head">
+      <span class="rec-title">{{ rec.title }}</span>
+      <span class="impact impact-{{ rec.impact.lower() }}">{{ rec.impact }}</span>
+    </div>
+    <p class="rec-detail">{{ rec.detail }}</p>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Supporting Reports</span>
+</section>
+<section id="reports" class="report-grid">
+  {% for report in reports %}
+  <article class="report-card">
+    <div class="report-card-top">
+      <span class="report-category">{{ report.category }}</span>
+      <span class="report-status">Report</span>
+    </div>
+    <div class="report-name">{{ report.title }}</div>
+    <p class="report-summary">{{ report.summary }}</p>
+    <div class="report-actions">
+      <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open report</a>
+      <button class="small-button" data-query="Analyze {{ report.title }}">Ask</button>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="chat-panel">
+  <div class="chat-top">
+    <div>
+      <span class="section-kicker">Campaign assistant</span>
+      <h2>AI summary and strategic questions</h2>
+    </div>
+    <span class="chat-status">Anthropic-enabled</span>
+  </div>
+  <div class="chat-output" id="chatOutput">
+    <div class="chat-output-message">
+      Ask about loyalty, budgets, creative, or campaign momentum.
+    </div>
+  </div>
+  <div class="chat-controls">
+    <input type="text" id="chatQuery" class="chat-input" placeholder="Ask about the best campaign opportunity...">
+    <button class="primary-button" id="chatSubmit">Ask CAA AI</button>
+  </div>
+</section>
+{% endblock %}

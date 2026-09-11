@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CAA Campaign Intelligence{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">CAA</span>
+        <span class="brand-copy">
+          <span class="brand-title">Campaign Intelligence</span>
+          <span class="brand-subtitle">August 2026</span>
+        </span>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-link active" href="/">
+          <span>Overview</span>
+          <span class="nav-icon">↗</span>
+        </a>
+        <a class="nav-link" href="#">
+          <span>Summary Report</span>
+          <span class="nav-icon">»</span>
+        </a>
+        <a class="nav-link" href="#reports">
+          <span>Supporting Reports</span>
+          <span class="nav-icon">»</span>
+        </a>
+        <a class="nav-link" href="#recommendations">
+          <span>Recommendations</span>
+          <span class="nav-icon">»</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <span class="user-label">Signed in</span>
+          <span class="user-name">{{ session.get('username', 'CAA User') }}</span>
+        </div>
+        <a class="logout-link" href="/logout">Logout</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>August 2026 Fireworks Campaign — Smokers Warehouse</title>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1220;--panel:rgba(255,255,255,0.05);--panel2:rgba(255,255,255,0.03);
+      --border:rgba(255,255,255,0.08);--text:#e5e7eb;--muted:#9ca3af;
+      --shadow:0 14px 32px rgba(0,0,0,.38);--radius:16px;--pad:16px;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:var(--sans);color:var(--text);
+      background:
+        radial-gradient(1400px 700px at 10% 0%,rgba(167,139,250,.14),transparent 55%),
+        radial-gradient(900px 600px at 85% 5%,rgba(249,115,22,.10),transparent 55%),
+        radial-gradient(600px 400px at 50% 100%,rgba(52,211,153,.08),transparent 50%),
+        var(--bg);}
+    .wrap{max-width:1380px;margin:0 auto;padding:22px 18px 80px;}
+    .hero{padding:24px 26px;border-radius:22px;
+      border:1px solid rgba(249,115,22,.22);
+      background:linear-gradient(135deg,rgba(249,115,22,.07),rgba(167,139,250,.06),rgba(52,211,153,.04));
+      box-shadow:var(--shadow);position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 95% 0%,rgba(249,115,22,.13),transparent 50%);pointer-events:none;}
+    h1.title{font-size:28px;font-weight:900;line-height:1.15;margin:0 0 8px;
+      background:linear-gradient(135deg,#fde68a,#f97316 40%,#c4b5fd);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .meta{color:var(--muted);font-size:13px;line-height:1.75;}
+    .meta b{color:#d1d5db;}
+    .promo-badge{display:inline-block;margin:7px 5px 0 0;padding:5px 13px;border-radius:999px;
+      font-size:12px;font-weight:600;}
+    .badge-all{border:1px solid rgba(249,115,22,.5);color:#fed7aa;background:rgba(249,115,22,.12);}
+    .badge-loy{border:1px solid rgba(52,211,153,.5);color:#6ee7b7;background:rgba(52,211,153,.12);}
+    .badge-yoy{border:1px solid rgba(167,139,250,.45);color:#c4b5fd;background:rgba(167,139,250,.10);}
+    .nav{position:sticky;top:0;z-index:20;margin:12px 0;padding:10px;
+      border-radius:14px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(11,18,32,.92);backdrop-filter:blur(10px);}
+    .nav a{display:inline-block;color:var(--muted);text-decoration:none;font-size:12px;
+      padding:7px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.08);margin:4px 4px 0 0;
+      transition:all .15s;}
+    .nav a:hover{color:#f97316;border-color:rgba(249,115,22,.45);background:rgba(249,115,22,.08);}
+    .section{margin-top:28px;}
+    .section h2{margin:0 0 8px;font-size:18px;font-weight:800;color:#f3f4f6;}
+    .note{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 10px;}
+    .card{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);
+      padding:var(--pad);box-shadow:var(--shadow);margin-bottom:12px;}
+    .co{border-left:3px solid rgba(52,211,153,.7);padding:13px 16px;
+      background:rgba(52,211,153,.07);border-radius:10px;
+      color:#6ee7b7;font-size:13px;line-height:1.75;margin-bottom:12px;}
+    .co-o{border-left:3px solid rgba(249,115,22,.7);padding:13px 16px;
+      background:rgba(249,115,22,.07);border-radius:10px;
+      color:#fed7aa;font-size:13px;line-height:1.75;margin-bottom:12px;}
+    .co-p{border-left:3px solid rgba(167,139,250,.7);padding:13px 16px;
+      background:rgba(167,139,250,.07);border-radius:10px;
+      color:#c4b5fd;font-size:13px;line-height:1.75;margin-bottom:12px;}
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+    @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+    .kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;}
+    .kpi-g{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.30);}
+    .kpi-fw{background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.25);}
+    .kpi-net{background:rgba(167,139,250,.10);border-color:rgba(167,139,250,.30);}
+    .kpis4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+    @media(max-width:1100px){.kpis4{grid-template-columns:repeat(2,1fr);}}
+    .kl{color:var(--muted);font-size:10px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;}
+    .kv{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1;}
+    .ks{color:var(--muted);font-size:11px;line-height:1.55;}
+    .store-block{background:var(--panel2);border:1px solid var(--border);
+      border-radius:var(--radius);padding:var(--pad);margin-bottom:16px;}
+    .up{color:#93c5fd;}.dn{color:#fca5a5;}.mu{color:#9ca3af;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th,td{border-bottom:1px solid rgba(255,255,255,.07);padding:8px 10px;text-align:left;white-space:nowrap;}
+    th{color:#fff;background:rgba(255,255,255,.04);font-weight:700;font-size:12px;}
+    tr:hover td{background:rgba(255,255,255,.02);}
+    .chart{padding:4px 0;}
+    h4,h5{margin:10px 0 8px;font-weight:700;}
+    h4{font-size:15px;} h5{font-size:13px;}
+    .footer{color:var(--muted);font-size:12px;margin-top:22px;line-height:1.6;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+    .legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero" id="top">
+    <h1 class="title">&#x1F9E8; August 2026 Fireworks Campaign</h1>
+    <div class="meta">
+      <b>Period:</b> August 1 – 31, 2026 &nbsp;|&nbsp;
+      <b>Stores:</b> <span style="color:#a78bfa">SW1</span> Akwesasne &middot;
+                    <span style="color:#60a5fa">SW2</span> Ft Covington &nbsp;|&nbsp;
+      <b>Generated:</b> 2026-09-08
+    </div>
+    <div style="margin-top:10px">
+      <span class="promo-badge badge-all">&#x1F3F7; Everyone: 20% off remaining fireworks inventory</span>
+      <span class="promo-badge badge-loy">&#x1F4B3; Loyalty: 3&times; Points on Fireworks</span>
+    </div>
+    <div style="margin-top:10px">
+      <span class="promo-badge badge-yoy">Summer (May–Aug) FW: $433,069
+        &nbsp;<span class="up">+49.0% YoY</span></span>
+      <span class="promo-badge badge-yoy">Aug FW Rev: $5,806
+        &nbsp;<span class="dn">-55.7% YoY</span></span>
+      <span class="promo-badge badge-loy">Loyalty Rev: $405
+        &nbsp;&bull;&nbsp; 17 trips &nbsp;&bull;&nbsp; 13 cards</span>
+      <span class="promo-badge badge-all">Non-Loyalty Rev: $5,401
+        &nbsp;&bull;&nbsp; 75 trips</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <a href="#summary">Summary KPIs</a>
+    <a href="#summer">Summer Arc</a>
+    <a href="#split">Rev &amp; Basket Split</a>
+    <a href="#daily">Daily Trend</a>
+    <a href="#loyalty">Loyalty Analysis</a>
+    <a href="#yoy">YoY Context</a>
+    <a href="#stores">Store Detail</a>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="section" id="summary">
+    <h2>&#x1F4CA; Campaign Summary &mdash; Both Stores, August 2026</h2>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kl">Total FW Revenue</div>
+        <div class="kv">$5,806</div>
+        <div class="ks">YoY: <span class="dn">-55.7%</span>
+          vs $13,118 Aug 2025<br/>
+          SW1: $2,924
+          &middot; SW2: $2,882
+        </div>
+      </div>
+      <div class="kpi kpi-fw">
+        <div class="kl">Total FW Baskets</div>
+        <div class="kv">92</div>
+        <div class="ks">vs 128 Aug 2025<br/>
+          Loyalty: 17 &middot; Non-Loyalty: 75</div>
+      </div>
+      <div class="kpi kpi-g">
+        <div class="kl"><span style="color:#34d399">&#x25CF;</span> Loyalty Revenue</div>
+        <div class="kv">$405</div>
+        <div class="ks">7.0% of FW revenue
+          <br/>YoY: <span class="dn">-70.7%</span>
+          &nbsp;(13 unique cards)
+          <br/>Avg basket: $23.82</div>
+      </div>
+      <div class="kpi">
+        <div class="kl"><span style="color:#f97316">&#x25CF;</span> Non-Loyalty Revenue</div>
+        <div class="kv">$5,401</div>
+        <div class="ks">93.0% of FW revenue
+          <br/>YoY: <span class="dn">-54.0%</span>
+          <br/>Avg basket: $72.02</div>
+      </div>
+    </div>
+
+    <div class="co">
+      <b>Campaign read:</b>
+      Total fireworks revenue in August 2026 was <b>$5,806</b>
+      (<span class="dn">-55.7% vs August 2025</span> — no promo baseline).
+      Loyalty cardholders accounted for <b>7.0%</b> of fireworks revenue
+      ($405, <span class="dn">-70.7% YoY</span>)
+      across <b>13 unique cards</b> and 17 trips.
+      The 3&times; points offer on loyalty buyers and the 20% off blanket discount both ran all month.
+      Loyalty avg basket <b>$23.82</b> vs non-loyalty <b>$72.02</b>.
+    </div>
+
+    <div class="co-o">
+      <b>Loyalty new vs returning:</b>
+      Of <b>13</b> loyalty cardholders who bought fireworks in August 2026,
+      <b>12</b> (92.3%) had prior fireworks purchase history
+      (returning buyers) and
+      <b>1</b> (7.7%) were buying fireworks for the first time
+      on their loyalty card — potential new FW buyers activated by the 3&times; points campaign.
+    </div>
+  </div>
+
+  <!-- SUMMER ARC -->
+  <div class="section" id="summer">
+    <h2>&#x2600;&#xFE0F; Summer Fireworks Arc — May to August</h2>
+    <p class="note">
+      Full summer context: monthly FW revenue May–August 2025 (no promotion) vs 2026 (campaign).
+      Reveals whether the season gained overall and where August sat in the arc.
+    </p>
+    <div class="chart"><div class="chart" id="summer_ch"></div><script>(function(){var f={"data":[{"marker":{"color":"rgba(255,255,255,0.18)"},"name":"2025 (no promo)","opacity":0.85,"text":["$8,557","$71,038","$198,005","$13,087"],"textposition":"outside","x":["May","Jun","Jul","Aug"],"y":[8557.119999999999,71038.42,198004.86000000002,13086.73],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":"#f97316"},"name":"2026 (campaign)","opacity":0.88,"text":["$7,056","$150,801","$269,651","$5,561"],"textposition":"outside","x":["May","Jun","Jul","Aug"],"y":[7055.700000000001,150801.34999999998,269650.7,5561.4],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":"#34d399"},"name":"2026 Loyalty","opacity":0.88,"text":["$1,571","$10,461","$12,312","$160"],"textposition":"outside","x":["May","Jun","Jul","Aug"],"y":[1571.4,10460.76,12311.900000000001,160.19999999999996],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":"#f97316"},"name":"2026 Non-Loyalty","opacity":0.88,"text":["$5,484","$140,341","$257,339","$5,401"],"textposition":"outside","x":["May","Jun","Jul","Aug"],"y":[5484.3,140340.59,257338.8,5401.200000000001],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.44],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"tickprefix":"$","gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.56,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"tickprefix":"$","gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"Both Stores \u2014 Monthly FW Revenue","x":0.22,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"Both Stores \u2014 Loyalty vs Non-Loyalty","x":0.78,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"bgcolor":"rgba(0,0,0,0.5)","borderpad":3,"font":{"color":"#fde68a","size":9},"showarrow":false,"text":"20% off + 3\u00d7 pts \u2192","x":3,"xref":"x","y":1,"yref":"y"},{"bgcolor":"rgba(0,0,0,0.5)","borderpad":3,"font":{"color":"#fde68a","size":9},"showarrow":false,"text":"20% off + 3\u00d7 pts \u2192","x":3,"xref":"x2","y":1,"yref":"y2"}],"shapes":[{"line":{"color":"rgba(255,255,255,0.12)","dash":"dash"},"type":"line","x0":2.5,"x1":2.5,"xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"rgba(255,255,255,0.12)","dash":"dash"},"type":"line","x0":2.5,"x1":2.5,"xref":"x2","y0":0,"y1":1,"yref":"y2 domain"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","height":400,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","title":{"text":"Summer Fireworks Arc \u2014 May to August | 2025 (baseline) vs 2026 (campaign)"}}};Plotly.newPlot("summer_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="co">
+      <b>Summer 2026 total FW revenue: $433,069</b>
+      (<span class="up">+49.0%</span> vs $290,687 in 2025).
+      Loyalty summer revenue: <b>$24,504</b>
+      (<span class="up">+69.9%</span> YoY).
+      The chart shows whether peak season (Jun–Jul) generated meaningful gains before August's
+      clearance phase. A strong Jun–Jul followed by a sharp August decline is the classic
+      fireworks arc — inventory cleared at a discount after peak demand has passed.
+    </div>
+    <div class="co-o">
+      <b>August in context:</b>
+      August FW revenue was <b>$5,806</b> — <b>1.3%</b> of
+      total summer fireworks revenue. At -55.7% YoY, August underperformed relative to 2025's
+      natural season tail. This is consistent with "remaining inventory" positioning: the promotion
+      acknowledges the season is winding down rather than trying to sustain peak-season volume.
+      The question is whether Jun–Jul 2026 made up for August's shortfall on a full-summer basis.
+    </div>
+  </div>
+
+  <!-- REVENUE & BASKET SPLIT -->
+  <div class="section" id="split">
+    <h2>Revenue &amp; Basket Split — Loyalty vs Non-Loyalty</h2>
+    <p class="note">
+      <span class="legend-dot" style="background:#34d399"></span>Loyalty (card present) &nbsp;|&nbsp;
+      <span class="legend-dot" style="background:#f97316"></span>Non-Loyalty (no card) &nbsp;|&nbsp;
+      Solid = Aug 2026 &nbsp;|&nbsp; Faded = Aug 2025 baseline
+    </p>
+    <div class="chart"><div class="chart" id="rev_split_ch"></div><script>(function(){var f={"data":[{"marker":{"color":["rgba(52,211,153,0.4)","rgba(249,115,22,0.4)"]},"name":"SW1 Aug 2025","opacity":0.88,"showlegend":true,"text":["$583","$7,776"],"textposition":"outside","x":["SW1 Loyalty","SW1 Non-Loyalty"],"y":[583.4300000000001,7775.9],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["rgba(52,211,153,0.4)","rgba(249,115,22,0.4)"]},"name":"SW1 Aug 2025","opacity":0.88,"showlegend":false,"text":["12","63"],"textposition":"outside","x":["SW1 Loyalty","SW1 Non-Loyalty"],"y":[12,63],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":["#34d399","#f97316"]},"name":"SW1 Aug 2026","opacity":0.88,"showlegend":false,"text":["$168","$2,756"],"textposition":"outside","x":["SW1 Loyalty","SW1 Non-Loyalty"],"y":[167.8,2756.4],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["#34d399","#f97316"]},"name":"SW1 Aug 2026","opacity":0.88,"showlegend":false,"text":["9","43"],"textposition":"outside","x":["SW1 Loyalty","SW1 Non-Loyalty"],"y":[9,43],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":["rgba(52,211,153,0.4)","rgba(249,115,22,0.4)"]},"name":"SW2 Aug 2025","opacity":0.88,"showlegend":true,"text":["$797","$3,961"],"textposition":"outside","x":["SW2 Loyalty","SW2 Non-Loyalty"],"y":[797.2,3961.4],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["rgba(52,211,153,0.4)","rgba(249,115,22,0.4)"]},"name":"SW2 Aug 2025","opacity":0.88,"showlegend":false,"text":["4","49"],"textposition":"outside","x":["SW2 Loyalty","SW2 Non-Loyalty"],"y":[4,49],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":["#34d399","#f97316"]},"name":"SW2 Aug 2026","opacity":0.88,"showlegend":false,"text":["$237","$2,645"],"textposition":"outside","x":["SW2 Loyalty","SW2 Non-Loyalty"],"y":[237.2,2644.8],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["#34d399","#f97316"]},"name":"SW2 Aug 2026","opacity":0.88,"showlegend":false,"text":["8","32"],"textposition":"outside","x":["SW2 Loyalty","SW2 Non-Loyalty"],"y":[8,32],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.44],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)","tickprefix":"$"},"xaxis2":{"anchor":"y2","domain":[0.56,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"FW Revenue \u2014 Aug 2026 vs Aug 2025","x":0.22,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"FW Baskets \u2014 Aug 2026 vs Aug 2025","x":0.78,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","height":380,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","title":{"text":"Fireworks Revenue & Basket Count \u2014 Loyalty vs Non-Loyalty | Aug 2026 vs Aug 2025"}}};Plotly.newPlot("rev_split_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="co-p">
+      <b>What to look for:</b>
+      If the loyalty revenue bar grew more than the non-loyalty bar year-over-year, the 3&times; points
+      offer successfully pulled card-present buyers into higher fireworks engagement.
+      A larger non-loyalty lift suggests the 20% off blanket discount drove incremental casual buyers —
+      potentially worth converting into loyalty members.
+    </div>
+  </div>
+
+  <!-- DAILY TREND -->
+  <div class="section" id="daily">
+    <h2>Daily Fireworks Revenue Trend — August 2026</h2>
+    <p class="note">
+      <span class="legend-dot" style="background:#34d399"></span>Loyalty &nbsp;|&nbsp;
+      <span class="legend-dot" style="background:#f97316"></span>Non-Loyalty &nbsp;|&nbsp;
+      SW1 solid line &middot; SW2 dashed line
+    </p>
+    <div class="chart"><div class="chart" id="daily_ch"></div><script>(function(){var f={"data":[{"line":{"color":"#f97316","dash":"solid","width":2.5},"marker":{"color":"#f97316","size":6},"mode":"lines+markers","name":"SW1 Non-Loyalty","x":["2026-08-01T00:00:00","2026-08-02T00:00:00","2026-08-05T00:00:00","2026-08-07T00:00:00","2026-08-08T00:00:00","2026-08-11T00:00:00","2026-08-13T00:00:00","2026-08-14T00:00:00","2026-08-16T00:00:00","2026-08-18T00:00:00","2026-08-20T00:00:00","2026-08-21T00:00:00","2026-08-22T00:00:00","2026-08-23T00:00:00","2026-08-25T00:00:00","2026-08-28T00:00:00","2026-08-29T00:00:00","2026-08-30T00:00:00"],"y":[36.0,226.4,48.0,184.8,944.0,60.0,36.0,10.0,16.0,8.0,28.2,495.20000000000005,83.6,15.2,20.0,68.6,316.4,160.0],"type":"scatter"},{"line":{"color":"#34d399","dash":"solid","width":2.5},"marker":{"color":"#34d399","size":6},"mode":"lines+markers","name":"SW1 Loyalty","x":["2026-08-02T00:00:00","2026-08-06T00:00:00","2026-08-07T00:00:00","2026-08-11T00:00:00","2026-08-13T00:00:00","2026-08-17T00:00:00","2026-08-18T00:00:00","2026-08-21T00:00:00","2026-08-30T00:00:00"],"y":[59.2,-244.8,4.0,35.0,8.8,8.0,8.0,12.8,32.0],"type":"scatter"},{"line":{"color":"#f97316","dash":"dash","width":2.5},"marker":{"color":"#f97316","size":6},"mode":"lines+markers","name":"SW2 Non-Loyalty","x":["2026-08-01T00:00:00","2026-08-02T00:00:00","2026-08-05T00:00:00","2026-08-06T00:00:00","2026-08-07T00:00:00","2026-08-08T00:00:00","2026-08-10T00:00:00","2026-08-11T00:00:00","2026-08-14T00:00:00","2026-08-15T00:00:00","2026-08-16T00:00:00","2026-08-17T00:00:00","2026-08-20T00:00:00","2026-08-21T00:00:00","2026-08-25T00:00:00","2026-08-27T00:00:00","2026-08-28T00:00:00","2026-08-30T00:00:00"],"y":[152.0,140.79999999999998,54.4,77.6,750.0,50.0,96.8,6.4,13.0,570.8,1.2,3.2,8.0,248.0,12.8,144.0,156.8,159.0],"type":"scatter"},{"line":{"color":"#34d399","dash":"dash","width":2.5},"marker":{"color":"#34d399","size":6},"mode":"lines+markers","name":"SW2 Loyalty","x":["2026-08-01T00:00:00","2026-08-04T00:00:00","2026-08-07T00:00:00","2026-08-08T00:00:00","2026-08-13T00:00:00","2026-08-18T00:00:00","2026-08-28T00:00:00"],"y":[4.0,64.0,12.0,19.2,10.0,4.0,124.0],"type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"title":{"text":"Daily Fireworks Revenue \u2014 August 2026 (Loyalty vs Non-Loyalty)"},"height":340,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","yaxis":{"title":{"text":"Revenue ($)"},"tickprefix":"$","gridcolor":"rgba(255,255,255,0.08)"},"xaxis":{"gridcolor":"rgba(255,255,255,0.08)"}}};Plotly.newPlot("daily_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="co-o">
+      <b>Trend signal:</b>
+      Look for loyalty revenue holding steady or declining more slowly than non-loyalty toward
+      month-end — this would indicate the 3&times; points kept loyalty buyers coming back while
+      non-loyalty buyers front-loaded their 20%-off purchases early in the month (remaining inventory
+      discount creates urgency at the start, not the end).
+    </div>
+  </div>
+
+  <!-- LOYALTY ANALYSIS -->
+  <div class="section" id="loyalty">
+    <h2>&#x1F4B3; Loyalty Analysis — 3&times; Points Campaign</h2>
+    <p class="note">
+      Cardholders who purchased fireworks in August 2026. "Returning" = had at least one prior
+      fireworks purchase on record before August 2026. "First-time" = no prior FW purchase on card.
+    </p>
+    <div class="grid2">
+      <div class="chart"><div class="chart" id="loy_nr_ch"></div><script>(function(){var f={"data":[{"marker":{"color":"#a78bfa"},"name":"SW1","opacity":0.88,"text":["5","1"],"textposition":"outside","x":["Returning FW Buyers","First-Time FW Buyers"],"y":[5,1],"type":"bar"},{"marker":{"color":"#60a5fa"},"name":"SW2","opacity":0.88,"text":["7","0"],"textposition":"outside","x":["Returning FW Buyers","First-Time FW Buyers"],"y":[7,0],"type":"bar"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","height":320,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","title":{"text":"Loyalty Card FW Buyers \u2014 Returning (prior FW history) vs First-Time, August 2026"},"yaxis":{"title":{"text":"Cardholders"},"gridcolor":"rgba(255,255,255,0.08)"},"xaxis":{"gridcolor":"rgba(255,255,255,0.08)"}}};Plotly.newPlot("loy_nr_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+      <div class="chart"><div class="chart" id="loy_freq_ch"></div><script>(function(){var f={"data":[{"marker":{"color":"#34d399"},"name":"SW1","opacity":0.85,"showlegend":false,"text":["4","1","1"],"textposition":"outside","x":["1","2","3"],"y":[4,1,1],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":"#34d399"},"name":"SW2","opacity":0.85,"showlegend":false,"text":["6","1"],"textposition":"outside","x":["1","2"],"y":[6,1],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.43],"title":{"text":"FW Trips in August"},"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Loyalty Cardholders"},"gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.5700000000000001,1.0],"title":{"text":"FW Trips in August"},"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"title":{"text":"Loyalty Cardholders"},"gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"SW1 \u2014 Loyalty Visit Frequency","x":0.215,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"SW2 \u2014 Loyalty Visit Frequency","x":0.785,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"height":320,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","title":{"text":"Loyalty Cardholder Visit Frequency \u2014 Fireworks Purchases, August 2026"}}};Plotly.newPlot("loy_freq_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    </div>
+    <div class="co">
+      <b>3&times; points impact:</b>
+      <b>1</b> loyalty cardholders bought fireworks for the first time —
+      these are customers already enrolled in the program who had never transacted in the fireworks
+      category, now activated by the triple-points offer. They represent the most concrete signal of
+      category expansion driven by the promotion.
+      Returning FW buyers (12) likely would have purchased anyway — but the 3&times;
+      points may have increased their basket size or trip frequency.
+    </div>
+    <div class="co-p">
+      <b>Follow-up opportunity:</b>
+      The 1 first-time FW buyers on loyalty are high-value targets for next year's
+      fireworks campaign — they self-selected into the category and have card data for direct outreach
+      (email, SMS, app push). A pre-season targeted offer to this cohort (e.g. early access or
+      bonus points) would be more cost-effective than a blanket discount.
+    </div>
+  </div>
+
+  <!-- AVG BASKET -->
+  <div class="section" id="yoy">
+    <h2>Year-Over-Year Context — August 2025 Baseline (No Promo)</h2>
+    <p class="note">
+      August 2025 had no fireworks promotion. Any lift in 2026 reflects the combined effect of
+      the 20% off inventory clearance and the 3&times; loyalty points offer.
+    </p>
+    <div class="chart"><div class="chart" id="avg_bk_ch"></div><script>(function(){var f={"data":[{"marker":{"color":["rgba(249,115,22,0.45)","rgba(52,211,153,0.45)","#f97316","#34d399"]},"name":"SW1","opacity":0.88,"text":["$123.43","$48.62","$64.10","$18.64"],"textposition":"outside","x":["Aug 2025\nNon-Loy","Aug 2025\nLoyalty","Aug 2026\nNon-Loy","Aug 2026\nLoyalty"],"y":[123.42698412698412,48.61916666666667,64.10232558139535,18.644444444444446],"type":"bar"},{"marker":{"color":["rgba(249,115,22,0.45)","rgba(52,211,153,0.45)","#f97316","#34d399"]},"name":"SW2","opacity":0.88,"text":["$80.84","$199.30","$82.65","$29.65"],"textposition":"outside","x":["Aug 2025\nNon-Loy","Aug 2025\nLoyalty","Aug 2026\nNon-Loy","Aug 2026\nLoyalty"],"y":[80.84489795918367,199.3,82.65,29.65],"type":"bar"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","height":360,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","title":{"text":"Avg Fireworks Basket Size \u2014 Loyalty vs Non-Loyalty | Aug 2025 \u2192 Aug 2026"},"yaxis":{"tickprefix":"$","gridcolor":"rgba(255,255,255,0.08)"},"xaxis":{"gridcolor":"rgba(255,255,255,0.08)"}}};Plotly.newPlot("avg_bk_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="co-p">
+      <b>Avg basket interpretation:</b>
+      If loyalty avg basket grew more than non-loyalty year-over-year, the 3&times; points
+      incentive succeeded at deepening the per-trip spend (customers buying more to maximise points).
+      If non-loyalty avg basket grew more, the 20% off discount brought in higher-value casual
+      buyers — or regular buyers traded up because of the discount.
+    </div>
+  </div>
+
+  <!-- PER-STORE -->
+  <div class="section" id="stores">
+    <h2>Per-Store Detail</h2>
+    <p class="note">Full breakdown per store with loyalty engagement metrics.</p>
+    
+        <div class="store-block" style="border-left:3px solid #a78bfa">
+          <h3 style="color:#a78bfa;margin:0 0 12px;font-size:17px">Smokers Warehouse 1 — Akwesasne</h3>
+
+          <div class="kpis4">
+            <div class="kpi"><div class="kl">FW Revenue Aug 2026</div>
+              <div class="kv">$2,924</div>
+              <div class="ks">YoY: <span class="dn">-65.0%</span>
+                vs $8,359 Aug 2025</div></div>
+            <div class="kpi kpi-fw"><div class="kl">FW Baskets</div>
+              <div class="kv">52</div>
+              <div class="ks">vs 75 Aug 2025</div></div>
+            <div class="kpi kpi-g"><div class="kl">Loyalty Revenue</div>
+              <div class="kv">$168</div>
+              <div class="ks">5.7% of FW rev · 9 trips
+                · avg $18.64/trip</div></div>
+            <div class="kpi"><div class="kl">Non-Loyalty Revenue</div>
+              <div class="kv">$2,756</div>
+              <div class="ks">94.3% of FW rev · 43 trips
+                · avg $64.10/trip</div></div>
+          </div>
+
+          
+            <div style='margin-top:14px'>
+              <h5 style='margin:0 0 8px;font-size:13px;color:#34d399'>
+                &#x1F4B3; 3x Points — Loyalty Card Engagement
+              </h5>
+              <div class="kpis4" style="grid-template-columns:repeat(4,1fr)">
+                <div class="kpi kpi-g"><div class="kl">Unique Cardholders</div>
+                  <div class="kv">6</div>
+                  <div class="ks">bought FW in August</div></div>
+                <div class="kpi"><div class="kl">Returning FW Buyers</div>
+                  <div class="kv">5</div>
+                  <div class="ks">83.3% had prior FW history</div></div>
+                <div class="kpi kpi-g"><div class="kl">First-Time FW Buyers</div>
+                  <div class="kv">1</div>
+                  <div class="ks">no prior fireworks purchase</div></div>
+                <div class="kpi"><div class="kl">Avg Trips / Cardholder</div>
+                  <div class="kv">1.5</div>
+                  <div class="ks">avg $18.64 per FW trip</div></div>
+              </div>
+              <p class="note" style="margin:10px 0 4px">Visit frequency (loyalty FW buyers):</p>
+              <table style="max-width:340px"><thead>
+                <tr><th>Trips</th><th style='text-align:right'>Cardholders</th><th>Bar</th></tr>
+              </thead><tbody><tr><td>1 visit</td><td style='text-align:right'>4</td><td><div style='width:70%;height:5px;border-radius:3px;background:#34d399;opacity:.80'></div></td></tr><tr><td>2 visits</td><td style='text-align:right'>1</td><td><div style='width:17%;height:5px;border-radius:3px;background:#34d399;opacity:.80'></div></td></tr><tr><td>3 visits</td><td style='text-align:right'>1</td><td><div style='width:17%;height:5px;border-radius:3px;background:#34d399;opacity:.80'></div></td></tr></tbody></table>
+            </div>
+        </div>
+
+        <div class="store-block" style="border-left:3px solid #60a5fa">
+          <h3 style="color:#60a5fa;margin:0 0 12px;font-size:17px">Smokers Warehouse 2 — Ft Covington</h3>
+
+          <div class="kpis4">
+            <div class="kpi"><div class="kl">FW Revenue Aug 2026</div>
+              <div class="kv">$2,882</div>
+              <div class="ks">YoY: <span class="dn">-39.4%</span>
+                vs $4,759 Aug 2025</div></div>
+            <div class="kpi kpi-fw"><div class="kl">FW Baskets</div>
+              <div class="kv">40</div>
+              <div class="ks">vs 53 Aug 2025</div></div>
+            <div class="kpi kpi-g"><div class="kl">Loyalty Revenue</div>
+              <div class="kv">$237</div>
+              <div class="ks">8.2% of FW rev · 8 trips
+                · avg $29.65/trip</div></div>
+            <div class="kpi"><div class="kl">Non-Loyalty Revenue</div>
+              <div class="kv">$2,645</div>
+              <div class="ks">91.8% of FW rev · 32 trips
+                · avg $82.65/trip</div></div>
+          </div>
+
+          
+            <div style='margin-top:14px'>
+              <h5 style='margin:0 0 8px;font-size:13px;color:#34d399'>
+                &#x1F4B3; 3x Points — Loyalty Card Engagement
+              </h5>
+              <div class="kpis4" style="grid-template-columns:repeat(4,1fr)">
+                <div class="kpi kpi-g"><div class="kl">Unique Cardholders</div>
+                  <div class="kv">7</div>
+                  <div class="ks">bought FW in August</div></div>
+                <div class="kpi"><div class="kl">Returning FW Buyers</div>
+                  <div class="kv">7</div>
+                  <div class="ks">100.0% had prior FW history</div></div>
+                <div class="kpi kpi-g"><div class="kl">First-Time FW Buyers</div>
+                  <div class="kv">0</div>
+                  <div class="ks">no prior fireworks purchase</div></div>
+                <div class="kpi"><div class="kl">Avg Trips / Cardholder</div>
+                  <div class="kv">1.1</div>
+                  <div class="ks">avg $29.65 per FW trip</div></div>
+              </div>
+              <p class="note" style="margin:10px 0 4px">Visit frequency (loyalty FW buyers):</p>
+              <table style="max-width:340px"><thead>
+                <tr><th>Trips</th><th style='text-align:right'>Cardholders</th><th>Bar</th></tr>
+              </thead><tbody><tr><td>1 visit</td><td style='text-align:right'>6</td><td><div style='width:70%;height:5px;border-radius:3px;background:#34d399;opacity:.80'></div></td></tr><tr><td>2 visits</td><td style='text-align:right'>1</td><td><div style='width:11%;height:5px;border-radius:3px;background:#34d399;opacity:.80'></div></td></tr></tbody></table>
+            </div>
+        </div>
+  </div>
+
+  <div class="footer">
+    Generated 2026-09-08 &nbsp;|&nbsp;
+    Source: SW1 &amp; SW2 enriched transaction files &nbsp;|&nbsp;
+    Campaign: August 1–31, 2026 &nbsp;|&nbsp;
+    Loyalty = transaction has a linked loyalty card number &nbsp;|&nbsp;
+    YoY baseline = August 1–31, 2025 (no promotion) &nbsp;|&nbsp;
+    First-time FW buyer = no prior fireworks purchase on record before August 2026.
+    &nbsp;<a href="#top" style="color:#9ca3af;text-decoration:none">Back to top &uarr;</a>
+  </div>
+
+</div>
+</body>
+</html>

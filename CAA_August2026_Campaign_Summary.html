@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>CAA August 2026 Campaign Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:           #F4F1EC;
+      --surface:      #FFFFFF;
+      --surface2:     #EDE9E2;
+      --border:       #D8D3C8;
+      --text:         #19160F;
+      --text2:        #453E33;
+      --muted:        #877E6F;
+      --accent:       #B8922A;
+      --accent-dim:   rgba(184,146,42,0.11);
+      --accent-border:rgba(184,146,42,0.45);
+      --pos:          #1B6B3A;
+      --pos-bg:       rgba(27,107,58,0.10);
+      --neg:          #9B1C1C;
+      --neg-bg:       rgba(155,28,28,0.10);
+      --new:          #1B4FBF;
+      --new-bg:       rgba(27,79,191,0.10);
+      --warn:         #92400E;
+      --warn-bg:      rgba(146,64,14,0.11);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:           #0C0E15;
+        --surface:      #13161F;
+        --surface2:     #1A1E2C;
+        --border:       rgba(255,255,255,0.08);
+        --text:         #E6E1D8;
+        --text2:        #A89F92;
+        --muted:        #645E53;
+        --accent:       #D4A843;
+        --accent-dim:   rgba(212,168,67,0.12);
+        --accent-border:rgba(212,168,67,0.40);
+        --pos:          #4ADE80;
+        --pos-bg:       rgba(74,222,128,0.10);
+        --neg:          #F87171;
+        --neg-bg:       rgba(248,113,113,0.10);
+        --new:          #93C5FD;
+        --new-bg:       rgba(147,197,253,0.11);
+        --warn:         #FCD34D;
+        --warn-bg:      rgba(252,211,77,0.10);
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg:           #0C0E15;
+      --surface:      #13161F;
+      --surface2:     #1A1E2C;
+      --border:       rgba(255,255,255,0.08);
+      --text:         #E6E1D8;
+      --text2:        #A89F92;
+      --muted:        #645E53;
+      --accent:       #D4A843;
+      --accent-dim:   rgba(212,168,67,0.12);
+      --accent-border:rgba(212,168,67,0.40);
+      --pos:          #4ADE80;
+      --pos-bg:       rgba(74,222,128,0.10);
+      --neg:          #F87171;
+      --neg-bg:       rgba(248,113,113,0.10);
+      --new:          #93C5FD;
+      --new-bg:       rgba(147,197,253,0.11);
+      --warn:         #FCD34D;
+      --warn-bg:      rgba(252,211,77,0.10);
+    }
+
+    /* ── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 44px 24px 80px;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--accent);
+      margin-bottom: 36px;
+    }
+    .doc-header h1 {
+      font-family: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--text);
+      text-wrap: balance;
+    }
+    .doc-header .stores {
+      margin-top: 7px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.2px;
+    }
+    .header-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .meeting-chip {
+      display: inline-block;
+      padding: 6px 14px;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .header-right .prep {
+      display: block;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ── SECTION LABEL ───────────────────────────────────────── */
+    .section-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    /* ── CAMPAIGN GRID ──────────────────────────────────────── */
+    .campaign-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 660px) { .campaign-grid { grid-template-columns: 1fr; } }
+
+    .camp-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* status stripe at top of card */
+    .camp-card::before {
+      content: '';
+      display: block;
+      height: 4px;
+    }
+    .camp-card.s-pos::before { background: var(--pos); }
+    .camp-card.s-warn::before { background: var(--warn); }
+    .camp-card.s-new::before { background: var(--new); }
+
+    .camp-body {
+      padding: 18px 20px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .camp-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .camp-name {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .camp-link {
+      display: block;
+      margin-top: 4px;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.2px;
+      transition: color 0.15s;
+    }
+    .camp-link:hover { color: var(--accent); text-decoration: underline; }
+    .camp-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+    .verdict {
+      flex-shrink: 0;
+      padding: 3px 9px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .s-pos .verdict { background: var(--pos-bg); color: var(--pos); }
+    .s-warn .verdict { background: var(--warn-bg); color: var(--warn); }
+    .s-new .verdict { background: var(--new-bg); color: var(--new); }
+
+    .camp-offer {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .metric {
+      padding: 10px 12px;
+      background: var(--surface2);
+      border-radius: 5px;
+    }
+    .metric-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .metric-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .metric-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+    .pos { color: var(--pos); font-weight: 600; }
+    .neg { color: var(--neg); font-weight: 600; }
+    .neu { color: var(--muted); }
+
+    .camp-note {
+      font-size: 12.5px;
+      color: var(--text2);
+      line-height: 1.6;
+      padding-left: 10px;
+      border-left: 2px solid var(--border);
+    }
+
+    /* ── TAKEAWAYS ───────────────────────────────────────────── */
+    .takeaways { margin-bottom: 40px; }
+    .takeaway-list {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .takeaway {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .takeaway:last-child { border-bottom: none; }
+    .tk-icon {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 16px 0 16px;
+      font-size: 15px;
+      background: var(--surface2);
+      border-right: 1px solid var(--border);
+    }
+    .tk-body { padding: 14px 18px 15px; }
+    .tk-head {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+    .tk-text {
+      font-size: 13px;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* ── RECOMMENDATIONS ─────────────────────────────────────── */
+    .recs { margin-bottom: 44px; }
+    .rec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .rec {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .rec-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .rec-text {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .rec-text strong { color: var(--text); }
+    .rec-tag {
+      flex-shrink: 0;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tag-q4   { background: var(--accent-dim);  color: var(--accent); border: 1px solid var(--accent-border); }
+    .tag-plan { background: var(--pos-bg);       color: var(--pos); }
+    .tag-ops  { background: var(--warn-bg);      color: var(--warn); }
+    .tag-sep  { background: var(--new-bg);       color: var(--new); }
+
+    /* ── IN-CARD STORE SPLIT ───────────────────────────────── */
+    .by-store {
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .by-store-hd {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.7px;
+      text-transform: uppercase; color: var(--muted);
+      padding: 5px 10px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .bs-row {
+      display: grid;
+      grid-template-columns: 8px auto 1fr auto;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .bs-row:last-child { border-bottom: none; }
+    .bs-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .bs-store { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; }
+    .bs-vals { font-size: 11.5px; color: var(--text2); }
+    .bs-delta { font-size: 11.5px; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+    /* ── FOOTER LINKS ────────────────────────────────────────── */
+    .report-footer { padding-top: 28px; border-top: 1px solid var(--border); }
+    .link-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    @media (max-width: 520px) { .link-grid { grid-template-columns: 1fr; } }
+    .link-tile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 15px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .link-tile:hover {
+      border-color: var(--accent-border);
+      background: var(--accent-dim);
+    }
+    .link-tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+    .link-icon { font-size: 20px; flex-shrink: 0; line-height: 1; }
+    .link-info { min-width: 0; }
+    .link-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .link-sub { font-size: 11px; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div>
+      <h1>CAA August 2026<br>Campaign Review</h1>
+      <p class="stores">Smokers Warehouse 1 &amp; 2 &nbsp;&middot;&nbsp; Twinleaf Express &amp; Gas &amp; Convenience</p>
+    </div>
+    <div class="header-right">
+      <span class="meeting-chip">Client Meeting &mdash; Sept 15</span>
+      <span class="prep">Prepared by Arthmetis</span>
+    </div>
+  </header>
+
+  <!-- CAMPAIGN SCORECARDS -->
+  <div class="section-label">August 2026 Campaigns &mdash; At a Glance</div>
+  <div class="campaign-grid">
+
+    <!-- VAPE (strongest) -->
+    <div class="camp-card s-pos">
+      <div class="camp-body">
+        <div class="camp-head">
+          <div>
+            <div class="camp-name">Vape Loyalty 4&times; Points</div>
+            <a class="camp-link" href="41g_August2026_Vape_Loyalty_Campaign.html">&#x2197; Full report &mdash; SW1 &amp; SW2</a>
+          </div>
+          <span class="verdict">Strong</span>
+        </div>
+        <p class="camp-offer">Smokers Warehouse &mdash; 4&times; points on all vape purchases, loyalty cardholders only</p>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Total Vape Rev</div>
+            <div class="metric-value">$100,279</div>
+            <div class="metric-sub"><span class="pos">+3.6%</span> vs Aug 2025</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Loyalty Revenue</div>
+            <div class="metric-value">$68,492</div>
+            <div class="metric-sub"><span class="pos">+32.0%</span> YoY &middot; 68.3% share</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Loyalty Cards</div>
+            <div class="metric-value">144</div>
+            <div class="metric-sub">1,420 trips &middot; 5 new buyers</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Non-Loyalty Rev</div>
+            <div class="metric-value">$31,787</div>
+            <div class="metric-sub"><span class="neg">-29.2%</span> YoY</div>
+          </div>
+        </div>
+        <div class="by-store">
+          <div class="by-store-hd">By Store</div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#a78bfa"></div>
+            <span class="bs-store">SW1 Akwesasne</span>
+            <span class="bs-vals">$66,654 total &middot; $45,365 loyalty (82 cards, 927 trips)</span>
+            <span class="bs-delta pos">+3.4%</span>
+          </div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#c084fc"></div>
+            <span class="bs-store">SW2 Ft. Covington</span>
+            <span class="bs-vals">$33,625 total &middot; $23,126 loyalty (62 cards, 493 trips)</span>
+            <span class="bs-delta pos">+4.1%</span>
+          </div>
+        </div>
+        <p class="camp-note">Loyalty revenue up +32% while non-loyalty fell -29%. SW1 drives ~66% of combined vape but SW2 grew slightly faster. Summer vape totaled $377,809 (+14% YoY).</p>
+      </div>
+    </div>
+
+    <!-- FIREWORKS (context/mixed) -->
+    <div class="camp-card s-warn">
+      <div class="camp-body">
+        <div class="camp-head">
+          <div>
+            <div class="camp-name">Fireworks Clearance + 3&times; Points</div>
+            <a class="camp-link" href="41f_August2026_Fireworks_Campaign.html">&#x2197; Full report &mdash; SW1 &amp; SW2</a>
+          </div>
+          <span class="verdict">Context</span>
+        </div>
+        <p class="camp-offer">Smokers Warehouse &mdash; 20% off remaining inventory + loyalty 3&times; points on fireworks</p>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Aug FW Revenue</div>
+            <div class="metric-value">$5,806</div>
+            <div class="metric-sub"><span class="neg">-55.7%</span> vs Aug 2025</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Summer FW Total</div>
+            <div class="metric-value">$433,069</div>
+            <div class="metric-sub"><span class="pos">+49.0%</span> vs Summer 2025</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">FW Baskets</div>
+            <div class="metric-value">92</div>
+            <div class="metric-sub"><span class="neg">-36</span> vs 128 Aug 2025</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Loyalty Share</div>
+            <div class="metric-value">7.0%</div>
+            <div class="metric-sub">$405 &middot; 13 cards &middot; 1 new buyer</div>
+          </div>
+        </div>
+        <div class="by-store">
+          <div class="by-store-hd">By Store &mdash; August decline diverges significantly</div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#a78bfa"></div>
+            <span class="bs-store">SW1 Akwesasne</span>
+            <span class="bs-vals">$2,924 &middot; 52 baskets &middot; loyalty $168 (6 cards)</span>
+            <span class="bs-delta neg">-65.0%</span>
+          </div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#c084fc"></div>
+            <span class="bs-store">SW2 Ft. Covington</span>
+            <span class="bs-vals">$2,882 &middot; 40 baskets &middot; loyalty $237 (7 cards)</span>
+            <span class="bs-delta neg">-39.4%</span>
+          </div>
+        </div>
+        <p class="camp-note">August is end-of-season clearance &mdash; demand peaks in June/July. SW1's drop was nearly double SW2's; worth investigating whether SW1 ran out of inventory earlier or faces different seasonal timing. The summer arc (+49%) is the real measure of this category.</p>
+      </div>
+    </div>
+
+    <!-- FOOD TO GO (mixed) -->
+    <div class="camp-card s-warn">
+      <div class="camp-body">
+        <div class="camp-head">
+          <div>
+            <div class="camp-name">Grab N Go Loyalty 2&times; Points</div>
+            <a class="camp-link" href="41h_August2026_FoodToGo_Loyalty_Campaign.html">&#x2197; Full report &mdash; TXP &amp; TGC</a>
+          </div>
+          <span class="verdict">Mixed</span>
+        </div>
+        <p class="camp-offer">Twinleaf &mdash; 2&times; points on any Grab N Go purchase, loyalty cardholders only</p>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Total Grab N Go</div>
+            <div class="metric-value">$109,603</div>
+            <div class="metric-sub"><span class="neg">-4.6%</span> vs Aug 2025</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Loyalty Revenue</div>
+            <div class="metric-value">$12,641</div>
+            <div class="metric-sub"><span class="pos">+11.3%</span> YoY &middot; 11.5% share</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Loyalty Cards</div>
+            <div class="metric-value">142</div>
+            <div class="metric-sub"><span class="pos">+14.5%</span> &middot; 1,456 trips (+17.9%)</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Avg Basket / Trip</div>
+            <div class="metric-value">$8.68</div>
+            <div class="metric-sub"><span class="neg">-5.6%</span> vs $9.20 Aug 2025</div>
+          </div>
+        </div>
+        <div class="by-store">
+          <div class="by-store-hd">By Store &mdash; opposite trip &amp; basket patterns</div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#fb923c"></div>
+            <span class="bs-store">TXP Express</span>
+            <span class="bs-vals">72 cards (+16.1%) &middot; 886 trips (+32.4%) &middot; $9.60 basket</span>
+            <span class="bs-delta neg">-10.9% basket</span>
+          </div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#f472b6"></div>
+            <span class="bs-store">TGC Gas &amp; Conv.</span>
+            <span class="bs-vals">70 cards (+12.9%) &middot; 570 trips (+0.7%) &middot; $7.26 basket</span>
+            <span class="bs-delta neu">-0.8% basket</span>
+          </div>
+        </div>
+        <p class="camp-note">TXP's trips surged +32.4% but each visit spent $1.18 less. TGC's trips were flat but basket held steady. Same campaign, opposite responses: TXP is frequency-driven; TGC is stable. All 142 Aug 2026 loyalty buyers were returning cardholders &mdash; zero new enrollments.</p>
+      </div>
+    </div>
+
+    <!-- BAGEL + COFFEE (baseline) -->
+    <div class="camp-card s-new">
+      <div class="camp-body">
+        <div class="camp-head">
+          <div>
+            <div class="camp-name">Bagel + Coffee Combo $4.99</div>
+            <a class="camp-link" href="41i_August2026_BagelCoffeeCombo_Snapshot.html">&#x2197; Full report &mdash; TXP &amp; TGC</a>
+          </div>
+          <span class="verdict">Baseline</span>
+        </div>
+        <p class="camp-offer">Twinleaf &mdash; Bagel + Coffee for $4.99, all customers, all August</p>
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Bagel Units Sold</div>
+            <div class="metric-value">334</div>
+            <div class="metric-sub"><span class="neu">First tracked month</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Coffee Units Sold</div>
+            <div class="metric-value">392</div>
+            <div class="metric-sub">$526 revenue</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Bagel Revenue</div>
+            <div class="metric-value">$1,667</div>
+            <div class="metric-sub"><span class="neu">No prior-year comp</span></div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Same-Basket Combos</div>
+            <div class="metric-value">12</div>
+            <div class="metric-sub">TGC only &mdash; TXP rings separately</div>
+          </div>
+        </div>
+        <div class="by-store">
+          <div class="by-store-hd">By Store &mdash; TGC is the combo destination</div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#fb923c"></div>
+            <span class="bs-store">TXP Express</span>
+            <span class="bs-vals">150 bagels ($749) &middot; 69 coffees ($79) &middot; 0 same-basket combos</span>
+            <span class="bs-delta neu">POS fix needed</span>
+          </div>
+          <div class="bs-row">
+            <div class="bs-dot" style="background:#f472b6"></div>
+            <span class="bs-store">TGC Gas &amp; Conv.</span>
+            <span class="bs-vals">184 bagels ($918) &middot; 323 coffees ($447) &middot; 12 confirmed combos</span>
+            <span class="bs-delta neu">Natural home</span>
+          </div>
+        </div>
+        <p class="camp-note">TGC sells 5&times; more coffee than TXP and generated all 12 confirmed same-basket combos &mdash; it is the natural home for this offer. 83% of purchases are non-loyalty. No Aug 2025 baseline exists for YoY comparison.</p>
+      </div>
+    </div>
+
+  </div><!-- /campaign-grid -->
+
+
+  <!-- KEY TAKEAWAYS -->
+  <div class="takeaways">
+    <div class="section-label">Key Takeaways</div>
+    <div class="takeaway-list">
+
+      <div class="takeaway">
+        <div class="tk-icon">&#x2714;</div>
+        <div class="tk-body">
+          <div class="tk-head">Vape 4&times; Points is the clearest campaign win this August</div>
+          <div class="tk-text">Loyalty revenue grew +32% YoY while accounting for 68.3% of total vape. Non-loyalty dropped -29.2% in parallel &mdash; the multiplier pulled enrolled customers deeper into the category. That divergence is the signal: the campaign is working exactly as designed, concentrating spend on cardholders without depending on casual buyers to carry revenue.</div>
+        </div>
+      </div>
+
+      <div class="takeaway">
+        <div class="tk-icon">&#x1F4CA;</div>
+        <div class="tk-body">
+          <div class="tk-head">Fireworks: August is the wrong month to judge the campaign</div>
+          <div class="tk-text">The -55.7% August decline reflects end-of-season clearance, not a promotion failure. Fireworks demand peaks in June and July; by August, inventory is selling out at discount. The summer arc (May&ndash;August) delivered $433,069, up +49% versus the prior summer. The category is healthy &mdash; the timing of an August-focused push was structurally disadvantaged.</div>
+        </div>
+      </div>
+
+      <div class="takeaway">
+        <div class="tk-icon">&#x26A0;</div>
+        <div class="tk-body">
+          <div class="tk-head">Food to Go loyalty is widening but spending less per visit</div>
+          <div class="tk-text">Cards grew +14.5% and trips grew +17.9%, but avg basket fell -5.6% to $8.68. More enrolled customers are visiting more often, yet each transaction is lighter. The 2&times; points offer successfully deepened engagement frequency &mdash; but frequency without basket growth limits revenue upside. A bundle mechanic targeting per-visit spend is the natural next step.</div>
+        </div>
+      </div>
+
+      <div class="takeaway">
+        <div class="tk-icon">&#x1F6AA;</div>
+        <div class="tk-body">
+          <div class="tk-head">No new loyalty enrollments were activated in Food to Go</div>
+          <div class="tk-text">All 142 loyalty buyers in August 2026 were returning Grab N Go cardholders. The campaign deepened loyalty within an existing base but did not bring a single new member into the category &mdash; compared to 2 first-timers in August 2025. A points campaign alone does not convert non-loyalty shoppers; an active enrollment hook at checkout is needed to grow the base.</div>
+        </div>
+      </div>
+
+      <div class="takeaway">
+        <div class="tk-icon">&#x1F6A7;</div>
+        <div class="tk-body">
+          <div class="tk-head">Bagel + Coffee needs a POS fix before it can be measured</div>
+          <div class="tk-text">TXP rings bagels and coffee as separate transactions, making it impossible to confirm combo purchases in the data. TGC confirmed 12 same-basket combos. Since these SKUs have no August 2025 history, there is no prior-year baseline to compare against. August 2026 is Month 1 &mdash; the offer needs a process alignment at TXP and a clean September run before any performance read is possible.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- RECOMMENDATIONS -->
+  <div class="recs">
+    <div class="section-label">Recommendations</div>
+    <div class="rec-list">
+
+      <div class="rec">
+        <div class="rec-num">1</div>
+        <div class="rec-text"><strong>Re-run Vape 4&times; Points in Q4.</strong> This is the highest-ROI campaign structure in August. A holiday-season push &mdash; tied to a new SKU launch or seasonal brand &mdash; would leverage the same proven mechanic on a high-intent audience. SW1 outperformed (82 cards, $45K loyalty rev) and is the stronger anchor for Q4 targeting.</div>
+        <span class="rec-tag tag-q4">Q4 Action</span>
+      </div>
+
+      <div class="rec">
+        <div class="rec-num">2</div>
+        <div class="rec-text"><strong>Shift Fireworks promotions to May&ndash;June 2027.</strong> The summer arc data confirms strong category demand that peaks well before August. A Memorial Day launch with a loyalty multiplier would capture peak-demand traffic rather than closing out inventory after the season has passed.</div>
+        <span class="rec-tag tag-plan">2027 Plan</span>
+      </div>
+
+      <div class="rec">
+        <div class="rec-num">3</div>
+        <div class="rec-text"><strong>Add a bundle mechanic to Food to Go to lift avg basket.</strong> With trips up but per-visit spend declining, the gap is per-transaction value. A "Earn 2&times; points on a combo purchase" structure &mdash; pairing the existing Bagel + Coffee $4.99 offer with the Grab N Go points campaign &mdash; gives enrolled customers a reason to consolidate more spend in one visit rather than multiple lighter stops.</div>
+        <span class="rec-tag tag-q4">Q4 Action</span>
+      </div>
+
+      <div class="rec">
+        <div class="rec-num">4</div>
+        <div class="rec-text"><strong>Fix the Bagel + Coffee POS ring at TXP; set September as Month 1.</strong> Align cashier process at TXP so bagel and coffee ring together when ordered as a combo. September 2026 then becomes the first clean baseline month, enabling month-over-month tracking and a Nov 2026 vs Nov 2025 YoY comparison by end of year.</div>
+        <span class="rec-tag tag-ops">Ops Fix</span>
+      </div>
+
+      <div class="rec">
+        <div class="rec-num">5</div>
+        <div class="rec-text"><strong>Launch a loyalty enrollment prompt for non-loyalty Vape and Grab N Go buyers.</strong> Non-loyalty spend is declining in both categories (Vape -29.2%, Food to Go -6.3%). These customers are already at the register &mdash; a point-of-sale enrollment prompt ("Earn 4&times; points today &mdash; sign up free") converts existing cash transactions into cardholder data and expands the audience future campaigns can reach.</div>
+        <span class="rec-tag tag-sep">Sep Launch</span>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- DETAILED REPORTS FOOTER -->
+  <div class="report-footer">
+    <div class="section-label">Detailed Reports</div>
+    <div class="link-grid">
+      <a class="link-tile" href="41g_August2026_Vape_Loyalty_Campaign.html">
+        <span class="link-icon">&#x1F6AC;</span>
+        <div class="link-info">
+          <div class="link-name">Vape Loyalty Campaign</div>
+          <div class="link-sub">41g &middot; SW1 &amp; SW2 &middot; Full loyalty &amp; summer arc</div>
+        </div>
+      </a>
+      <a class="link-tile" href="41f_August2026_Fireworks_Campaign.html">
+        <span class="link-icon">&#x1F9E8;</span>
+        <div class="link-info">
+          <div class="link-name">Fireworks Campaign</div>
+          <div class="link-sub">41f &middot; SW1 &amp; SW2 &middot; Summer arc + loyalty breakdown</div>
+        </div>
+      </a>
+      <a class="link-tile" href="41h_August2026_FoodToGo_Loyalty_Campaign.html">
+        <span class="link-icon">&#x1F96A;</span>
+        <div class="link-info">
+          <div class="link-name">Food to Go Loyalty Campaign</div>
+          <div class="link-sub">41h &middot; TXP &amp; TGC &middot; Grab N Go YoY &amp; cardholder detail</div>
+        </div>
+      </a>
+      <a class="link-tile" href="41i_August2026_BagelCoffeeCombo_Snapshot.html">
+        <span class="link-icon">&#x2615;</span>
+        <div class="link-info">
+          <div class="link-name">Bagel + Coffee Combo Snapshot</div>
+          <div class="link-sub">41i &middot; TXP &amp; TGC &middot; Baseline month &amp; item detail</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
