@@ -1,52 +1,47 @@
 {% extends 'layout.html' %}
 {% block title %}CAA Campaign Summary{% endblock %}
 {% block content %}
-<section class="page-header">
+<section class="dashboard-head">
   <div>
     <span class="section-kicker">Campaign performance review</span>
-    <h1>August 2026 Campaign Summary</h1>
+    <h1>CAA Campaign Measurement Story</h1>
   </div>
   <div class="header-actions">
-    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary HTML</a>
+    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary Report</a>
+    <a class="primary-button compact" href="/month-story">Campaign Timeline</a>
   </div>
 </section>
 
-<section class="kpi-grid">
-  <article class="kpi-card">
-    <span class="kpi-label">Activated Programs</span>
-    <span class="kpi-value">04</span>
-    <span class="kpi-foot">Core campaign reports</span>
+<section class="summary-strip">
+  <article class="strip-card">
+    <span class="strip-label">Campaign Window</span>
+    <span class="strip-value">May-Aug 2026</span>
   </article>
-  <article class="kpi-card">
-    <span class="kpi-label">Priority Focus</span>
-    <span class="kpi-value">Loyalty</span>
-    <span class="kpi-foot">Repeat purchase growth</span>
+  <article class="strip-card">
+    <span class="strip-label">Monthly Reports</span>
+    <span class="strip-value">04</span>
   </article>
-  <article class="kpi-card">
-    <span class="kpi-label">Recommendation</span>
-    <span class="kpi-value eta">Scale</span>
-    <span class="kpi-foot">High-performing funnels</span>
+  <article class="strip-card">
+    <span class="strip-label">Continuous Families</span>
+    <span class="strip-value">03</span>
   </article>
-  <article class="kpi-card">
-    <span class="kpi-label">Insight Mode</span>
-    <span class="kpi-value">AI</span>
-    <span class="kpi-foot">Concise strategic query</span>
+  <article class="strip-card">
+    <span class="strip-label">One-Off Moments</span>
+    <span class="strip-value">08+</span>
   </article>
 </section>
 
-<section class="summary-grid">
-  <article class="panel summary-panel">
+<section class="hero-grid">
+  <article class="hero-panel">
     <div class="panel-title">
       <span>Executive Summary</span>
-      <span class="panel-chip positive">Overall momentum</span>
+      <span class="panel-chip positive">Overall Momentum</span>
     </div>
-    <div class="summary-copy">
+    <div class="hero-copy">
       <p>
-        The August campaign portfolio shows a measurable shift toward loyalty-driven behavior. 
-        The strongest improvement is visible in programs that combine carded customer behavior, 
-        repeat purchase frequency, and targeted offers.
+        The campaign sequence from May through August demonstrates a clear path from audience discovery and trial formation to loyalty and repeat-purchase behavior. The most strategic campaign system is not a single promotion; it is a family of connected offers, bundles, seasonal programs, and loyalty loops that build over time.
       </p>
-      <div class="highlights">
+      <div class="hero-highlight-list">
         {% for item in highlights %}
         <div class="highlight-row">
           <span class="check">✓</span>
@@ -57,9 +52,9 @@
     </div>
   </article>
 
-  <article class="panel insight-panel">
+  <article class="signal-panel">
     <div class="panel-title">
-      <span>Campaign Signals</span>
+      <span>Campaign Signal Index</span>
       <span class="panel-chip">Signals</span>
     </div>
     <div class="signal-list">
@@ -81,6 +76,103 @@
       </div>
     </div>
   </article>
+</section>
+
+<section class="section-title">
+  <span>Campaign Calendar</span>
+</section>
+<section class="campaign-calendar-panel">
+  <div class="legend-bar">
+    <span class="legend-title">Campaign Type Legend</span>
+    <span class="legend-chip continuous-chip">Continuous</span>
+    <span class="legend-chip oneoff-chip">One-off</span>
+    <span class="legend-chip seasonal-chip">Seasonal</span>
+    <span class="legend-chip dependent-chip">Dependent Family</span>
+  </div>
+  <div class="calendar-table">
+    <div class="calendar-row calendar-head">
+      <span class="calendar-month-head">Month</span>
+      <span class="calendar-campaign-head">Campaign</span>
+      <span class="calendar-type-head">Type</span>
+      <span class="calendar-status-head">Status</span>
+      <span class="calendar-objective-head">Objective</span>
+    </div>
+    {% for month in campaign_monthly_story %}
+      {% for campaign in month.campaigns %}
+      <div class="calendar-row">
+        <span class="calendar-month">{{ month.month }}</span>
+        <span class="calendar-campaign">{{ campaign.name }}</span>
+        <span class="calendar-type type-{{ campaign.type.lower() | replace(' ', '-') }}">{{ campaign.type }}</span>
+        <span class="calendar-status">{{ campaign.status }}</span>
+        <span class="calendar-objective">{{ campaign.objective }}</span>
+      </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section-title">
+  <span>Monthly Campaign Flow</span>
+</section>
+<section id="campaign-timeline" class="timeline-grid">
+  {% for month in campaign_monthly_story %}
+  <article class="timeline-card">
+    <div class="timeline-card-head">
+      <span class="timeline-month">{{ month.month }}</span>
+      <span class="timeline-theme">{{ month.theme }}</span>
+    </div>
+    <p class="timeline-summary">{{ month.summary }}</p>
+    <div class="timeline-campaign-list">
+      {% for campaign in month.campaigns %}
+      <div class="timeline-campaign-row">
+        <span class="campaign-name">{{ campaign.name }}</span>
+        <span class="campaign-type type-{{ campaign.type.lower() | replace(' ', '-') }}">{{ campaign.type }}</span>
+        <span class="campaign-status">{{ campaign.status }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Monthly Summary Archive</span>
+</section>
+<section class="monthly-summary-grid">
+  {% for month in monthly_summaries %}
+  <article class="monthly-card">
+    <span class="month-label">{{ month.month }}</span>
+    <span class="month-theme">{{ month.theme }}</span>
+    <p class="month-summary">{{ month.summary }}</p>
+    <div class="month-objective">
+      <span class="objective-label">Objective</span>
+      <span class="objective-text">{{ month.objective }}</span>
+    </div>
+    <div class="month-actions">
+      <a class="small-link" href="/monthly-summary/{{ month.slug }}" target="_blank">Open summary</a>
+      <a class="mini-link" href="/month-story">Month story</a>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Campaign Families</span>
+</section>
+<section class="family-grid">
+  {% for family in interrelated_campaigns %}
+  <article class="family-card">
+    <div class="family-head">
+      <span class="family-title">{{ family.family }}</span>
+    </div>
+    <p class="family-summary">{{ family.summary }}</p>
+    <div class="family-files">
+      {% for file in family.reports %}
+      <a class="mini-link" href="/shared-report/{{ file }}">{{ file }}</a>
+      {% endfor %}
+    </div>
+  </article>
+  {% endfor %}
 </section>
 
 <section class="section-title">
@@ -116,24 +208,5 @@
     </div>
   </article>
   {% endfor %}
-</section>
-
-<section class="chat-panel">
-  <div class="chat-top">
-    <div>
-      <span class="section-kicker">Campaign assistant</span>
-      <h2>AI summary and strategic questions</h2>
-    </div>
-    <span class="chat-status">Anthropic-enabled</span>
-  </div>
-  <div class="chat-output" id="chatOutput">
-    <div class="chat-output-message">
-      Ask about loyalty, budgets, creative, or campaign momentum.
-    </div>
-  </div>
-  <div class="chat-controls">
-    <input type="text" id="chatQuery" class="chat-input" placeholder="Ask about the best campaign opportunity...">
-    <button class="primary-button" id="chatSubmit">Ask CAA AI</button>
-  </div>
 </section>
 {% endblock %}

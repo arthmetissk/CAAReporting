@@ -1,0 +1,163 @@
+{% extends 'layout.html' %}
+{% block title %}CAA Monthly Campaign Story{% endblock %}
+{% block content %}
+<section class="page-header">
+  <div>
+    <span class="section-kicker">CAA campaign measurement story</span>
+    <h1>All Campaigns Measurement Narrative</h1>
+  </div>
+  <div class="header-actions">
+    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary Report</a>
+  </div>
+</section>
+
+<section class="kpi-grid">
+  <article class="kpi-card">
+    <span class="kpi-label">Campaign Family</span>
+    <span class="kpi-value">May-Jul-Aug</span>
+    <span class="kpi-foot">Loyalty and activation</span>
+  </article>
+  <article class="kpi-card">
+    <span class="kpi-label">Measurement Lens</span>
+    <span class="kpi-value">Cross-month</span>
+    <span class="kpi-foot">Offer and behavior inference</span>
+  </article>
+  <article class="kpi-card">
+    <span class="kpi-label">Recommendation</span>
+    <span class="kpi-value eta">Connect</span>
+    <span class="kpi-foot">Loyalty and basket logic</span>
+  </article>
+  <article class="kpi-card">
+    <span class="kpi-label">Reporting Source</span>
+    <span class="kpi-value">All</span>
+    <span class="kpi-foot">Campaign reports</span>
+  </article>
+</section>
+
+<section class="summary-grid">
+  <article class="panel summary-panel">
+    <div class="panel-title">
+      <span>Executive Story</span>
+      <span class="panel-chip positive">Cross-month inference</span>
+    </div>
+    <div class="summary-copy">
+      <p>
+        The campaign set demonstrates a consistent loyalty and offer-building pattern. May establishes the audience and initial food, beverage, and rewards loop. June expands the offer architecture through a broader set of seasonal programs. July deepens the summer story with buy-downs and water, cooler, and heat-management promotions. August converts the learnings into a focused August performance review across food, coffee, vape, and fireworks.
+      </p>
+      <div class="highlights">
+        <div class="highlight-row"><span class="check">✓</span><span>Offer families that repeat across months are more reliable than isolated one-off promotions.</span></div>
+        <div class="highlight-row"><span class="check">✓</span><span>Carded customer behavior is the strongest measurement pattern for repeat purchase and wallet expansion.</span></div>
+        <div class="highlight-row"><span class="check">✓</span><span>Creative and category relevance should be paired with useful next-step rewards to protect frequency uplift.</span></div>
+      </div>
+    </div>
+  </article>
+
+  <article class="panel insight-panel">
+    <div class="panel-title">
+      <span>Monthly Flow</span>
+      <span class="panel-chip">Narrative</span>
+    </div>
+    <div class="timeline">
+      {% for month in story_months %}
+      <div class="timeline-row">
+        <span class="timeline-month">{{ month.month }}</span>
+        <span class="timeline-text">{{ month.theme }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+</section>
+
+<section class="section-title">
+  <span>Campaign Timeline</span>
+</section>
+<section class="timeline-grid">
+  {% for month in story_months %}
+  <article class="timeline-card">
+    <div class="timeline-card-head">
+      <span class="timeline-month">{{ month.month }}</span>
+      <span class="timeline-theme">{{ month.theme }}</span>
+    </div>
+    <p class="timeline-summary">{{ month.insight }}</p>
+    <div class="timeline-campaign-list">
+      {% for campaign in month.campaigns %}
+      <div class="timeline-campaign-row">
+        <span class="campaign-name">{{ campaign }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Campaign Family Narrative</span>
+</section>
+<section class="family-grid">
+  {% for family in interrelated_campaigns %}
+  <article class="family-card">
+    <div class="family-head">
+      <span class="family-title">{{ family.family }}</span>
+    </div>
+    <p class="family-summary">{{ family.summary }}</p>
+    <div class="family-files">
+      {% for file in family.reports %}
+      <a class="mini-link" href="/shared-report/{{ file }}">{{ file }}</a>
+      {% endfor %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Combined Summary by Month</span>
+</section>
+<section class="monthly-summary-grid">
+  {% for month in monthly_summaries %}
+  <article class="monthly-summary-card">
+    <span class="month-label">{{ month.month }}</span>
+    <span class="month-theme">{{ month.theme }}</span>
+    <p class="month-summary">{{ month.summary }}</p>
+    <div class="month-actions">
+      <a class="small-link" href="/monthly-summary/{{ month.slug }}" target="_blank">Open summary</a>
+      <a class="mini-link" href="/">Overview</a>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Recommendations</span>
+</section>
+<section id="recommendations" class="recommendation-grid">
+  {% for rec in recommendations %}
+  <article class="recommendation-card">
+    <div class="recommendation-head">
+      <span class="rec-title">{{ rec.title }}</span>
+      <span class="impact impact-{{ rec.impact.lower() }}">{{ rec.impact }}</span>
+    </div>
+    <p class="rec-detail">{{ rec.detail }}</p>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Creative and Measurement Links</span>
+</section>
+<section id="reports" class="report-grid">
+  {% for report in reports %}
+  <article class="report-card">
+    <div class="report-card-top">
+      <span class="report-category">{{ report.category }}</span>
+      <span class="report-status">Report</span>
+    </div>
+    <div class="report-name">{{ report.title }}</div>
+    <p class="report-summary">{{ report.summary }}</p>
+    <div class="report-actions">
+      <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open report</a>
+      <button class="small-button" data-query="Analyze {{ report.title }}">Ask</button>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

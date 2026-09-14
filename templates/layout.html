@@ -13,16 +13,28 @@
         <span class="brand-mark">CAA</span>
         <span class="brand-copy">
           <span class="brand-title">Campaign Intelligence</span>
-          <span class="brand-subtitle">August 2026</span>
+          <span class="brand-subtitle">May-Aug 2026</span>
         </span>
       </div>
 
+      <section class="sidebar-panel">
+        <span class="sidebar-label">Campaign Console</span>
+        <div class="sidebar-status">
+          <span class="status-dot"></span>
+          <span class="status-text">Measurement view</span>
+        </div>
+      </section>
+
       <nav class="nav">
         <a class="nav-link active" href="/">
-          <span>Overview</span>
+          <span>Executive Overview</span>
           <span class="nav-icon">↗</span>
         </a>
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="/month-story">
+          <span>Campaign Timeline</span>
+          <span class="nav-icon">»</span>
+        </a>
+        <a class="nav-link" href="/summary-report" target="_blank">
           <span>Summary Report</span>
           <span class="nav-icon">»</span>
         </a>
@@ -48,6 +60,25 @@
     <main class="main-content">
       {% block content %}{% endblock %}
     </main>
+  </div>
+
+  <button class="chat-launcher" id="chatLauncher" title="Ask CAA AI">
+    <span class="chat-launcher-icon">✦</span>
+    <span class="chat-launcher-text">Ask CAA AI</span>
+  </button>
+
+  <div class="chat-drawer" id="chatDrawer">
+    <div class="chat-drawer-top">
+      <span class="chat-drawer-title">CAA Campaign Assistant</span>
+      <button class="chat-close" id="chatClose">×</button>
+    </div>
+    <div class="chat-drawer-output" id="chatDrawerOutput">
+      <div class="chat-drawer-message">Ask about campaigns, monthly summary, budget, or recommendation themes.</div>
+    </div>
+    <div class="chat-drawer-controls">
+      <input type="text" id="chatDrawerQuery" class="chat-drawer-input" placeholder="Ask a campaign question...">
+      <button class="primary-button" id="chatDrawerSubmit">Ask</button>
+    </div>
   </div>
 
   <script src="{{ url_for('static', filename='app.js') }}"></script>
