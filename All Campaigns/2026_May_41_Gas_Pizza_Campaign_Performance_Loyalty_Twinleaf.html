@@ -1,0 +1,447 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Gas + Free Pizza Campaign — Loyalty Performance Report</title>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1220;--panel:rgba(255,255,255,0.05);--panel2:rgba(255,255,255,0.03);
+      --border:rgba(255,255,255,0.10);--text:#e5e7eb;--muted:#9ca3af;
+      --shadow:0 14px 32px rgba(0,0,0,.38);--radius:16px;--pad:16px;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:var(--sans);color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 0%,rgba(167,139,250,.18),transparent 60%),
+        radial-gradient(900px 500px at 85% 10%,rgba(52,211,153,.12),transparent 60%),
+        var(--bg);}
+    .wrap{max-width:1360px;margin:0 auto;padding:22px 18px 70px;}
+    .hero{padding:22px;border-radius:20px;border:1px solid var(--border);
+      background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+      box-shadow:var(--shadow);}
+    .title{font-size:26px;font-weight:900;line-height:1.15;margin:0 0 8px;}
+    .meta{color:var(--muted);font-size:13px;line-height:1.65;}
+    .pill{display:inline-block;margin:6px 6px 0 0;padding:5px 12px;border-radius:999px;
+      border:1px solid var(--border);color:var(--muted);
+      background:rgba(255,255,255,.03);font-size:12px;}
+    .pill-p{border-color:rgba(167,139,250,.4);color:#c4b5fd;background:rgba(167,139,250,.08);}
+    .pill-g{border-color:rgba(52,211,153,.4);color:#6ee7b7;background:rgba(52,211,153,.08);}
+    .pill-y{border-color:rgba(251,191,36,.4);color:#fde68a;background:rgba(251,191,36,.08);}
+    .nav{position:sticky;top:0;z-index:20;margin-top:12px;padding:10px;
+      border-radius:14px;border:1px solid var(--border);
+      background:rgba(11,18,32,.88);backdrop-filter:blur(8px);}
+    .nav a{display:inline-block;color:var(--muted);text-decoration:none;font-size:12px;
+      padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.08);
+      margin:4px 4px 0 0;}
+    .nav a:hover{color:#fff;border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08);}
+    .section{margin-top:24px;}
+    .section h2{margin:0 0 10px;font-size:18px;font-weight:800;}
+    .note{color:var(--muted);font-size:13px;line-height:1.55;margin:0 0 10px;}
+    .card{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);
+      padding:var(--pad);box-shadow:var(--shadow);margin-bottom:12px;}
+    .callout{border-left:3px solid rgba(167,139,250,.7);padding:12px 14px;
+      background:rgba(167,139,250,.07);border-radius:10px;
+      color:#c4b5fd;font-size:13px;line-height:1.7;margin-bottom:12px;}
+    .callout-green{border-left:3px solid rgba(52,211,153,.7);padding:12px 14px;
+      background:rgba(52,211,153,.07);border-radius:10px;
+      color:#6ee7b7;font-size:13px;line-height:1.7;margin-bottom:12px;}
+    .callout-warn{border-left:3px solid rgba(251,191,36,.7);padding:12px 14px;
+      background:rgba(251,191,36,.07);border-radius:10px;
+      color:#fde68a;font-size:13px;line-height:1.7;margin-bottom:12px;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    @media(max-width:1100px){.grid2{grid-template-columns:1fr;}}
+    .store-block{background:var(--panel2);border:1px solid var(--border);
+      border-radius:var(--radius);padding:var(--pad);margin-bottom:12px;}
+    .kpis6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+    .kpis3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    @media(max-width:1300px){.kpis6{grid-template-columns:repeat(3,1fr);}}
+    .kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px;}
+    .kpi-gas{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25);}
+    .kpi-redem{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.30);}
+    .kpi-cost{background:rgba(248,113,113,.10);border-color:rgba(248,113,113,.30);}
+    .kl{color:var(--muted);font-size:10px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:6px;}
+    .kv{font-size:19px;font-weight:900;color:#fff;margin-bottom:4px;}
+    .ks{color:var(--muted);font-size:11px;}
+    .up{color:#34d399;}.dn{color:#f87171;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th,td{border-bottom:1px solid rgba(255,255,255,.07);padding:8px 10px;
+      text-align:left;white-space:nowrap;}
+    th{color:#fff;background:rgba(255,255,255,.04);font-weight:700;font-size:12px;}
+    tr:hover td{background:rgba(255,255,255,.02);}
+    .chart{padding:4px 0;}
+    .footer{color:var(--muted);font-size:12px;margin-top:20px;line-height:1.6;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero" id="top">
+    <h1 class="title">$30 Gas + Free Pizza Campaign &mdash;
+      Loyalty Performance Report &nbsp;|&nbsp; Twinleaf</h1>
+    <div class="meta">
+      <b>Campaign mechanic:</b> Spend $30+ on fuel (loyalty card required) &rarr;
+      receive a FREE Pizza By The Slice ($3.25 discount applied at POS)<br/>
+      <b>Data source:</b> PatronPoints loyalty LineItems exports (Jan 2024 &ndash; Jun 2026)<br/>
+      <b>Redemption signal:</b> Same Trans ID has (1) gas Amount &ge;$30 with
+      null Department AND (2) "PIZZA BY THE SLICE" with Discount Amount = $3.25<br/>
+      <b>Stores:</b> TGC (Akwesasne) &middot; TExpress (Ft Covington)
+    </div>
+    <div>
+      <span class="pill pill-p">TGC May 2026: 9 redemptions
+        (0.5% rate)</span>
+      <span class="pill pill-g">TExp May 2026: 14 redemptions
+        (1.8% rate)</span>
+      <span class="pill pill-y">All-time TGC: 9 &middot;
+        TExp: 22</span>
+      <span class="pill">Combined May cost:
+        $78.00</span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <a href="#methodology">Methodology</a>
+    <a href="#may-kpis">May 2026 KPIs</a>
+    <a href="#alltime-kpis">All-Time KPIs</a>
+    <a href="#monthly-trend">Monthly Trend</a>
+    <a href="#gas-dist">Gas Distribution</a>
+    <a href="#pizza-split">Pizza Volume</a>
+    <a href="#redemptions">Redemption Log</a>
+    <a href="#all-time-table">All-Time Summary</a>
+  </div>
+
+  <!-- METHODOLOGY -->
+  <div class="section" id="methodology">
+    <h2>Methodology</h2>
+    <div class="callout">
+      <b>How redemptions are identified in loyalty data:</b><br/>
+      1. Find all loyalty gas transactions (Department = NULL) with Amount &ge; $30.00<br/>
+      2. Find all "PIZZA BY THE SLICE" line items with Discount Amount = $3.25
+         (this discount = the free pizza reward; regular pizza sold at $3.00 with $3.25
+         discount representing the campaign benefit value)<br/>
+      3. A <b>confirmed redemption</b> = a Trans ID that appears in BOTH sets above<br/>
+      4. <b>Redemption rate</b> = confirmed redemptions &divide; qualifying gas transactions<br/><br/>
+      <b>Note on discount amount:</b> The $3.25 discount on a $3.00 pizza reflects the
+      full regular-price value being credited ($3.25 regular &rarr; $0 after discount).
+      Pizza transactions with $0.00 discount are paid purchases, not campaign redemptions.
+    </div>
+  </div>
+
+  <!-- MAY 2026 KPIs -->
+  <div class="section" id="may-kpis">
+    <h2>1. May 2026 Campaign Performance</h2>
+    <p class="note">
+      May 2026 = full month (May 1&ndash;31). All figures are loyalty-card transactions only.
+      "Near-miss" = gas transactions between $20&ndash;$29.99 (potential conversions if
+      threshold were lower, or customers who stopped just short of qualifying).
+    </p>
+    
+        <div class="store-block">
+          <h3 style="color:#a78bfa;margin:0 0 10px">Twinleaf Gas & Convenience — Akwesasne</h3>
+          <div class="kpis6">
+            <div class="kpi kpi-gas">
+              <div class="kl">Gas Transactions (May 2026)</div>
+              <div class="kv">2,286</div>
+              <div class="ks">all loyalty gas fills</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Qualifying ($30+)</div>
+              <div class="kv">1,666</div>
+              <div class="ks">72.9% of all gas txns</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Avg Qualifying Gas Spend</div>
+              <div class="kv">$54.61</div>
+              <div class="ks">per qualifying fill-up</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Free Pizza Redemptions</div>
+              <div class="kv">9</div>
+              <div class="ks">gas $30+ AND pizza disc=$3.25</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Redemption Rate</div>
+              <div class="kv">0.5%</div>
+              <div class="ks">of qualifying gas transactions</div></div>
+            <div class="kpi kpi-cost">
+              <div class="kl">Est. Campaign Cost</div>
+              <div class="kv">$29.25</div>
+              <div class="ks">9 free pizzas &times; $3.25</div></div>
+          </div>
+          <div class="kpis3" style="margin-top:8px">
+            <div class="kpi"><div class="kl">Near-Miss Gas ($20–$29.99)</div>
+              <div class="kv">487</div>
+              <div class="ks">transactions just below $30 threshold</div></div>
+            <div class="kpi"><div class="kl">All Pizza (paid + free)</div>
+              <div class="kv">37</div>
+              <div class="ks">transactions with any pizza slice</div></div>
+            <div class="kpi"><div class="kl">Total Qualifying Gas Revenue</div>
+              <div class="kv">$91,424</div>
+              <div class="ks">from $30+ fills in period</div></div>
+          </div>
+        </div>
+
+        <div class="store-block">
+          <h3 style="color:#34d399;margin:0 0 10px">Twinleaf Express — Ft Covington</h3>
+          <div class="kpis6">
+            <div class="kpi kpi-gas">
+              <div class="kl">Gas Transactions (May 2026)</div>
+              <div class="kv">1,060</div>
+              <div class="ks">all loyalty gas fills</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Qualifying ($30+)</div>
+              <div class="kv">800</div>
+              <div class="ks">75.5% of all gas txns</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Avg Qualifying Gas Spend</div>
+              <div class="kv">$59.08</div>
+              <div class="ks">per qualifying fill-up</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Free Pizza Redemptions</div>
+              <div class="kv">14</div>
+              <div class="ks">gas $30+ AND pizza disc=$3.25</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Redemption Rate</div>
+              <div class="kv">1.8%</div>
+              <div class="ks">of qualifying gas transactions</div></div>
+            <div class="kpi kpi-cost">
+              <div class="kl">Est. Campaign Cost</div>
+              <div class="kv">$48.75</div>
+              <div class="ks">15 free pizzas &times; $3.25</div></div>
+          </div>
+          <div class="kpis3" style="margin-top:8px">
+            <div class="kpi"><div class="kl">Near-Miss Gas ($20–$29.99)</div>
+              <div class="kv">212</div>
+              <div class="ks">transactions just below $30 threshold</div></div>
+            <div class="kpi"><div class="kl">All Pizza (paid + free)</div>
+              <div class="kv">122</div>
+              <div class="ks">transactions with any pizza slice</div></div>
+            <div class="kpi"><div class="kl">Total Qualifying Gas Revenue</div>
+              <div class="kv">$47,443</div>
+              <div class="ks">from $30+ fills in period</div></div>
+          </div>
+        </div>
+  </div>
+
+  <!-- ALL-TIME KPIs -->
+  <div class="section" id="alltime-kpis">
+    <h2>2. All-Time Campaign Performance (Jan 2024 &ndash; Jun 2026)</h2>
+    <p class="note">
+      Cumulative figures from the full loyalty data extract.
+      Campaign redemptions first appear: TGC from Aug 2024, TExp from Sep 2024.
+    </p>
+    
+        <div class="store-block">
+          <h3 style="color:#a78bfa;margin:0 0 10px">Twinleaf Gas & Convenience — Akwesasne</h3>
+          <div class="kpis6">
+            <div class="kpi kpi-gas">
+              <div class="kl">Gas Transactions (All Time)</div>
+              <div class="kv">61,887</div>
+              <div class="ks">all loyalty gas fills</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Qualifying ($30+)</div>
+              <div class="kv">37,139</div>
+              <div class="ks">60.0% of all gas txns</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Avg Qualifying Gas Spend</div>
+              <div class="kv">$46.77</div>
+              <div class="ks">per qualifying fill-up</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Free Pizza Redemptions</div>
+              <div class="kv">9</div>
+              <div class="ks">gas $30+ AND pizza disc=$3.25</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Redemption Rate</div>
+              <div class="kv">0.0%</div>
+              <div class="ks">of qualifying gas transactions</div></div>
+            <div class="kpi kpi-cost">
+              <div class="kl">Est. Campaign Cost</div>
+              <div class="kv">$29.25</div>
+              <div class="ks">9 free pizzas &times; $3.25</div></div>
+          </div>
+          <div class="kpis3" style="margin-top:8px">
+            <div class="kpi"><div class="kl">Near-Miss Gas ($20–$29.99)</div>
+              <div class="kv">18,188</div>
+              <div class="ks">transactions just below $30 threshold</div></div>
+            <div class="kpi"><div class="kl">All Pizza (paid + free)</div>
+              <div class="kv">1,148</div>
+              <div class="ks">transactions with any pizza slice</div></div>
+            <div class="kpi"><div class="kl">Total Qualifying Gas Revenue</div>
+              <div class="kv">$1,744,668</div>
+              <div class="ks">from $30+ fills in period</div></div>
+          </div>
+        </div>
+
+        <div class="store-block">
+          <h3 style="color:#34d399;margin:0 0 10px">Twinleaf Express — Ft Covington</h3>
+          <div class="kpis6">
+            <div class="kpi kpi-gas">
+              <div class="kl">Gas Transactions (All Time)</div>
+              <div class="kv">35,341</div>
+              <div class="ks">all loyalty gas fills</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Qualifying ($30+)</div>
+              <div class="kv">20,806</div>
+              <div class="ks">58.9% of all gas txns</div></div>
+            <div class="kpi kpi-gas">
+              <div class="kl">Avg Qualifying Gas Spend</div>
+              <div class="kv">$48.70</div>
+              <div class="ks">per qualifying fill-up</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Free Pizza Redemptions</div>
+              <div class="kv">22</div>
+              <div class="ks">gas $30+ AND pizza disc=$3.25</div></div>
+            <div class="kpi kpi-redem">
+              <div class="kl">Redemption Rate</div>
+              <div class="kv">0.1%</div>
+              <div class="ks">of qualifying gas transactions</div></div>
+            <div class="kpi kpi-cost">
+              <div class="kl">Est. Campaign Cost</div>
+              <div class="kv">$74.75</div>
+              <div class="ks">23 free pizzas &times; $3.25</div></div>
+          </div>
+          <div class="kpis3" style="margin-top:8px">
+            <div class="kpi"><div class="kl">Near-Miss Gas ($20–$29.99)</div>
+              <div class="kv">10,650</div>
+              <div class="ks">transactions just below $30 threshold</div></div>
+            <div class="kpi"><div class="kl">All Pizza (paid + free)</div>
+              <div class="kv">1,831</div>
+              <div class="ks">transactions with any pizza slice</div></div>
+            <div class="kpi"><div class="kl">Total Qualifying Gas Revenue</div>
+              <div class="kv">$1,020,671</div>
+              <div class="ks">from $30+ fills in period</div></div>
+          </div>
+        </div>
+  </div>
+
+  <!-- MONTHLY TREND -->
+  <div class="section" id="monthly-trend">
+    <h2>3. Monthly Campaign Trend — Redemptions and Qualifying Gas</h2>
+    <p class="note">
+      Top chart: confirmed free pizza redemptions per month (bars) and redemption rate %
+      (dotted line). Bottom chart: qualifying gas transactions and their share of
+      all gas fills. Yellow shading = May 2026 campaign focus month.
+    </p>
+    <div class="chart"><div class="chart" id="redem_chart"></div><script>(function(){var f={"data":[{"marker":{"color":"#a78bfa"},"name":"TGC Redemptions","opacity":0.85,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,0],"type":"bar","xaxis":"x","yaxis":"y"},{"line":{"color":"#a78bfa","dash":"dot","width":2},"marker":{"size":5},"mode":"lines+markers","name":"TGC Rate %","x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.54,0.0],"type":"scatter","xaxis":"x","yaxis":"y2"},{"marker":{"color":"#34d399"},"name":"TExp Redemptions","opacity":0.85,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,1,0,1,0,0,0,1,0,0,0,0,1,1,14,0],"type":"bar","xaxis":"x","yaxis":"y"},{"line":{"color":"#34d399","dash":"dot","width":2},"marker":{"size":5},"mode":"lines+markers","name":"TExp Rate %","x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.37,0.0,0.12,0.0,0.12,0.0,0.0,0.0,0.11,0.0,0.0,0.0,0.0,0.16,0.14,1.75,0.0],"type":"scatter","xaxis":"x","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.94],"gridcolor":"rgba(255,255,255,0.08)","linecolor":"rgba(255,255,255,0.1)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)","linecolor":"rgba(255,255,255,0.1)","title":{"text":"Confirmed Redemptions"}},"yaxis2":{"anchor":"x","overlaying":"y","side":"right","title":{"text":"Redemption Rate (%)"},"ticksuffix":"%","showgrid":false,"color":"#fbbf24"},"shapes":[{"fillcolor":"rgba(251,191,36,0.08)","line":{"width":0},"type":"rect","x0":"2026-05-01","x1":"2026-05-31","xref":"x","y0":0,"y1":1,"yref":"y domain"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":50},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","title":{"text":"Monthly Free Pizza Redemptions (Gas $30+ Campaign)"},"height":360,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("redem_chart",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="chart" style="margin-top:12px">
+      <div class="chart" id="gas_qual_chart"></div><script>(function(){var f={"data":[{"marker":{"color":"#a78bfa"},"name":"TGC Qual Gas Txns","opacity":0.6,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[3,105,657,995,1233,1176,1264,1349,1286,2022,1758,1636,1580,1450,1492,1310,1387,1350,1351,1263,1236,1604,1363,1342,1167,1155,1371,1510,1666,58],"type":"bar","xaxis":"x","yaxis":"y"},{"line":{"color":"#a78bfa","width":2},"marker":{"size":5},"mode":"lines+markers","name":"TGC % Qual","x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[75.0,55.6,55.2,60.7,63.3,58.8,59.1,59.6,57.2,60.1,56.2,58.2,57.9,60.1,60.4,58.9,56.6,58.7,57.2,57.1,59.2,58.8,61.1,60.2,55.1,61.1,67.2,71.6,72.9,70.7],"type":"scatter","xaxis":"x","yaxis":"y2"},{"marker":{"color":"#34d399"},"name":"TExp Qual Gas Txns","opacity":0.6,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[2,54,370,599,798,718,787,830,823,1250,1037,910,825,818,840,830,825,824,788,741,777,917,699,660,474,442,631,715,800,22],"type":"bar","xaxis":"x","yaxis":"y"},{"line":{"color":"#34d399","width":2},"marker":{"size":5},"mode":"lines+markers","name":"TExp % Qual","x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[40.0,41.9,47.7,55.0,59.7,58.6,58.7,58.8,58.3,59.6,56.7,56.6,59.0,59.4,59.8,58.7,58.0,57.3,58.4,56.9,56.3,56.9,55.7,57.1,53.7,64.4,68.8,72.0,75.5,66.7],"type":"scatter","xaxis":"x","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.94],"gridcolor":"rgba(255,255,255,0.08)","linecolor":"rgba(255,255,255,0.1)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)","linecolor":"rgba(255,255,255,0.1)","title":{"text":"Gas Transactions $30+"}},"yaxis2":{"anchor":"x","overlaying":"y","side":"right","title":{"text":"% of Gas Txns Qualifying"},"ticksuffix":"%","showgrid":false,"color":"#fbbf24"},"shapes":[{"fillcolor":"rgba(251,191,36,0.08)","line":{"width":0},"type":"rect","x0":"2026-05-01","x1":"2026-05-31","xref":"x","y0":0,"y1":1,"yref":"y domain"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":50},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","title":{"text":"Monthly Qualifying Gas Transactions ($30+) and % of All Gas"},"height":340,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("gas_qual_chart",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="callout-warn" style="margin-top:12px">
+      <b>Redemption rate context:</b>
+      TGC May 2026: 9 redemptions out of
+      1,666 qualifying gas transactions =
+      <b>0.5%</b>.
+      TExp May 2026: 14 out of
+      800 = <b>1.8%</b>.<br/>
+      Low redemption rates suggest customers are either: (a) unaware of the promo,
+      (b) not bringing their loyalty card to the pump, or (c) the pizza is not always
+      being rung as a free item even when the promo qualifies. <b>Near-miss transactions
+      (TGC: 487 &middot;
+      TExp: 212)</b> represent customers who spent
+      $20&ndash;$29.99 on gas — a visible reminder at the pump could convert these.
+    </div>
+  </div>
+
+  <!-- GAS DISTRIBUTION -->
+  <div class="section" id="gas-dist">
+    <h2>4. Gas Spend Distribution — May 2026</h2>
+    <p class="note">
+      Distribution of per-transaction gas spend for loyalty customers.
+      Green bars = $30+ (qualifying). Grey bars = below threshold.
+      The split between qualifying and non-qualifying reveals the
+      threshold's natural fit with customer purchase behaviour.
+    </p>
+    <div class="chart"><div class="chart" id="gas_dist_chart"></div><script>(function(){var f={"data":[{"marker":{"color":["#6b7280","#6b7280","#6b7280","#6b7280","#34d399","#34d399","#34d399","#34d399","#34d399","#34d399","#34d399","#34d399"]},"name":"TGC","opacity":0.88,"showlegend":false,"x":["$0–$10","$10–$20","$20–$25","$25–$30","$30–$35","$35–$40","$40–$50","$50–$60","$60–$75","$75–$100","$100–$150","$150–$200"],"y":[11,124,334,150,217,110,433,327,314,197,64,5],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["#6b7280","#6b7280","#6b7280","#6b7280","#34d399","#34d399","#34d399","#34d399","#34d399","#34d399","#34d399","#34d399"]},"name":"TExp","opacity":0.88,"showlegend":false,"x":["$0–$10","$10–$20","$20–$25","$25–$30","$30–$35","$35–$40","$40–$50","$50–$60","$60–$75","$75–$100","$100–$150","$150–$200"],"y":[5,53,125,71,92,53,177,177,130,116,44,17],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.46],"title":{"text":"Gas Spend ($)"},"gridcolor":"rgba(255,255,255,0.08)","tickangle":45},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Transactions"},"gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.54,1.0],"title":{"text":"Gas Spend ($)"},"gridcolor":"rgba(255,255,255,0.08)","tickangle":45},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"title":{"text":"Transactions"},"gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"TGC — Akwesasne","x":0.23,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"TExpress — Ft Covington","x":0.77,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":50},"title":{"text":"Gas Spend Distribution per Transaction — May 2026 (Green = $30+, qualifying)"},"height":340,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("gas_dist_chart",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="callout-green">
+      <b>Threshold fit:</b>
+      TGC: 72.9% of loyalty gas transactions qualify ($30+),
+      with 487 near-miss transactions ($20&ndash;$29.99).<br/>
+      TExp: 75.5% qualify,
+      with 212 near-misses.<br/>
+      A high qualifying % means the $30 floor is already within most customers' normal
+      fill-up range — the promo rewards existing behaviour. Near-miss volume shows the
+      opportunity to capture additional incremental fills with a slight threshold reduction.
+    </div>
+  </div>
+
+  <!-- PIZZA SPLIT -->
+  <div class="section" id="pizza-split">
+    <h2>5. Pizza Volume — Free (Campaign) vs Paid</h2>
+    <p class="note">
+      Monthly count of "PIZZA BY THE SLICE" line items split by whether the $3.25
+      campaign discount was applied. Paid pizza = full-price purchases unrelated to
+      the gas campaign. The ratio shows how much of pizza demand is campaign-driven
+      versus baseline appetite.
+    </p>
+    <div class="chart"><div class="chart" id="pizza_split_chart"></div><script>(function(){var f={"data":[{"marker":{"color":"#34d399"},"name":"Free (disc=$3.25)","opacity":0.9,"showlegend":true,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0,0,0,0,0,0,0,0,2,0,1,2,1,0,1,2,6,1,0,3,2,4,4,1,1,0,2,1,9,0],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":"#9ca3af"},"name":"Paid pizza","opacity":0.5,"showlegend":true,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0,23,42,58,44,48,40,28,40,248,65,43,43,27,56,67,87,31,34,60,48,142,37,29,22,21,26,36,32,1],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":"#34d399"},"name":"","opacity":0.9,"showlegend":false,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[0,0,0,0,0,0,0,2,1,0,3,0,4,5,2,5,5,4,1,5,1,6,1,2,0,4,5,4,20,0],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":"#9ca3af"},"name":"","opacity":0.5,"showlegend":false,"x":["2024-01-01T00:00:00","2024-02-01T00:00:00","2024-03-01T00:00:00","2024-04-01T00:00:00","2024-05-01T00:00:00","2024-06-01T00:00:00","2024-07-01T00:00:00","2024-08-01T00:00:00","2024-09-01T00:00:00","2024-10-01T00:00:00","2024-11-01T00:00:00","2024-12-01T00:00:00","2025-01-01T00:00:00","2025-02-01T00:00:00","2025-03-01T00:00:00","2025-04-01T00:00:00","2025-05-01T00:00:00","2025-06-01T00:00:00","2025-07-01T00:00:00","2025-08-01T00:00:00","2025-09-01T00:00:00","2025-10-01T00:00:00","2025-11-01T00:00:00","2025-12-01T00:00:00","2026-01-01T00:00:00","2026-02-01T00:00:00","2026-03-01T00:00:00","2026-04-01T00:00:00","2026-05-01T00:00:00","2026-06-01T00:00:00"],"y":[4,8,61,63,38,44,53,63,74,252,81,81,72,68,71,87,85,71,72,52,82,181,72,56,58,59,113,93,125,6],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.46],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"Pizza Units"},"gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.54,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"title":{"text":"Pizza Units"},"gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"TGC — Akwesasne","x":0.23,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"TExpress — Ft Covington","x":0.77,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":50},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"stack","title":{"text":"Monthly Pizza By The Slice — Free (Campaign) vs Paid"},"height":320,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("pizza_split_chart",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+  </div>
+
+  <!-- REDEMPTION LOG — MAY 2026 -->
+  <div class="section" id="redemptions">
+    <h2>6. Confirmed Redemption Log &mdash; May 2026</h2>
+    <p class="note">
+      Every transaction in May 2026 where a loyalty customer spent $30+ on gas AND
+      had a pizza slice with the $3.25 free-pizza discount applied.
+    </p>
+    <div class="grid2">
+      
+        <div>
+          <h4 style="margin:0 0 6px;color:#a78bfa">Twinleaf Gas & Convenience — Akwesasne</h4>
+          <table><thead><tr>
+            <th>Date</th>
+            <th style='text-align:right'>Gas Spend</th>
+            <th style='text-align:right'>Pizza Qty</th>
+            <th style='text-align:right'>Disc Applied</th>
+          </tr></thead><tbody><tr><td>2026-05-03</td><td style='text-align:right;color:#34d399'>$37.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-08</td><td style='text-align:right;color:#34d399'>$40.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-08</td><td style='text-align:right;color:#34d399'>$50.06</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-12</td><td style='text-align:right;color:#34d399'>$48.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-15</td><td style='text-align:right;color:#34d399'>$82.01</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-17</td><td style='text-align:right;color:#34d399'>$108.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-18</td><td style='text-align:right;color:#34d399'>$40.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-20</td><td style='text-align:right;color:#34d399'>$47.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-20</td><td style='text-align:right;color:#34d399'>$40.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr></tbody></table>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 6px;color:#34d399">Twinleaf Express — Ft Covington</h4>
+          <table><thead><tr>
+            <th>Date</th>
+            <th style='text-align:right'>Gas Spend</th>
+            <th style='text-align:right'>Pizza Qty</th>
+            <th style='text-align:right'>Disc Applied</th>
+          </tr></thead><tbody><tr><td>2026-05-04</td><td style='text-align:right;color:#34d399'>$102.83</td><td style='text-align:right'>2</td><td style='text-align:right;color:#a78bfa'>$6.50</td></tr><tr><td>2026-05-05</td><td style='text-align:right;color:#34d399'>$220.36</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-08</td><td style='text-align:right;color:#34d399'>$35.78</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-12</td><td style='text-align:right;color:#34d399'>$36.79</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-13</td><td style='text-align:right;color:#34d399'>$50.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-14</td><td style='text-align:right;color:#34d399'>$50.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-15</td><td style='text-align:right;color:#34d399'>$50.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-18</td><td style='text-align:right;color:#34d399'>$40.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-18</td><td style='text-align:right;color:#34d399'>$40.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-20</td><td style='text-align:right;color:#34d399'>$53.76</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-21</td><td style='text-align:right;color:#34d399'>$98.19</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-21</td><td style='text-align:right;color:#34d399'>$80.46</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-22</td><td style='text-align:right;color:#34d399'>$48.02</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr><tr><td>2026-05-29</td><td style='text-align:right;color:#34d399'>$60.00</td><td style='text-align:right'>1</td><td style='text-align:right;color:#a78bfa'>$3.25</td></tr></tbody></table>
+        </div>
+    </div>
+  </div>
+
+  <!-- ALL-TIME TABLE -->
+  <div class="section" id="all-time-table">
+    <h2>7. Monthly Summary Table &mdash; Full Campaign History</h2>
+    <p class="note">
+      Month-by-month breakdown for both stores from the full loyalty data period.
+      Only months with at least one gas transaction are shown.
+    </p>
+    <div class="card" style="overflow-x:auto">
+      <table><thead><tr>
+      <th>Store</th><th>Month</th>
+      <th style='text-align:right'>Gas Txns</th>
+      <th style='text-align:right;color:#34d399'>Qual $30+ (%)</th>
+      <th style='text-align:right;color:#a78bfa'>Redemptions</th>
+      <th style='text-align:right'>Rate</th>
+      <th style='text-align:right;color:#f87171'>Cost</th>
+      <th style='text-align:right'>Near-Miss</th>
+    </tr></thead><tbody><tr><td style='color:#a78bfa'>TGC</td><td>Jan 2024</td><td style='text-align:right'>4</td><td style='text-align:right;color:#34d399'>3 (75.0%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>0</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Feb 2024</td><td style='text-align:right'>189</td><td style='text-align:right;color:#34d399'>105 (55.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>64</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Mar 2024</td><td style='text-align:right'>1,190</td><td style='text-align:right;color:#34d399'>657 (55.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>384</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Apr 2024</td><td style='text-align:right'>1,640</td><td style='text-align:right;color:#34d399'>995 (60.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>480</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>May 2024</td><td style='text-align:right'>1,949</td><td style='text-align:right;color:#34d399'>1,233 (63.3%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>508</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jun 2024</td><td style='text-align:right'>2,001</td><td style='text-align:right;color:#34d399'>1,176 (58.8%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>614</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jul 2024</td><td style='text-align:right'>2,138</td><td style='text-align:right;color:#34d399'>1,264 (59.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>624</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Aug 2024</td><td style='text-align:right'>2,263</td><td style='text-align:right;color:#34d399'>1,349 (59.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>636</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Sep 2024</td><td style='text-align:right'>2,247</td><td style='text-align:right;color:#34d399'>1,286 (57.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>650</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Oct 2024</td><td style='text-align:right'>3,365</td><td style='text-align:right;color:#34d399'>2,022 (60.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>966</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Nov 2024</td><td style='text-align:right'>3,130</td><td style='text-align:right;color:#34d399'>1,758 (56.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>968</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Dec 2024</td><td style='text-align:right'>2,812</td><td style='text-align:right;color:#34d399'>1,636 (58.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>865</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jan 2025</td><td style='text-align:right'>2,730</td><td style='text-align:right;color:#34d399'>1,580 (57.9%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>852</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Feb 2025</td><td style='text-align:right'>2,412</td><td style='text-align:right;color:#34d399'>1,450 (60.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>726</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Mar 2025</td><td style='text-align:right'>2,471</td><td style='text-align:right;color:#34d399'>1,492 (60.4%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>779</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Apr 2025</td><td style='text-align:right'>2,225</td><td style='text-align:right;color:#34d399'>1,310 (58.9%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>656</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>May 2025</td><td style='text-align:right'>2,449</td><td style='text-align:right;color:#34d399'>1,387 (56.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>781</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jun 2025</td><td style='text-align:right'>2,300</td><td style='text-align:right;color:#34d399'>1,350 (58.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>691</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jul 2025</td><td style='text-align:right'>2,361</td><td style='text-align:right;color:#34d399'>1,351 (57.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>763</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Aug 2025</td><td style='text-align:right'>2,211</td><td style='text-align:right;color:#34d399'>1,263 (57.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>710</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Sep 2025</td><td style='text-align:right'>2,087</td><td style='text-align:right;color:#34d399'>1,236 (59.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>613</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Oct 2025</td><td style='text-align:right'>2,730</td><td style='text-align:right;color:#34d399'>1,604 (58.8%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>814</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Nov 2025</td><td style='text-align:right'>2,230</td><td style='text-align:right;color:#34d399'>1,363 (61.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>638</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Dec 2025</td><td style='text-align:right'>2,229</td><td style='text-align:right;color:#34d399'>1,342 (60.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>673</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jan 2026</td><td style='text-align:right'>2,118</td><td style='text-align:right;color:#34d399'>1,167 (55.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>690</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Feb 2026</td><td style='text-align:right'>1,889</td><td style='text-align:right;color:#34d399'>1,155 (61.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>564</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Mar 2026</td><td style='text-align:right'>2,039</td><td style='text-align:right;color:#34d399'>1,371 (67.2%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>520</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Apr 2026</td><td style='text-align:right'>2,110</td><td style='text-align:right;color:#34d399'>1,510 (71.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>453</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>May 2026</td><td style='text-align:right'>2,286</td><td style='text-align:right;color:#34d399'>1,666 (72.9%)</td><td style='text-align:right;color:#a78bfa'>9</td><td style='text-align:right'>0.5%</td><td style='text-align:right;color:#f87171'>$29.25</td><td style='text-align:right'>487</td></tr><tr><td style='color:#a78bfa'>TGC</td><td>Jun 2026</td><td style='text-align:right'>82</td><td style='text-align:right;color:#34d399'>58 (70.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>19</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jan 2024</td><td style='text-align:right'>5</td><td style='text-align:right;color:#34d399'>2 (40.0%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>0</td></tr><tr><td style='color:#34d399'>TExp</td><td>Feb 2024</td><td style='text-align:right'>129</td><td style='text-align:right;color:#34d399'>54 (41.9%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>54</td></tr><tr><td style='color:#34d399'>TExp</td><td>Mar 2024</td><td style='text-align:right'>776</td><td style='text-align:right;color:#34d399'>370 (47.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>293</td></tr><tr><td style='color:#34d399'>TExp</td><td>Apr 2024</td><td style='text-align:right'>1,089</td><td style='text-align:right;color:#34d399'>599 (55.0%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>377</td></tr><tr><td style='color:#34d399'>TExp</td><td>May 2024</td><td style='text-align:right'>1,336</td><td style='text-align:right;color:#34d399'>798 (59.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>391</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jun 2024</td><td style='text-align:right'>1,225</td><td style='text-align:right;color:#34d399'>718 (58.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>361</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jul 2024</td><td style='text-align:right'>1,340</td><td style='text-align:right;color:#34d399'>787 (58.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>413</td></tr><tr><td style='color:#34d399'>TExp</td><td>Aug 2024</td><td style='text-align:right'>1,412</td><td style='text-align:right;color:#34d399'>830 (58.8%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>437</td></tr><tr><td style='color:#34d399'>TExp</td><td>Sep 2024</td><td style='text-align:right'>1,412</td><td style='text-align:right;color:#34d399'>823 (58.3%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>421</td></tr><tr><td style='color:#34d399'>TExp</td><td>Oct 2024</td><td style='text-align:right'>2,096</td><td style='text-align:right;color:#34d399'>1,250 (59.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>604</td></tr><tr><td style='color:#34d399'>TExp</td><td>Nov 2024</td><td style='text-align:right'>1,828</td><td style='text-align:right;color:#34d399'>1,037 (56.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>610</td></tr><tr><td style='color:#34d399'>TExp</td><td>Dec 2024</td><td style='text-align:right'>1,608</td><td style='text-align:right;color:#34d399'>910 (56.6%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>565</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jan 2025</td><td style='text-align:right'>1,399</td><td style='text-align:right;color:#34d399'>825 (59.0%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>412</td></tr><tr><td style='color:#34d399'>TExp</td><td>Feb 2025</td><td style='text-align:right'>1,376</td><td style='text-align:right;color:#34d399'>818 (59.4%)</td><td style='text-align:right;color:#a78bfa'>3</td><td style='text-align:right'>0.4%</td><td style='text-align:right;color:#f87171'>$9.75</td><td style='text-align:right'>418</td></tr><tr><td style='color:#34d399'>TExp</td><td>Mar 2025</td><td style='text-align:right'>1,405</td><td style='text-align:right;color:#34d399'>840 (59.8%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>427</td></tr><tr><td style='color:#34d399'>TExp</td><td>Apr 2025</td><td style='text-align:right'>1,413</td><td style='text-align:right;color:#34d399'>830 (58.7%)</td><td style='text-align:right;color:#a78bfa'>1</td><td style='text-align:right'>0.1%</td><td style='text-align:right;color:#f87171'>$3.25</td><td style='text-align:right'>437</td></tr><tr><td style='color:#34d399'>TExp</td><td>May 2025</td><td style='text-align:right'>1,423</td><td style='text-align:right;color:#34d399'>825 (58.0%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>413</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jun 2025</td><td style='text-align:right'>1,439</td><td style='text-align:right;color:#34d399'>824 (57.3%)</td><td style='text-align:right;color:#a78bfa'>1</td><td style='text-align:right'>0.1%</td><td style='text-align:right;color:#f87171'>$3.25</td><td style='text-align:right'>445</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jul 2025</td><td style='text-align:right'>1,350</td><td style='text-align:right;color:#34d399'>788 (58.4%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>383</td></tr><tr><td style='color:#34d399'>TExp</td><td>Aug 2025</td><td style='text-align:right'>1,303</td><td style='text-align:right;color:#34d399'>741 (56.9%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>389</td></tr><tr><td style='color:#34d399'>TExp</td><td>Sep 2025</td><td style='text-align:right'>1,381</td><td style='text-align:right;color:#34d399'>777 (56.3%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>415</td></tr><tr><td style='color:#34d399'>TExp</td><td>Oct 2025</td><td style='text-align:right'>1,612</td><td style='text-align:right;color:#34d399'>917 (56.9%)</td><td style='text-align:right;color:#a78bfa'>1</td><td style='text-align:right'>0.1%</td><td style='text-align:right;color:#f87171'>$3.25</td><td style='text-align:right'>485</td></tr><tr><td style='color:#34d399'>TExp</td><td>Nov 2025</td><td style='text-align:right'>1,256</td><td style='text-align:right;color:#34d399'>699 (55.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>376</td></tr><tr><td style='color:#34d399'>TExp</td><td>Dec 2025</td><td style='text-align:right'>1,156</td><td style='text-align:right;color:#34d399'>660 (57.1%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>397</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jan 2026</td><td style='text-align:right'>883</td><td style='text-align:right;color:#34d399'>474 (53.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>291</td></tr><tr><td style='color:#34d399'>TExp</td><td>Feb 2026</td><td style='text-align:right'>686</td><td style='text-align:right;color:#34d399'>442 (64.4%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>185</td></tr><tr><td style='color:#34d399'>TExp</td><td>Mar 2026</td><td style='text-align:right'>917</td><td style='text-align:right;color:#34d399'>631 (68.8%)</td><td style='text-align:right;color:#a78bfa'>1</td><td style='text-align:right'>0.2%</td><td style='text-align:right;color:#f87171'>$3.25</td><td style='text-align:right'>214</td></tr><tr><td style='color:#34d399'>TExp</td><td>Apr 2026</td><td style='text-align:right'>993</td><td style='text-align:right;color:#34d399'>715 (72.0%)</td><td style='text-align:right;color:#a78bfa'>1</td><td style='text-align:right'>0.1%</td><td style='text-align:right;color:#f87171'>$3.25</td><td style='text-align:right'>218</td></tr><tr><td style='color:#34d399'>TExp</td><td>May 2026</td><td style='text-align:right'>1,060</td><td style='text-align:right;color:#34d399'>800 (75.5%)</td><td style='text-align:right;color:#a78bfa'>14</td><td style='text-align:right'>1.8%</td><td style='text-align:right;color:#f87171'>$48.75</td><td style='text-align:right'>212</td></tr><tr><td style='color:#34d399'>TExp</td><td>Jun 2026</td><td style='text-align:right'>33</td><td style='text-align:right;color:#34d399'>22 (66.7%)</td><td style='text-align:right;color:#a78bfa'>0</td><td style='text-align:right'>0.0%</td><td style='text-align:right;color:#f87171'>$0.00</td><td style='text-align:right'>7</td></tr></tbody></table>
+    </div>
+    <div class="callout" style="margin-top:12px">
+      <b>All-time campaign cost:</b>
+      TGC: 9 redemptions &times; $3.25 =
+      <b>$29.25</b> &nbsp;|&nbsp;
+      TExp: 22 redemptions &times; $3.25 =
+      <b>$74.75</b> &nbsp;|&nbsp;
+      Combined: <b>$104.00</b>
+      in free pizza value across the full programme period.
+    </div>
+  </div>
+
+  <div class="footer">
+    Generated 2026-06-03 &nbsp;|&nbsp;
+    Source: PatronPoints loyalty LineItems exports &nbsp;|&nbsp;
+    Gas = null Department; qualifying = single-transaction gas Amount &ge; $30.
+    Free pizza = "PIZZA BY THE SLICE" with Discount Amount = $3.25.
+    Redemption = same Trans ID contains both a qualifying gas line AND a free pizza line.
+    &nbsp;<a href="#top" style="color:#9ca3af;text-decoration:none;">Back to top &uarr;</a>
+  </div>
+
+</div>
+</body>
+</html>

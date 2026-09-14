@@ -1,0 +1,560 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Spark the 4th Campaign Report — June 23–July 6, 2026</title>
+  <script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1220;--panel:rgba(255,255,255,0.05);--panel2:rgba(255,255,255,0.03);
+      --border:rgba(255,255,255,0.08);--text:#e5e7eb;--muted:#9ca3af;
+      --shadow:0 14px 32px rgba(0,0,0,.38);--radius:16px;--pad:16px;
+      --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+    }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:var(--sans);color:var(--text);
+      background:
+        radial-gradient(1400px 700px at 10% 0%,rgba(167,139,250,.15),transparent 55%),
+        radial-gradient(1000px 600px at 85% 5%,rgba(52,211,153,.12),transparent 55%),
+        radial-gradient(600px 400px at 50% 100%,rgba(96,165,250,.08),transparent 50%),
+        var(--bg);}
+    .wrap{max-width:1380px;margin:0 auto;padding:22px 18px 80px;}
+    .hero{padding:24px 26px;border-radius:22px;border:1px solid rgba(52,211,153,.25);
+      background:linear-gradient(135deg,rgba(52,211,153,.07),rgba(167,139,250,.06),rgba(255,255,255,.02));
+      box-shadow:var(--shadow);position:relative;overflow:hidden;}
+    .hero::before{content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 100% 0%,rgba(52,211,153,.12),transparent 50%);pointer-events:none;}
+    h1.title{font-size:28px;font-weight:900;line-height:1.15;margin:0 0 8px;
+      background:linear-gradient(135deg,#6ee7b7,#c4b5fd 60%,#93c5fd);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .meta{color:var(--muted);font-size:13px;line-height:1.75;}
+    .meta b{color:#d1d5db;}
+    .pill{display:inline-block;margin:7px 5px 0 0;padding:5px 13px;border-radius:999px;
+      border:1px solid var(--border);color:var(--muted);
+      background:rgba(255,255,255,.03);font-size:12px;}
+    .pill-gw{border-color:rgba(167,139,250,.5);color:#c4b5fd;background:rgba(167,139,250,.10);}
+    .pill-ff{border-color:rgba(52,211,153,.5);color:#6ee7b7;background:rgba(52,211,153,.10);}
+    .pill-net{border-color:rgba(251,191,36,.5);color:#fde68a;background:rgba(251,191,36,.08);}
+    .nav{position:sticky;top:0;z-index:20;margin:12px 0;padding:10px;
+      border-radius:14px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(11,18,32,.92);backdrop-filter:blur(10px);}
+    .nav a{display:inline-block;color:var(--muted);text-decoration:none;font-size:12px;
+      padding:7px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.08);margin:4px 4px 0 0;
+      transition:all .15s;}
+    .nav a:hover{color:#6ee7b7;border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.08);}
+    .section{margin-top:28px;}
+    .section h2{margin:0 0 8px;font-size:18px;font-weight:800;color:#f3f4f6;}
+    .section-spark{background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(52,211,153,.03));
+      border:1px solid rgba(52,211,153,.20);border-radius:20px;padding:18px 20px;margin-bottom:14px;}
+    .section-spark h2{color:#6ee7b7;}
+    .note{color:var(--muted);font-size:13px;line-height:1.6;margin:0 0 10px;}
+    .card{background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius);
+      padding:var(--pad);box-shadow:var(--shadow);margin-bottom:12px;}
+    .co{border-left:3px solid rgba(52,211,153,.7);padding:13px 16px;
+      background:rgba(52,211,153,.07);border-radius:10px;
+      color:#6ee7b7;font-size:13px;line-height:1.75;margin-bottom:12px;}
+    .co-p{border-left:3px solid rgba(167,139,250,.7);padding:13px 16px;
+      background:rgba(167,139,250,.07);border-radius:10px;
+      color:#c4b5fd;font-size:13px;line-height:1.75;margin-bottom:12px;}
+    .co-w{border-left:3px solid rgba(251,191,36,.7);padding:13px 16px;
+      background:rgba(251,191,36,.07);border-radius:10px;
+      color:#fde68a;font-size:13px;line-height:1.75;margin-bottom:12px;}
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+    @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+    .kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:14px;}
+    .kpi-g{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.30);}
+    .kpi-fw{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25);}
+    .kpi-net{background:rgba(167,139,250,.10);border-color:rgba(167,139,250,.30);}
+    .kpis4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+    @media(max-width:1100px){.kpis4{grid-template-columns:repeat(2,1fr);}}
+    .kl{color:var(--muted);font-size:10px;letter-spacing:.4px;text-transform:uppercase;margin-bottom:8px;}
+    .kv{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1;}
+    .ks{color:var(--muted);font-size:11px;line-height:1.55;}
+    .store-block{background:var(--panel2);border:1px solid var(--border);
+      border-radius:var(--radius);padding:var(--pad);margin-bottom:16px;}
+    .up{color:#93c5fd;}.dn{color:#c4b5fd;}.mu{color:#9ca3af;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    th,td{border-bottom:1px solid rgba(255,255,255,.07);padding:8px 10px;text-align:left;white-space:nowrap;}
+    th{color:#fff;background:rgba(255,255,255,.04);font-weight:700;font-size:12px;}
+    tr:hover td{background:rgba(255,255,255,.02);}
+    .chart{padding:4px 0;}
+    .dollar-impact{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.18);
+      border-radius:14px;padding:14px 16px;margin:10px 0;}
+    .di-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+    @media(max-width:1000px){.di-grid{grid-template-columns:repeat(2,1fr);}}
+    .di-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      border-radius:10px;padding:12px;}
+    .di-extra{background:rgba(52,211,153,.10);border-color:rgba(52,211,153,.25);}
+    .di-cost{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.20);}
+    .di-net{background:rgba(167,139,250,.10);border-color:rgba(167,139,250,.25);}
+    .di-label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+    .di-val{font-size:20px;font-weight:900;margin-bottom:4px;}
+    .di-sub{color:var(--muted);font-size:11px;line-height:1.5;}
+    h4,h5{margin:10px 0 8px;font-weight:700;}
+    h4{font-size:15px;} h5{font-size:13px;}
+    .footer{color:var(--muted);font-size:12px;margin-top:22px;line-height:1.6;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero" id="top">
+    <h1 class="title">&#x2728; Spark the 4th &mdash; Campaign Report</h1>
+    <div class="meta">
+      <b>Promo:</b> Jun 23 &ndash; Jul 6, 2026 &nbsp;&#x2014;&nbsp; 14 days &nbsp;|&nbsp;
+      <b>Mechanic:</b> Buy 2 &times; Green Widow 108S &rarr; get 1 Flying Flamingo 500g FREE &nbsp;|&nbsp;
+      <b>Stores:</b> <span style="color:#a78bfa">SW1</span> (Akwesasne) &middot;
+                    <span style="color:#60a5fa">SW2</span> (Ft Covington)<br/>
+      <b>Green Widow:</b> SKU 857205003950 &nbsp;|&nbsp;
+      <b>Flying Flamingo:</b> SKU 757201525312 &nbsp;|&nbsp;
+      <b>Generated:</b> 2026-08-13
+    </div>
+    <div style="margin-top:10px">
+      <span class="pill pill-gw">GW Units: 62 &nbsp;
+        <span class="mu">— YoY</span></span>
+      <span class="pill pill-ff">Qualifying Bk: 15 &nbsp;| &nbsp;
+        Redeemed FF: 15 (100.0%)</span>
+      <span class="pill pill-net">Net Impact: +$2,468.67 combined</span>
+      <span class="pill">FW Revenue: $343,321
+        <span class="up">+31.8%</span> YoY</span>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <a href="#summary">Campaign Summary</a>
+    <a href="#gw-behavior">GW Purchase Behavior</a>
+    <a href="#daily">Daily Trend</a>
+    <a href="#copurch">Co-Purchases</a>
+    <a href="#yoy">YoY Context</a>
+    <a href="#stores">Store Detail</a>
+  </div>
+
+  <!-- CAMPAIGN SUMMARY -->
+  <div class="section" id="summary">
+    <div class="section-spark">
+      <h2>&#x1F386; Campaign Summary &mdash; Both Stores, Jun 23–Jul 6, 2026</h2>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kl">Total FW Baskets (promo window)</div>
+        <div class="kv">1,826</div>
+        <div class="ks">all fireworks transactions, both stores<br/>
+          FW Revenue: <b>$343,321</b>
+          <span class="up">&nbsp;+31.8% YoY</span></div>
+      </div>
+      <div class="kpi kpi-fw">
+        <div class="kl">Qualifying Baskets (≥2 Green Widow)</div>
+        <div class="kv">15</div>
+        <div class="ks">0.8% of all FW baskets<br/>
+          SW1: 15 &middot;
+          SW2: 0</div>
+      </div>
+      <div class="kpi kpi-g">
+        <div class="kl">Flying Flamingo Redemptions</div>
+        <div class="kv">15</div>
+        <div class="ks">100.0% of qualifying baskets redeemed<br/>
+          SW1: 15 &middot;
+          SW2: 0</div>
+      </div>
+      <div class="kpi kpi-net">
+        <div class="kl">Net Promo Impact (combined)</div>
+        <div class="kv up">+$2,468.67</div>
+        <div class="ks">incr. GW rev: +$3,363.75<br/>
+          FF giveaway cost: &minus;$895.08</div>
+      </div>
+    </div>
+
+    <div class="co">
+      <b>Overall read:</b>
+      The Spark the 4th promotion ran 14 days (Jun 23–Jul 6) across both SW stores.
+      Total fireworks revenue in this window was <b>$343,321</b>
+      (<span class="up">+31.8% vs the same 14-day window in 2025</span>).
+      Green Widow generated <b>62 units</b>
+      (<span class="mu">— YoY</span>).
+      <b>15</b> baskets qualified (≥2 GW units) and
+      <b>15</b> redeemed a free Flying Flamingo (100.0% redemption rate).
+      Combined net promo impact:
+      <span class="up">+$2,468.67</span>
+      (incremental GW revenue from extra units minus the Flying Flamingo giveaway cost).
+    </div>
+
+    <div class="card" style="overflow-x:auto">
+      <h4 style="margin:0 0 10px">Combined Dollar Impact</h4>
+      <div class="dollar-impact">
+        <div class="di-grid">
+          <div class="di-item">
+            <div class="di-label">Total GW Revenue (qualifying bk)</div>
+            <div class="di-val">$6,727.50</div>
+            <div class="di-sub">30 units in qualifying baskets</div>
+          </div>
+          <div class="di-item di-extra">
+            <div class="di-label">Incremental GW Revenue (extra units)</div>
+            <div class="di-val" style="color:#6ee7b7">+$3,363.75</div>
+            <div class="di-sub">units beyond the 1st in each qualifying basket</div>
+          </div>
+          <div class="di-item di-cost">
+            <div class="di-label">Flying Flamingo Giveaway Cost</div>
+            <div class="di-val" style="color:#fca5a5">−$895.08</div>
+            <div class="di-sub">15 redemptions at avg FF price</div>
+          </div>
+          <div class="di-item di-net">
+            <div class="di-label">Net Impact (both stores)</div>
+            <div class="di-val up">+$2,468.67</div>
+            <div class="di-sub">positive = promo generated more GW rev than FF cost</div>
+          </div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:8px">
+        Net impact assumes: incremental GW units = all GW units in qualifying baskets above 1st unit
+        (i.e., the second buy was prompted by the promo). Flying Flamingo cost = redemption count &times; avg selling price
+        across the full dataset. If some customers would have bought 2 GW anyway, incremental impact is lower;
+        if some redeemed without scanning the free item, ff_cost is overstated.
+      </p>
+    </div>
+    <div class="chart"><div class="chart" id="funnel_ch"></div><script>(function(){var f={"data":[{"marker":{"color":"#a78bfa"},"name":"SW1","opacity":0.85,"text":["1,417","42","15","15"],"textposition":"outside","x":["All FW Baskets","With GW","Qualifying (≥2 GW)","Redeemed FF"],"y":[1417,42,15,15],"type":"bar"},{"marker":{"color":"#60a5fa"},"name":"SW2","opacity":0.85,"text":["409","5","0","0"],"textposition":"outside","x":["All FW Baskets","With GW","Qualifying (≥2 GW)","Redeemed FF"],"y":[409,5,0,0],"type":"bar"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","title":{"text":"Promo Funnel — FW Baskets → GW Baskets → Qualifying → Redeemed"},"height":360,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","xaxis":{"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"title":{"text":"# Baskets"},"gridcolor":"rgba(255,255,255,0.08)"}}};Plotly.newPlot("funnel_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+  </div>
+
+  <!-- GW PURCHASE BEHAVIOR -->
+  <div class="section" id="gw-behavior">
+    <h2>Green Widow 108S — Purchase Behavior</h2>
+    <p class="note">
+      All baskets containing at least one Green Widow unit during Jun 23–Jul 6, 2026.
+      The promo trigger is buying exactly 2 — baskets with 1 unit are below trigger;
+      baskets with 3+ are bulk buyers above it.
+    </p>
+    <div class="co-p">
+      <b>What to watch:</b>
+      If most GW baskets contain exactly 2 units, the promo successfully lifted buyers from 1 &rarr; 2.
+      A high share of 3+ unit baskets indicates committed bulk buyers who may have hit 2 anyway.
+      A high share of 1-unit baskets means many customers saw GW, bought one, and stopped — a retargeting
+      opportunity: a reminder at the register or bag might have pushed them over the threshold.
+    </div>
+    <div class="chart"><div class="chart" id="gw_behavior_ch"></div><script>(function(){var f={"data":[{"marker":{"color":["#a78bfa","rgba(52,211,153,0.90)"]},"name":"SW1","opacity":0.88,"showlegend":false,"text":["27","15"],"textposition":"outside","x":["1","2"],"y":[27,15],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["#60a5fa"]},"name":"SW2","opacity":0.88,"showlegend":false,"text":["5"],"textposition":"outside","x":["1"],"y":[5],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.44],"title":{"text":"Green Widow Units per Basket"},"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"title":{"text":"# Baskets"},"gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.56,1.0],"title":{"text":"Green Widow Units per Basket"},"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"title":{"text":"# Baskets"},"gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"SW1 — Akwesasne","x":0.22,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"SW2 — Ft Covington","x":0.78,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"title":{"text":"Green Widow 108S — Purchase Quantity per Basket  ·  \u003cspan style='color:rgb(52,211,153)'\u003e■ qty = 2 = Buy-2 trigger\u003c\u002fspan\u003e"},"height":340,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("gw_behavior_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+  </div>
+
+  <!-- DAILY TREND -->
+  <div class="section" id="daily">
+    <h2>Daily Qualifying Baskets &mdash; Jun 23–Jul 6, 2026</h2>
+    <p class="note">
+      Each day: baskets containing ≥2 Green Widow units (= eligible for free Flying Flamingo).
+      Canada Day (Jul 1) is the peak fireworks buying day of the season.
+    </p>
+    <div class="chart"><div class="chart" id="daily_ch"></div><script>(function(){var f={"data":[{"line":{"color":"#a78bfa","width":2.5},"marker":{"color":"#a78bfa","size":8},"mode":"lines+markers","name":"SW1","x":["2026-06-26T00:00:00","2026-06-27T00:00:00","2026-06-28T00:00:00","2026-07-01T00:00:00","2026-07-02T00:00:00","2026-07-03T00:00:00"],"y":[2,2,3,3,4,1],"type":"scatter"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"shapes":[{"line":{"color":"rgba(255,255,255,0.15)","dash":"dash"},"type":"line","x0":"2026-06-24","x1":"2026-06-24","xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"rgba(255,255,255,0.15)","dash":"dash"},"type":"line","x0":"2026-07-01","x1":"2026-07-01","xref":"x","y0":0,"y1":1,"yref":"y domain"},{"line":{"color":"rgba(255,255,255,0.15)","dash":"dash"},"type":"line","x0":"2026-07-04","x1":"2026-07-04","xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"bgcolor":"rgba(0,0,0,0.5)","borderpad":3,"font":{"color":"#fde68a","size":9},"showarrow":false,"text":"🇨🇦 Promo Day 2","x":"2026-06-24","y":1,"yref":"paper"},{"bgcolor":"rgba(0,0,0,0.5)","borderpad":3,"font":{"color":"#fca5a5","size":9},"showarrow":false,"text":"🇨🇦 Canada Day","x":"2026-07-01","y":1,"yref":"paper"},{"bgcolor":"rgba(0,0,0,0.5)","borderpad":3,"font":{"color":"#93c5fd","size":9},"showarrow":false,"text":"🇺🇸 Jul 4","x":"2026-07-04","y":1,"yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"title":{"text":"Daily Qualifying Baskets (≥2 Green Widow) — Jun 23–Jul 6, 2026"},"height":320,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)","yaxis":{"title":{"text":"Qualifying Baskets"},"gridcolor":"rgba(255,255,255,0.08)"},"xaxis":{"gridcolor":"rgba(255,255,255,0.08)"}}};Plotly.newPlot("daily_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="co-w">
+      <b>Day pattern:</b>
+      The qualifying basket trend shows how demand built through the promo window.
+      A peak on or just before Canada Day (Jul 1) is expected — customers stocking up for the
+      holiday. Any secondary peak around July 4 reflects US buyers crossing for the US Independence Day.
+      A flat or declining tail post-Jul 4 is normal; by then the promo's main window has elapsed.
+    </div>
+  </div>
+
+  <!-- CO-PURCHASES -->
+  <div class="section" id="copurch">
+    <h2>Basket Co-Purchases &mdash; What Qualifying Buyers Also Buy</h2>
+    <p class="note">
+      All items in qualifying baskets (≥2 GW units), excluding Green Widow and Flying Flamingo rows.
+      Reveals the full fireworks shopping basket for Spark the 4th buyers.
+    </p>
+    <div class="chart"><div class="chart" id="dept_ch"></div><script>(function(){var f={"data":[{"marker":{"color":"#a78bfa"},"name":"SW1","opacity":0.85,"orientation":"h","showlegend":false,"text":["14"],"textposition":"outside","x":[14],"y":["FIREWORKS"],"type":"bar","xaxis":"x","yaxis":"y"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.43],"title":{"text":"Qualifying Baskets with co-buy"},"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"automargin":true,"gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.5700000000000001,1.0]},"yaxis2":{"anchor":"x2","domain":[0.0,1.0]},"annotations":[{"font":{"size":16},"showarrow":false,"text":"SW1 — Co-Purchase Departments","x":0.215,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"SW2 — Co-Purchase Departments","x":0.785,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"title":{"text":"What Else Is in Qualifying Baskets? — Dept Co-Purchases"},"height":420,"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("dept_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    <div class="co-p">
+      <b>Cross-sell insight:</b>
+      Qualifying buyers are higher-spend fireworks customers. Their co-purchase patterns
+      reveal the "big show" basket: high-ticket items alongside the Green Widow.
+      Any category appearing in a majority of qualifying baskets is a natural adjacency to
+      promote or position near the Green Widow display — point-of-sale placement there is
+      low-friction and high-yield.
+    </div>
+  </div>
+
+  <!-- YOY CONTEXT -->
+  <div class="section" id="yoy">
+    <h2>Year-Over-Year Context &mdash; Promo Window (2025 = No Promo Baseline)</h2>
+    <p class="note">
+      Same 14-day window (Jun 23–Jul 6) compared year-over-year. 2025 had no Buy-2-Get-1 promotion,
+      so any GW and total FW increase in 2026 is attributable to a combination of organic growth and
+      the Spark the 4th stimulus.
+    </p>
+    <div class="grid2">
+      <div class="chart"><div class="chart" id="fw_yoy_ch"></div><script>(function(){var f={"data":[{"marker":{"color":["rgba(167,139,250,0.50)","#a78bfa"]},"name":"SW1","opacity":0.9,"showlegend":true,"text":["$197,127","$277,988"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[197126.86,277988.42000000004],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["rgba(167,139,250,0.50)","#a78bfa"]},"name":"SW1","opacity":0.9,"showlegend":false,"text":["1104","1417"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[1104,1417],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":["rgba(96,165,250,0.50)","#60a5fa"]},"name":"SW2","opacity":0.9,"showlegend":false,"text":["$63,297","$65,333"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[63297.3,65332.6],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["rgba(96,165,250,0.50)","#60a5fa"]},"name":"SW2","opacity":0.9,"showlegend":false,"text":["420","409"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[420,409],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.44],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)","tickprefix":"$"},"xaxis2":{"anchor":"y2","domain":[0.56,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"FW Revenue ($)","x":0.22,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"FW Trips","x":0.78,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","height":340,"title":{"text":"Fireworks Overall — 2026 Promo Window vs Same 2025 Period (no promo)"},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("fw_yoy_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+      <div class="chart"><div class="chart" id="gw_yoy_ch"></div><script>(function(){var f={"data":[{"marker":{"color":["rgba(167,139,250,0.50)","#a78bfa"]},"name":"SW1","opacity":0.9,"showlegend":true,"text":["0","57"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[0,57],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["rgba(167,139,250,0.50)","#a78bfa"]},"name":"SW1","opacity":0.9,"showlegend":false,"text":["$0","$12,712"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[0,12712.5],"type":"bar","xaxis":"x2","yaxis":"y2"},{"marker":{"color":["rgba(96,165,250,0.50)","#60a5fa"]},"name":"SW2","opacity":0.9,"showlegend":false,"text":["0","5"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[0,5],"type":"bar","xaxis":"x","yaxis":"y"},{"marker":{"color":["rgba(96,165,250,0.50)","#60a5fa"]},"name":"SW2","opacity":0.9,"showlegend":false,"text":["$0","$1,125"],"textposition":"outside","x":["Jun 23–Jul 6, 2025","Jun 23–Jul 6, 2026"],"y":[0,1125.0],"type":"bar","xaxis":"x2","yaxis":"y2"}],"layout":{"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,0.44],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis":{"anchor":"x","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"xaxis2":{"anchor":"y2","domain":[0.56,1.0],"gridcolor":"rgba(255,255,255,0.08)"},"yaxis2":{"anchor":"x2","domain":[0.0,1.0],"gridcolor":"rgba(255,255,255,0.08)","tickprefix":"$"},"annotations":[{"font":{"size":16},"showarrow":false,"text":"GW Units","x":0.22,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"GW Revenue ($)","x":0.78,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"}],"font":{"color":"#e5e7eb","family":"ui-sans-serif,system-ui,sans-serif","size":12},"margin":{"l":55,"r":20,"t":55,"b":55},"legend":{"orientation":"h","x":1,"xanchor":"right","y":1.15},"barmode":"group","height":340,"title":{"text":"Green Widow YOY — Same 14-Day Window (2025 = no promo baseline)"},"paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(255,255,255,0.03)"}};Plotly.newPlot("gw_yoy_ch",f.data,f.layout,{displayModeBar:false,responsive:true});})();</script></div>
+    </div>
+    <div class="co">
+      <b>YoY read:</b>
+      Total FW revenue in the promo window:
+      <b>$260,424</b> (2025) &rarr;
+      <b>$343,321</b> (2026)
+      <span class="up">+31.8%</span>.
+      Green Widow units:
+      <b>0</b> (2025) &rarr;
+      <b>62</b> (2026)
+      <span class="mu">—</span>.
+      GW revenue:
+      <b>$0</b> &rarr;
+      <b>$13,838</b>
+      <span class="mu">—</span>.
+      The promo's contribution to the lift is the incremental GW revenue attributed to extra units
+      purchased specifically to hit the Buy-2 threshold — separate from baseline demand growth.
+    </div>
+  </div>
+
+  <!-- PER-STORE DETAIL -->
+  <div class="section" id="stores">
+    <h2>Per-Store Detail</h2>
+    <p class="note">
+      Full breakdown per store: GW behavior, qualifying basket funnel, dollar impact, loyalty, co-purchases.
+    </p>
+    
+        <div class="store-block" style="border-left:3px solid #a78bfa">
+          <h3 style="color:#a78bfa;margin:0 0 12px;font-size:17px">Smokers Warehouse 1 — Akwesasne</h3>
+
+          <!-- Promo funnel KPIs -->
+          <div class="kpis4">
+            <div class="kpi"><div class="kl">All FW Baskets</div>
+              <div class="kv">1,417</div>
+              <div class="ks">Jun 23–Jul 6, 2026</div></div>
+            <div class="kpi kpi-fw"><div class="kl">Qualifying (≥2 GW)</div>
+              <div class="kv">15</div>
+              <div class="ks">1.1% of FW baskets</div></div>
+            <div class="kpi kpi-g"><div class="kl">Flying Flamingo Redemptions</div>
+              <div class="kv">15</div>
+              <div class="ks">100.0% of qualifying baskets redeemed</div></div>
+            <div class="kpi"><div class="kl">Avg Qualifying Basket</div>
+              <div class="kv">$1,309</div>
+              <div class="ks">+567.3% vs all FW avg ($196)</div></div>
+          </div>
+
+          <!-- GW behavior -->
+          <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <h5 style="margin:0 0 6px;font-size:13px;color:#a78bfa">
+                Green Widow 108S — Purchase Breakdown
+              </h5>
+              <div class="kpis4" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px">
+                <div class="kpi"><div class="kl">GW Baskets</div>
+                  <div class="kv" style="font-size:20px">42</div>
+                  <div class="ks">avg 1.4 units/basket</div></div>
+                <div class="kpi"><div class="kl">GW Units (total)</div>
+                  <div class="kv" style="font-size:20px">57</div>
+                  <div class="ks">avg $223.03/unit · $12,712 rev<br/>
+                    YoY: <span class="mu">—</span> units
+                    · <span class="mu">—</span> rev</div></div>
+              </div>
+              <p class="note" style="margin:0 0 4px">
+                Qty distribution — <span style="color:#34d399">■ 2 = Buy trigger</span>
+              </p>
+              <table style="max-width:360px"><thead>
+                <tr><th style='text-align:center'>Units in Basket</th>
+                <th style='text-align:right'># Baskets</th>
+                <th style='text-align:right'>%</th><th>Bar</th></tr>
+              </thead><tbody><tr><td style='text-align:center;'>1</td><td style='text-align:right;'>27</td><td style='text-align:right;'>64.3%</td><td><div style='width:75%;height:5px;border-radius:3px;background:#a78bfa;opacity:.80'></div></td></tr><tr><td style='text-align:center;color:#6ee7b7;font-weight:700'>2 ← buy trigger</td><td style='text-align:right;color:#6ee7b7;font-weight:700'>15</td><td style='text-align:right;color:#6ee7b7;font-weight:700'>35.7%</td><td><div style='width:41%;height:5px;border-radius:3px;background:#34d399;opacity:.80'></div></td></tr></tbody></table>
+              <p class="note" style="margin-top:6px">
+                0 baskets purchased 3+ units
+                (0.0% of GW baskets) — bulk buyers above trigger.
+              </p>
+            </div>
+
+            <!-- Dollar impact -->
+            <div>
+              <h5 style="margin:0 0 6px;font-size:13px;color:#6ee7b7">
+                &#x1F4B5; Dollar Impact — Incremental GW vs FF Giveaway
+              </h5>
+              <div class="dollar-impact">
+                <div class="di-grid" style="grid-template-columns:1fr 1fr">
+                  <div class="di-item">
+                    <div class="di-label">GW Revenue (qualifying bk)</div>
+                    <div class="di-val">$6,727.50</div>
+                    <div class="di-sub">30 units · $224.25/unit</div>
+                  </div>
+                  <div class="di-item di-extra">
+                    <div class="di-label">Incremental GW (extra units)</div>
+                    <div class="di-val" style="color:#6ee7b7">+$3,363.75</div>
+                    <div class="di-sub">15 extra units × $224.25</div>
+                  </div>
+                  <div class="di-item di-cost">
+                    <div class="di-label">Flying Flamingo Giveaway Cost</div>
+                    <div class="di-val" style="color:#fca5a5">−$895.08</div>
+                    <div class="di-sub">15 redemptions × $59.67</div>
+                  </div>
+                  <div class="di-item di-net">
+                    <div class="di-label">Net Promo Impact</div>
+                    <div class="di-val up">+$2,468.67</div>
+                    <div class="di-sub">incremental GW rev minus FF cost</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div style='margin-top:14px'>
+              <h5 style='margin:0 0 8px;font-size:13px;color:#a78bfa'>Loyalty Card Holders — Qualifying Buyers</h5>
+              <div class="kpis4" style="grid-template-columns:repeat(4,1fr)">
+                <div class="kpi"><div class="kl">Card Holders in Qualifying Bk</div>
+                  <div class="kv">1</div>
+                  <div class="ks">linked to reward card</div></div>
+                <div class="kpi kpi-g"><div class="kl">Returning FW Buyers</div>
+                  <div class="kv">1</div>
+                  <div class="ks">100.0% return rate</div></div>
+                <div class="kpi"><div class="kl">First-Time FW Buyers</div>
+                  <div class="kv">0</div>
+                  <div class="ks">no prior fireworks purchase</div></div>
+                <div class="kpi"><div class="kl">Avg Qualifying Trips</div>
+                  <div class="kv">1.0</div>
+                  <div class="ks">trips per cardholder in promo window</div></div>
+              </div>
+              <p class="note" style="margin:10px 0 4px">Visit frequency:</p>
+              <table style="max-width:340px"><thead>
+                <tr><th>Trips</th><th style='text-align:right'>Cardholders</th><th>Bar</th></tr>
+              </thead><tbody><tr><td>1 visit</td><td style='text-align:right'>1</td><td><div style='width:70%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr></tbody></table>
+            </div>
+
+          <!-- Co-purchase products -->
+          <div style="margin-top:14px">
+            <h5 style="margin:0 0 6px;font-size:13px;color:#a78bfa">
+              Top Co-Purchased Items in Qualifying Baskets
+            </h5>
+            <table style="max-width:560px"><thead>
+              <tr><th>Product</th><th style='text-align:right'>Qualifying Baskets</th><th>Bar</th></tr>
+            </thead><tbody><tr><td style='font-size:12px'>805253408319 - PURE VENOM</td><td style='text-align:right'>7</td><td><div style='width:70%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>805253357013 - EXCALIBUR PLATINUM</td><td style='text-align:right'>5</td><td><div style='width:50%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>757201536684 - USA 250 250S</td><td style='text-align:right'>5</td><td><div style='width:50%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>757205302599 - 2MINUTE BOMBS 70S</td><td style='text-align:right'>5</td><td><div style='width:50%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>857205003943 - NAVY SEALS 156S</td><td style='text-align:right'>4</td><td><div style='width:40%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>8052530186091 - WORLD CLASS 10 BALL ROMAN CANDLE</td><td style='text-align:right'>4</td><td><div style='width:40%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>757201572064 - MAGNUM TREMORS 9S</td><td style='text-align:right'>4</td><td><div style='width:40%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>8052530140116 - EXCALIBUR 60 GRAM</td><td style='text-align:right'>4</td><td><div style='width:40%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>757205302155 - WELCOME TO THE JUNGLE 25S</td><td style='text-align:right'>3</td><td><div style='width:30%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>805253411913 - GUNS BLAZIN 260</td><td style='text-align:right'>3</td><td><div style='width:30%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>805253407923 - SPACE COWBOY SPINNER</td><td style='text-align:right'>3</td><td><div style='width:30%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr><tr><td style='font-size:12px'>8052531290117 - ONE BAD MOTHER</td><td style='text-align:right'>3</td><td><div style='width:30%;height:5px;border-radius:3px;background:#a78bfa;opacity:.75'></div></td></tr></tbody></table>
+          </div>
+        </div>
+
+        <div class="store-block" style="border-left:3px solid #60a5fa">
+          <h3 style="color:#60a5fa;margin:0 0 12px;font-size:17px">Smokers Warehouse 2 — Ft Covington</h3>
+
+          <!-- Promo funnel KPIs -->
+          <div class="kpis4">
+            <div class="kpi"><div class="kl">All FW Baskets</div>
+              <div class="kv">409</div>
+              <div class="ks">Jun 23–Jul 6, 2026</div></div>
+            <div class="kpi kpi-fw"><div class="kl">Qualifying (≥2 GW)</div>
+              <div class="kv">0</div>
+              <div class="ks">0.0% of FW baskets</div></div>
+            <div class="kpi kpi-g"><div class="kl">Flying Flamingo Redemptions</div>
+              <div class="kv">0</div>
+              <div class="ks">0.0% of qualifying baskets redeemed</div></div>
+            <div class="kpi"><div class="kl">Avg Qualifying Basket</div>
+              <div class="kv">$0</div>
+              <div class="ks">-100.0% vs all FW avg ($160)</div></div>
+          </div>
+
+          <!-- GW behavior -->
+          <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <h5 style="margin:0 0 6px;font-size:13px;color:#60a5fa">
+                Green Widow 108S — Purchase Breakdown
+              </h5>
+              <div class="kpis4" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px">
+                <div class="kpi"><div class="kl">GW Baskets</div>
+                  <div class="kv" style="font-size:20px">5</div>
+                  <div class="ks">avg 1.0 units/basket</div></div>
+                <div class="kpi"><div class="kl">GW Units (total)</div>
+                  <div class="kv" style="font-size:20px">5</div>
+                  <div class="ks">avg $225.00/unit · $1,125 rev<br/>
+                    YoY: <span class="mu">—</span> units
+                    · <span class="mu">—</span> rev</div></div>
+              </div>
+              <p class="note" style="margin:0 0 4px">
+                Qty distribution — <span style="color:#34d399">■ 2 = Buy trigger</span>
+              </p>
+              <table style="max-width:360px"><thead>
+                <tr><th style='text-align:center'>Units in Basket</th>
+                <th style='text-align:right'># Baskets</th>
+                <th style='text-align:right'>%</th><th>Bar</th></tr>
+              </thead><tbody><tr><td style='text-align:center;'>1</td><td style='text-align:right;'>5</td><td style='text-align:right;'>100.0%</td><td><div style='width:75%;height:5px;border-radius:3px;background:#60a5fa;opacity:.80'></div></td></tr></tbody></table>
+              <p class="note" style="margin-top:6px">
+                0 baskets purchased 3+ units
+                (0.0% of GW baskets) — bulk buyers above trigger.
+              </p>
+            </div>
+
+            <!-- Dollar impact -->
+            <div>
+              <h5 style="margin:0 0 6px;font-size:13px;color:#6ee7b7">
+                &#x1F4B5; Dollar Impact — Incremental GW vs FF Giveaway
+              </h5>
+              <div class="dollar-impact">
+                <div class="di-grid" style="grid-template-columns:1fr 1fr">
+                  <div class="di-item">
+                    <div class="di-label">GW Revenue (qualifying bk)</div>
+                    <div class="di-val">$0.00</div>
+                    <div class="di-sub">0 units · $0.00/unit</div>
+                  </div>
+                  <div class="di-item di-extra">
+                    <div class="di-label">Incremental GW (extra units)</div>
+                    <div class="di-val" style="color:#6ee7b7">+$0.00</div>
+                    <div class="di-sub">0 extra units × $0.00</div>
+                  </div>
+                  <div class="di-item di-cost">
+                    <div class="di-label">Flying Flamingo Giveaway Cost</div>
+                    <div class="di-val" style="color:#fca5a5">−$0.00</div>
+                    <div class="di-sub">0 redemptions × $0.00</div>
+                  </div>
+                  <div class="di-item di-net">
+                    <div class="di-label">Net Promo Impact</div>
+                    <div class="di-val up">+$0.00</div>
+                    <div class="di-sub">incremental GW rev minus FF cost</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+            <div style='margin-top:14px'>
+              <h5 style='margin:0 0 8px;font-size:13px;color:#60a5fa'>Loyalty Card Holders — Qualifying Buyers</h5>
+              <div class="kpis4" style="grid-template-columns:repeat(4,1fr)">
+                <div class="kpi"><div class="kl">Card Holders in Qualifying Bk</div>
+                  <div class="kv">0</div>
+                  <div class="ks">linked to reward card</div></div>
+                <div class="kpi kpi-g"><div class="kl">Returning FW Buyers</div>
+                  <div class="kv">0</div>
+                  <div class="ks">0.0% return rate</div></div>
+                <div class="kpi"><div class="kl">First-Time FW Buyers</div>
+                  <div class="kv">0</div>
+                  <div class="ks">no prior fireworks purchase</div></div>
+                <div class="kpi"><div class="kl">Avg Qualifying Trips</div>
+                  <div class="kv">0.0</div>
+                  <div class="ks">trips per cardholder in promo window</div></div>
+              </div>
+              <p class="note" style="margin:10px 0 4px">Visit frequency:</p>
+              <table style="max-width:340px"><thead>
+                <tr><th>Trips</th><th style='text-align:right'>Cardholders</th><th>Bar</th></tr>
+              </thead><tbody></tbody></table>
+            </div>
+
+          <!-- Co-purchase products -->
+          <div style="margin-top:14px">
+            <h5 style="margin:0 0 6px;font-size:13px;color:#60a5fa">
+              Top Co-Purchased Items in Qualifying Baskets
+            </h5>
+            <table style="max-width:560px"><thead>
+              <tr><th>Product</th><th style='text-align:right'>Qualifying Baskets</th><th>Bar</th></tr>
+            </thead><tbody></tbody></table>
+          </div>
+        </div>
+  </div>
+
+  <div class="footer">
+    Generated 2026-08-13 &nbsp;|&nbsp;
+    Source: SW1 &amp; SW2 enriched transaction files &nbsp;|&nbsp;
+    Promo: Jun 23–Jul 6, 2026 &nbsp;|&nbsp;
+    Green Widow 108S — SKU 857205003950 &nbsp;|&nbsp;
+    Flying Flamingo 500g — SKU 757201525312 &nbsp;|&nbsp;
+    Qualifying = ≥2 Green Widow units in basket.
+    Redemption = qualifying basket also contains Flying Flamingo.
+    Net impact = extra GW units × avg GW price − redemptions × avg FF price.
+    2025 baseline = same 14-day window, no promo.
+    &nbsp;<a href="#top" style="color:#9ca3af;text-decoration:none">Back to top &uarr;</a>
+  </div>
+
+</div>
+</body>
+</html>

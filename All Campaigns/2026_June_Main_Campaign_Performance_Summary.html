@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Campaign Performance Summary &mdash; June 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #080f1a;
+  --surface2: rgba(255,255,255,0.025);
+  --border: rgba(255,255,255,0.08);
+  --text: #e2e8f0;
+  --muted: #7f8ea3;
+  --twinleaf: #a78bfa;
+  --smokers: #f59e0b;
+  --green: #34d399;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --r: 14px;
+  --font: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Barlow Condensed', 'Barlow', Arial, sans-serif;
+  --mono: 'IBM Plex Mono', 'Consolas', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 1400px 600px at 0% 0%, rgba(124,58,237,.12), transparent 70%),
+    radial-gradient(ellipse 1000px 500px at 100% 20%, rgba(245,158,11,.08), transparent 60%);
+}
+
+.page { max-width: 1280px; margin: 0 auto; padding: 32px 20px 80px; }
+
+/* HEADER */
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 8px; flex-wrap: wrap; }
+.header-left h1 { font-family: var(--font-display); font-size: clamp(26px,3.5vw,42px); font-weight: 800; letter-spacing: .3px; line-height: 1.05; margin-bottom: 6px; text-transform: uppercase; }
+.header-left h1 span { color: var(--twinleaf); }
+.header-meta { color: var(--muted); font-size: 13px; line-height: 1.7; font-weight: 400; }
+.header-meta b { color: var(--text); font-weight: 600; }
+.stamp { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; text-align: right; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.stamp .date { font-family: var(--font-display); font-size: 22px; font-weight: 700; letter-spacing: .5px; color: var(--text); display: block; text-transform: uppercase; }
+
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+/* NAV */
+.sticky-nav { position: sticky; top: 0; z-index: 50; background: rgba(8,15,26,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 10px 20px; margin: 0 -20px 28px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nav-logo { font-family: var(--font-display); font-weight: 800; font-size: 15px; letter-spacing: .5px; text-transform: uppercase; margin-right: 8px; }
+.nav-logo .tl { color: var(--twinleaf); }
+.nav-logo .sw { color: var(--smokers); }
+.tab-btn { padding: 8px 18px; border-radius: 999px; font-size: 13px; font-weight: 700; font-family: var(--font); cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); transition: all .2s; }
+.tab-btn:hover { color: var(--text); border-color: rgba(255,255,255,.2); }
+.tab-btn.active-tl { background: rgba(124,58,237,.2); border-color: rgba(167,139,250,.4); color: var(--twinleaf); }
+.tab-btn.active-sw { background: rgba(217,119,6,.2); border-color: rgba(245,158,11,.4); color: var(--smokers); }
+.tab-section { display: none; }
+.tab-section.visible { display: block; }
+
+/* SECTION HEADER */
+.section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; margin-top: 28px; flex-wrap: wrap; }
+.section-header:first-child { margin-top: 0; }
+.section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-bottom: 2px; }
+.dot-tl { background: var(--twinleaf); box-shadow: 0 0 10px rgba(167,139,250,.5); }
+.dot-sw { background: var(--smokers); box-shadow: 0 0 10px rgba(245,158,11,.5); }
+.section-header h2 { font-family: var(--font-display); font-size: 19px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; }
+.tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; font-family: var(--mono); letter-spacing: .3px; }
+.tag-seasonal { background: rgba(96,165,250,.15); color: #93c5fd; border: 1px solid rgba(96,165,250,.3); }
+.tag-loyalty { background: rgba(52,211,153,.15); color: #6ee7b7; border: 1px solid rgba(52,211,153,.3); }
+.tag-ongoing { background: rgba(251,191,36,.15); color: #fde68a; border: 1px solid rgba(251,191,36,.3); }
+
+/* DETAIL LINK */
+.detail-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-family: var(--mono); color: var(--muted); text-decoration: none; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; transition: all .2s; white-space: nowrap; }
+.detail-link:hover { color: var(--text); border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.04); }
+.detail-link svg { opacity: .6; }
+.detail-link-tl { border-color: rgba(167,139,250,.25); color: #c4b5fd; }
+.detail-link-tl:hover { background: rgba(124,58,237,.1); border-color: rgba(167,139,250,.5); color: #e9d5ff; }
+.detail-link-sw { border-color: rgba(245,158,11,.25); color: #fcd34d; }
+.detail-link-sw:hover { background: rgba(217,119,6,.1); border-color: rgba(245,158,11,.5); color: #fde68a; }
+
+/* CARDS */
+.card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px; margin-bottom: 12px; }
+.card-tl { border-left: 3px solid var(--twinleaf); }
+.card-sw { border-left: 3px solid var(--smokers); }
+.card-title { font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+
+/* KPI GRID */
+.kpi-grid { display: grid; gap: 10px; }
+.kpi-grid-4 { grid-template-columns: repeat(4,1fr); }
+.kpi-grid-3 { grid-template-columns: repeat(3,1fr); }
+.kpi-grid-2 { grid-template-columns: repeat(2,1fr); }
+@media(max-width:900px) { .kpi-grid-4,.kpi-grid-3 { grid-template-columns: repeat(2,1fr); } }
+@media(max-width:500px) { .kpi-grid-4,.kpi-grid-3,.kpi-grid-2 { grid-template-columns: 1fr; } }
+
+.kpi { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.kpi-hl  { background: rgba(167,139,250,.06); border-color: rgba(167,139,250,.25); }
+.kpi-hl-sw { background: rgba(245,158,11,.06); border-color: rgba(245,158,11,.25); }
+.kpi-hl-blue { background: rgba(96,165,250,.06); border-color: rgba(96,165,250,.25); }
+.kpi-green { background: rgba(52,211,153,.06); border-color: rgba(52,211,153,.25); }
+.kpi-warn  { background: rgba(251,191,36,.06); border-color: rgba(251,191,36,.25); }
+.kpi-red   { background: rgba(248,113,113,.06); border-color: rgba(248,113,113,.25); }
+.kpi-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.kpi-value { font-family: var(--font-display); font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 3px; line-height: 1.0; letter-spacing: .3px; }
+.kpi-sub   { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.up      { color: var(--green); }
+.dn      { color: var(--red); }
+.neutral { color: var(--muted); }
+.up-blue { color: var(--blue); }
+
+/* STORE GRID */
+.store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:760px) { .store-grid { grid-template-columns: 1fr; } }
+.store-block { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.store-label { font-size: 12px; font-weight: 700; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.lbl-tgc  { color: var(--twinleaf); }
+.lbl-texp { color: var(--green); }
+.lbl-sw1  { color: var(--twinleaf); }
+.lbl-sw2  { color: var(--blue); }
+
+/* TABLE */
+.sched-wrap { overflow-x: auto; }
+table.sched { width: 100%; border-collapse: collapse; font-size: 12px; font-family: var(--mono); }
+table.sched th, table.sched td { padding: 8px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.06); white-space: nowrap; }
+table.sched th { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); background: rgba(255,255,255,.03); font-family: var(--font); }
+table.sched tr:hover td { background: rgba(255,255,255,.02); }
+
+/* TIER TABLE */
+.tier-table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: var(--mono); }
+.tier-table th, .tier-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.05); }
+.tier-table th { font-size: 10px; color: var(--muted); text-transform: uppercase; font-family: var(--font); }
+.t1 { color: var(--green); } .t2 { color: var(--blue); } .t3 { color: var(--twinleaf); }
+
+/* ALERTS */
+.alert { padding: 12px 14px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; }
+.alert-warn  { background: rgba(251,191,36,.07); border-left: 3px solid rgba(251,191,36,.6); color: #fde68a; }
+.alert-error { background: rgba(248,113,113,.07); border-left: 3px solid rgba(248,113,113,.6); color: #fca5a5; }
+.alert-info  { background: rgba(96,165,250,.07); border-left: 3px solid rgba(96,165,250,.5); color: #bfdbfe; }
+.alert-green { background: rgba(52,211,153,.07); border-left: 3px solid rgba(52,211,153,.5); color: #6ee7b7; }
+.alert b { color: #fff; }
+
+/* MECHANIC */
+.mechanic { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.mechanic strong { color: var(--text); }
+
+/* CHIPS */
+.chip { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-family: var(--mono); }
+.chip-purple { background: rgba(167,139,250,.15); color: #c4b5fd; }
+.chip-orange { background: rgba(249,115,22,.15); color: #fed7aa; }
+.chip-blue   { background: rgba(96,165,250,.15); color: #bfdbfe; }
+
+/* SECTION ACTIONS ROW */
+.section-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+
+/* ADOPTION CALLOUT BAR */
+.adoption-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.adopt-box { flex: 1; min-width: 200px; background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.adopt-pct { font-family: var(--font-display); font-size: 36px; font-weight: 800; line-height: 1; }
+.adopt-label { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+
+/* FOOTER */
+.footer { color: var(--muted); font-size: 11px; margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--border); font-family: var(--mono); line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- STICKY NAV -->
+<div class="sticky-nav">
+  <span class="nav-logo"><span class="tl">Twinleaf</span> <span style="color:var(--muted)">&middot;</span> <span class="sw">Smokers&rsquo; Warehouse</span></span>
+  <span style="color:var(--border)">|</span>
+  <button class="tab-btn active-tl" onclick="showTab('twinleaf',this)">&#x1F4A7; Twinleaf Promos</button>
+  <button class="tab-btn" onclick="showTab('smokers',this)">&#x1F386; Smokers&rsquo; Warehouse</button>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Campaign Performance Summary<br/><span>June 2026</span></h1>
+    <div class="header-meta">
+      <b>Period:</b> June 1&ndash;30, 2026 (Full Month) &nbsp;|&nbsp; <b>Generated:</b> July 7, 2026<br/>
+      <b>Stores:</b> Twinleaf Gas &amp; Convenience (TGC &middot; Akwesasne), Twinleaf Express (TExp &middot; Ft Covington),
+      Smokers&rsquo; Warehouse 1 (SW1 &middot; Akwesasne), SW2 (Ft Covington)<br/>
+      <b>Prepared by:</b> Arthur Elliott
+    </div>
+  </div>
+  <div class="stamp">
+    <span class="date">June 1&ndash;30</span>
+    Full Month<br/>vs June 2025<br/>
+    <span style="margin-top:6px;display:block;font-size:11px;color:var(--muted);">Arthur Elliott</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- TWINLEAF TAB                                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="tab-section visible" id="tab-twinleaf">
+
+  <!-- PROMO 1: SMART WATER 2-FOR-$5 -->
+  <div class="section-header">
+    <div class="section-dot dot-tl"></div>
+    <h2>Promo 1 &mdash; 2 for $5 &middot; 1L Smart Water</h2>
+    <span class="tag tag-seasonal">Seasonal Snapshot</span>
+  </div>
+  <div class="section-actions">
+    <a class="detail-link detail-link-tl" href="44_Smart_Water_2for5_Campaign_Performance.html" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Full Smart Water Report &rarr;
+    </a>
+  </div>
+
+  <div class="mechanic">
+    <strong>Mechanic:</strong> 2 for $5 &mdash; 1L Smart Water (Regular &amp; Alkaline) &nbsp;|&nbsp;
+    Regular price <strong>$3.19 each</strong> &rarr; Promo price <strong>$2.50 each</strong> &nbsp;|&nbsp; Save $1.38 per pair (22% off) &nbsp;|&nbsp;
+    <strong>Period:</strong> All June 2026 &nbsp;|&nbsp; <strong>Stores:</strong> TGC + TExpress &nbsp;|&nbsp;
+    <strong>Scope:</strong> All customers &nbsp;|&nbsp;
+    <strong>SKUs:</strong> <span class="chip chip-blue">786162338006 SMRT WTR 1L</span> &nbsp;
+    <span class="chip chip-blue">786162411167 SMRT WTR ALKALINE 1LT</span>
+  </div>
+
+  <div class="card card-tl">
+    <div class="card-title">Campaign Overview &mdash; June 2026 vs June 2025 (Both Stores)</div>
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi">
+        <div class="kpi-label">Total 1L SW Units (Both Stores)</div>
+        <div class="kpi-value">1,360</div>
+        <div class="kpi-sub dn">-47 units vs Jun 25 (&minus;3.3% YOY)</div>
+      </div>
+      <div class="kpi kpi-hl">
+        <div class="kpi-label">Promo Adoption Rate (Combined)</div>
+        <div class="kpi-value">54.0%</div>
+        <div class="kpi-sub neutral">456 of 845 txns &ge;2 units</div>
+      </div>
+      <div class="kpi kpi-green">
+        <div class="kpi-label">Avg Units / Transaction</div>
+        <div class="kpi-value">1.61</div>
+        <div class="kpi-sub up">+9.4% vs Jun 25 (was 1.47)</div>
+      </div>
+      <div class="kpi kpi-warn">
+        <div class="kpi-label">Est. Customer Savings</div>
+        <div class="kpi-value">$629</div>
+        <div class="kpi-sub neutral">on qualifying promo txns</div>
+      </div>
+    </div>
+    <div class="alert alert-green" style="margin-top:12px;">
+      <b>Promo pricing confirmed in-data:</b> Avg price fell from $2.80 (Jun 25) &rarr; <b>$2.71</b> (Jun 26), &minus;$0.09/unit vs last year, consistent with the 2-for-$5 price of $2.50 each. Avg units per transaction rose <b>+9.4% YOY</b>, confirming the deal is driving multi-unit basket behavior.
+    </div>
+  </div>
+
+  <div class="card card-tl">
+    <div class="card-title">Promo Adoption &mdash; June 2026 by Store vs June 2025 &amp; Run Rate</div>
+    <div class="store-grid">
+      <div class="store-block">
+        <div class="store-label lbl-tgc">TGC &mdash; Akwesasne</div>
+        <div class="kpi-grid kpi-grid-3" style="gap:8px">
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">1L SW Transactions</div>
+            <div class="kpi-value">543</div>
+            <div class="kpi-sub dn">vs Jun 25: 679 (&minus;20.0%)</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">1L SW Units</div>
+            <div class="kpi-value">885</div>
+            <div class="kpi-sub dn">vs Jun 25: 1,028 (&minus;13.9%)</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Avg Units / Txn</div>
+            <div class="kpi-value">1.63</div>
+            <div class="kpi-sub up">vs Jun 25: 1.51 (+8.0%)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Promo Adoption Jun 26</div>
+            <div class="kpi-value" style="color:#34d399">55.1%</div>
+            <div class="kpi-sub up">+11.5pp YOY &middot; +10.9pp vs run rate</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Promo Adoption Jun 25</div>
+            <div class="kpi-value">43.6%</div>
+            <div class="kpi-sub neutral">baseline last year</div>
+          </div>
+          <div class="kpi kpi-warn">
+            <div class="kpi-label">Jan&ndash;May 26 Run Rate</div>
+            <div class="kpi-value">44.1%</div>
+            <div class="kpi-sub neutral">pre-promo monthly avg</div>
+          </div>
+        </div>
+      </div>
+      <div class="store-block">
+        <div class="store-label lbl-texp">TExpress &mdash; Ft Covington</div>
+        <div class="kpi-grid kpi-grid-3" style="gap:8px">
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">1L SW Transactions</div>
+            <div class="kpi-value">302</div>
+            <div class="kpi-sub up">vs Jun 25: 277 (+9.0%)</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">1L SW Units</div>
+            <div class="kpi-value">475</div>
+            <div class="kpi-sub up">vs Jun 25: 379 (+25.3%)</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Avg Units / Txn</div>
+            <div class="kpi-value">1.57</div>
+            <div class="kpi-sub up">vs Jun 25: 1.37 (+14.6%)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Promo Adoption Jun 26</div>
+            <div class="kpi-value" style="color:#34d399">52.0%</div>
+            <div class="kpi-sub up">+18.8pp YOY &middot; +23.5pp vs run rate</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Promo Adoption Jun 25</div>
+            <div class="kpi-value">33.2%</div>
+            <div class="kpi-sub neutral">baseline last year</div>
+          </div>
+          <div class="kpi kpi-warn">
+            <div class="kpi-label">Jan&ndash;May 26 Run Rate</div>
+            <div class="kpi-value">28.4%</div>
+            <div class="kpi-sub neutral">pre-promo monthly avg</div>
+          </div>
+        </div>
+        <div class="alert alert-info" style="margin-top:10px;font-size:12px;">
+          <b>TExpress key insight:</b> TE had a 5-month consecutive declining adoption trend (Jan 26: 35.5% &rarr; May 26: 22.6% &mdash; lowest in dataset). June promo reversed it to <b>52.0%</b> &mdash; the sharpest recovery on record. TExpress units grew +25.3% YOY while TGC units fell &minus;13.9% YOY, suggesting TE had greater unmet demand.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ONGOING LOYALTY: SANDWICH -->
+  <div class="section-header">
+    <div class="section-dot dot-tl"></div>
+    <h2>Ongoing Loyalty &mdash; $4.99 Sandwich Deal</h2>
+    <span class="tag tag-ongoing">Ongoing Loyalty</span>
+  </div>
+  <div class="section-actions">
+    <a class="detail-link detail-link-tl" href="37_Sandwich_Deal_Loyalty_Promo_Twinleaf_June2026.html" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Full Sandwich Deal Report &rarr;
+    </a>
+  </div>
+
+  <div class="mechanic">
+    <strong>Deal:</strong> $4.99 = Sandwich + Free 1oz Chip + Free 20oz Fountain Drink (saves $0.79&ndash;$0.99 vs individual) &nbsp;|&nbsp;
+    <strong>Period:</strong> June 1&ndash;30, 2026 vs June 2025 &amp; May 2026 &nbsp;|&nbsp; <strong>Stores:</strong> TGC + TExpress &nbsp;|&nbsp;
+    <strong>Excludes:</strong> Breakfast Sandwich (separate promo)
+  </div>
+
+  <div class="alert alert-warn">
+    <b>&#9888; POS Tracking Gap:</b> Bundle not recorded as a single combo SKU. Components ring at regular prices. Bundle completion (13 TGC / 7 TExp) likely reflects cashier ring-up patterns, not true deal redemption. A dedicated combo PLU is recommended for accurate tracking.
+  </div>
+
+  <div class="card card-tl">
+    <div class="card-title">Sandwich Promo &mdash; June 2026 Full Month vs June 2025 &amp; May 2026</div>
+    <div class="store-grid">
+      <div class="store-block">
+        <div class="store-label lbl-tgc">TGC &mdash; Akwesasne</div>
+        <div class="kpi-grid kpi-grid-3" style="gap:8px">
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Promo Baskets</div>
+            <div class="kpi-value">1,882</div>
+            <div class="kpi-sub up">+60.9% vs LY &middot; +15.0% vs May</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Promo Units</div>
+            <div class="kpi-value">2,194</div>
+            <div class="kpi-sub up">+59.4% vs LY (was 1,376)</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Promo Revenue</div>
+            <div class="kpi-value">$9,402</div>
+            <div class="kpi-sub up">+60.3% vs LY ($5,866)</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Chip Attachment</div>
+            <div class="kpi-value">2.9%</div>
+            <div class="kpi-sub neutral">55 of 1,882 baskets</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Drink Attachment</div>
+            <div class="kpi-value">1.2%</div>
+            <div class="kpi-sub neutral">23 of 1,882 baskets</div>
+          </div>
+          <div class="kpi kpi-warn">
+            <div class="kpi-label">Full Bundle (all 3)</div>
+            <div class="kpi-value">0.7%</div>
+            <div class="kpi-sub neutral">13 of 1,882 baskets</div>
+          </div>
+        </div>
+      </div>
+      <div class="store-block">
+        <div class="store-label lbl-texp">TExpress &mdash; Ft Covington</div>
+        <div class="kpi-grid kpi-grid-3" style="gap:8px">
+          <div class="kpi kpi-red">
+            <div class="kpi-label">Promo Baskets</div>
+            <div class="kpi-value">723</div>
+            <div class="kpi-sub dn">&minus;22.3% vs LY &middot; +9.2% vs May</div>
+          </div>
+          <div class="kpi kpi-red">
+            <div class="kpi-label">Promo Units</div>
+            <div class="kpi-value">882</div>
+            <div class="kpi-sub dn">&minus;18.9% vs LY (was 1,087)</div>
+          </div>
+          <div class="kpi kpi-red">
+            <div class="kpi-label">Promo Revenue</div>
+            <div class="kpi-value">$3,699</div>
+            <div class="kpi-sub dn">&minus;18.2% vs LY ($4,523)</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Chip Attachment</div>
+            <div class="kpi-value">5.4%</div>
+            <div class="kpi-sub neutral">39 of 723 baskets</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Drink Attachment</div>
+            <div class="kpi-value">1.5%</div>
+            <div class="kpi-sub neutral">11 of 723 baskets</div>
+          </div>
+          <div class="kpi kpi-warn">
+            <div class="kpi-label">Full Bundle (all 3)</div>
+            <div class="kpi-value">1.0%</div>
+            <div class="kpi-sub neutral">7 of 723 baskets</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin-top:12px;">
+      TGC accelerating: +60.9% YOY, continuing strong growth. TExpress down &minus;22.3% YOY for the second consecutive month &mdash; however MOM trend is recovering (+9.2% vs May). Attachment rates for chip and drink remain very low at both stores (&lt;6%), reinforcing the need for a dedicated bundle PLU and in-store signage to communicate the deal mechanic.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ONGOING LOYALTY: BREAKFAST -->
+  <div class="section-header">
+    <div class="section-dot dot-tl"></div>
+    <h2>Ongoing Loyalty &mdash; $3.99 Breakfast Sandwich &amp; Coffee Combo</h2>
+    <span class="tag tag-ongoing">Ongoing Loyalty</span>
+  </div>
+  <div class="section-actions">
+    <a class="detail-link detail-link-tl" href="38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf_June2026.html" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Full Breakfast Combo Report &rarr;
+    </a>
+  </div>
+
+  <div class="mechanic">
+    <strong>Deal:</strong> $3.99 = Breakfast Sandwich + Free Coffee (any size) &mdash; saves $1.00&ndash;$1.70. &nbsp;|&nbsp;
+    <strong>Breakfast SKU:</strong> <span class="chip chip-purple">620140065174</span> &nbsp;|&nbsp;
+    <strong>Coffee SKUs:</strong>
+    <span class="chip chip-orange">203</span> 12oz $0.99 &middot;
+    <span class="chip chip-orange">201/2011</span> 16oz $1.29 &middot;
+    <span class="chip chip-orange">202/2028</span> 20oz $1.69 &nbsp;|&nbsp;
+    <strong>Period:</strong> June 1&ndash;30, 2026 &nbsp;|&nbsp; <strong>Stores:</strong> TGC + TExpress
+  </div>
+
+  <div class="card card-tl">
+    <div class="card-title">Breakfast Combo &mdash; June 2026 Full Month vs June 2025 &amp; May 2026</div>
+    <div class="store-grid">
+      <div class="store-block">
+        <div class="store-label lbl-tgc">TGC &mdash; Akwesasne</div>
+        <div class="kpi-grid kpi-grid-3" style="gap:8px">
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Bfast Baskets</div>
+            <div class="kpi-value">1,436</div>
+            <div class="kpi-sub up">+117.9% vs LY &middot; +10.6% vs May</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Bfast Units</div>
+            <div class="kpi-value">1,797</div>
+            <div class="kpi-sub up">+103.1% vs LY (was 885)</div>
+          </div>
+          <div class="kpi kpi-hl">
+            <div class="kpi-label">Bfast Revenue</div>
+            <div class="kpi-value">$7,188</div>
+            <div class="kpi-sub up">+132.1% vs LY</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Coffee Units</div>
+            <div class="kpi-value">589</div>
+            <div class="kpi-sub up">+124.0% vs LY (was 263)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Combo Rate</div>
+            <div class="kpi-value">8.8%</div>
+            <div class="kpi-sub up">126 combos &middot; was 4.9% LY</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Free Coffee Fills</div>
+            <div class="kpi-value">33</div>
+            <div class="kpi-sub neutral">SKU 132010001118</div>
+          </div>
+        </div>
+      </div>
+      <div class="store-block">
+        <div class="store-label lbl-texp">TExpress &mdash; Ft Covington</div>
+        <div class="kpi-grid kpi-grid-3" style="gap:8px">
+          <div class="kpi kpi-red">
+            <div class="kpi-label">Bfast Baskets</div>
+            <div class="kpi-value">683</div>
+            <div class="kpi-sub dn">&minus;9.2% vs LY &middot; +7.2% vs May</div>
+          </div>
+          <div class="kpi kpi-red">
+            <div class="kpi-label">Bfast Units</div>
+            <div class="kpi-value">852</div>
+            <div class="kpi-sub dn">&minus;16.0% vs LY (was 1,014)</div>
+          </div>
+          <div class="kpi kpi-red">
+            <div class="kpi-label">Bfast Revenue</div>
+            <div class="kpi-value">$3,408</div>
+            <div class="kpi-sub dn">&minus;4.0% vs LY</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Coffee Units</div>
+            <div class="kpi-value">290</div>
+            <div class="kpi-sub up">+39.4% vs LY (was 208)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Combo Rate</div>
+            <div class="kpi-value">11.6%</div>
+            <div class="kpi-sub up">79 combos &middot; was 3.5% LY</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Free Coffee Fills</div>
+            <div class="kpi-value">23</div>
+            <div class="kpi-sub neutral">SKU 132010001118</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-warn" style="margin-top:12px;">
+      <b>&#9888; TExpress breakfast continues to decline:</b> &minus;16.0% YOY (1,014 &rarr; 852 units) for the second consecutive month. Recommend investigating supply availability, pricing, or customer shift to competing breakfast items. MOM trend is recovering (+7.2% vs May), which is a positive early signal.
+    </div>
+    <div class="alert alert-green" style="margin-top:8px;">
+      <b>Coffee growing strongly at both stores:</b> TGC +124.0% YOY &middot; TExpress +39.4%. Both stores showed significantly higher combo rates in June 2026 vs June 2025 (TGC: 4.9% &rarr; 8.8% &middot; TExp: 3.5% &rarr; 11.6%), confirming increasing morning routine pairing of breakfast + coffee &mdash; 8&ndash;16&times; higher than the lunch sandwich combo rate.
+    </div>
+  </div>
+
+</div><!-- end twinleaf tab -->
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- SMOKERS TAB                                            -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="tab-section" id="tab-smokers">
+
+  <!-- PROMO 2: FIREWORKS -->
+  <div class="section-header">
+    <div class="section-dot dot-sw"></div>
+    <h2>Promo 2 &mdash; Continuing Fireworks Tiered Discount</h2>
+    <span class="tag tag-seasonal">Seasonal Snapshot</span>
+  </div>
+  <div class="section-actions">
+    <a class="detail-link detail-link-sw" href="41_Fireworks_June_2026_Campaign_Performance.html" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      June 2026 Fireworks Detail Report &rarr;
+    </a>
+  </div>
+
+  <div class="mechanic">
+    <strong>Mechanic:</strong> Tier 1: $50&ndash;$999 = 10% off &middot; Tier 2: $1,000&ndash;$1,999 = 15% off &middot; Tier 3: $2,000+ = 20% off &nbsp;|&nbsp;
+    <strong>Period:</strong> All Summer (ongoing) &nbsp;|&nbsp; <strong>Stores:</strong> SW1 + SW2 &nbsp;|&nbsp;
+    <strong>Note:</strong> Tracked by product category (no UPCs for fireworks)
+  </div>
+
+  <div class="alert alert-green">
+    <b>June is peak fireworks season.</b> Combined FW revenue reached <b>$150,801</b> in June 2026 &mdash; up +16.6% YOY &mdash; driven entirely by higher basket sizes (+21.3%) despite slightly fewer trips (&minus;3.8%). Both stores saw qualifying rate improvements (SW1: 62.4% &rarr; 69.1% &middot; SW2: 59.3% &rarr; 71.9%).
+  </div>
+
+  <div class="card card-sw">
+    <div class="card-title">Fireworks Combined Performance &mdash; June 2026 Full Month vs June 2025</div>
+    <div class="kpi-grid kpi-grid-4">
+      <div class="kpi kpi-hl-sw">
+        <div class="kpi-label">Total FW Revenue (Both Stores)</div>
+        <div class="kpi-value">$150,801</div>
+        <div class="kpi-sub up">+$21,513 &middot; +16.6% YOY</div>
+      </div>
+      <div class="kpi kpi-hl-sw">
+        <div class="kpi-label">Gross Margin $</div>
+        <div class="kpi-value">$74,539</div>
+        <div class="kpi-sub up">+$10,282 &middot; +16.0% YOY</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">FW Trips (Baskets)</div>
+        <div class="kpi-value">782</div>
+        <div class="kpi-sub dn">&minus;31 trips &middot; &minus;3.8% YOY</div>
+      </div>
+      <div class="kpi kpi-green">
+        <div class="kpi-label">Avg Basket Size</div>
+        <div class="kpi-value">$192.84</div>
+        <div class="kpi-sub up">+$33.81 &middot; +21.3% YOY</div>
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin-top:12px;font-size:12px;">
+      <b>Revenue bridge:</b> Jun 2025 baseline $129,288 &rarr; trip effect <span class="dn">&minus;$4,930</span> (&minus;31 trips) &rarr; basket-size effect <span class="up">+$26,443</span> &rarr; Jun 2026 <b>$150,801</b>. The growth is entirely basket-driven &mdash; fewer customers spending significantly more per trip. Est. combined discount cost: <b>$16,583</b> (+$3,130 vs Jun 25).
+    </div>
+  </div>
+
+  <div class="card card-sw">
+    <div class="card-title">Per-Store Performance &mdash; June 2026 vs June 2025</div>
+    <div class="store-grid">
+      <div class="store-block">
+        <div class="store-label lbl-sw1">SW1 &mdash; Akwesasne</div>
+        <div class="kpi-grid kpi-grid-2" style="gap:8px">
+          <div class="kpi kpi-hl-sw">
+            <div class="kpi-label">FW Revenue</div>
+            <div class="kpi-value">$123,837</div>
+            <div class="kpi-sub up">+15.7% vs Jun 25 ($107,023)</div>
+          </div>
+          <div class="kpi kpi-hl-sw">
+            <div class="kpi-label">Gross Margin $</div>
+            <div class="kpi-value">$61,238</div>
+            <div class="kpi-sub up">+15.8% vs Jun 25</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">FW Trips</div>
+            <div class="kpi-value">611</div>
+            <div class="kpi-sub dn">&minus;3.2% vs Jun 25 (631)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Avg Basket Size</div>
+            <div class="kpi-value">$202.68</div>
+            <div class="kpi-sub up">+19.5% vs Jun 25 ($169.61)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Qualifying Baskets</div>
+            <div class="kpi-value">422</div>
+            <div class="kpi-sub up">69.1% qualify (+7.1% vs LY)</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Est. Discount Cost</div>
+            <div class="kpi-value">$13,812</div>
+            <div class="kpi-sub neutral">11.2% blended rate</div>
+          </div>
+        </div>
+      </div>
+      <div class="store-block">
+        <div class="store-label lbl-sw2">SW2 &mdash; Ft Covington</div>
+        <div class="kpi-grid kpi-grid-2" style="gap:8px">
+          <div class="kpi kpi-hl-sw">
+            <div class="kpi-label">FW Revenue</div>
+            <div class="kpi-value">$26,965</div>
+            <div class="kpi-sub up">+21.1% vs Jun 25 ($22,265)</div>
+          </div>
+          <div class="kpi kpi-hl-sw">
+            <div class="kpi-label">Gross Margin $</div>
+            <div class="kpi-value">$13,301</div>
+            <div class="kpi-sub up">+16.7% vs Jun 25</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">FW Trips</div>
+            <div class="kpi-value">171</div>
+            <div class="kpi-sub dn">&minus;6.0% vs Jun 25 (182)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Avg Basket Size</div>
+            <div class="kpi-value">$157.69</div>
+            <div class="kpi-sub up">+28.9% vs Jun 25 ($122.34)</div>
+          </div>
+          <div class="kpi kpi-green">
+            <div class="kpi-label">Qualifying Baskets</div>
+            <div class="kpi-value">123</div>
+            <div class="kpi-sub up">71.9% qualify (+13.9% vs LY)</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Est. Discount Cost</div>
+            <div class="kpi-value">$2,771</div>
+            <div class="kpi-sub neutral">10.3% blended rate</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-sw">
+    <div class="card-title">June 2026 Basket Driver Analysis (Per Store)</div>
+    <div class="sched-wrap">
+      <table class="sched">
+        <thead>
+          <tr>
+            <th>Store</th><th>Period</th>
+            <th style="text-align:right">Avg Basket</th>
+            <th style="text-align:right">Median Basket</th>
+            <th style="text-align:right">Avg Units/Bk</th>
+            <th style="text-align:right">Avg Price/Unit</th>
+            <th style="text-align:right">Avg SKUs/Bk</th>
+            <th style="text-align:right">Qualify Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:#a78bfa;font-weight:700">SW1</td><td>Jun 2025</td>
+            <td style="text-align:right">$169.61</td><td style="text-align:right">$80</td>
+            <td style="text-align:right">4.3</td><td style="text-align:right">$39.84</td>
+            <td style="text-align:right">2.8</td><td style="text-align:right">62.4%</td>
+          </tr>
+          <tr style="background:rgba(167,139,250,.04)">
+            <td style="color:#a78bfa;font-weight:700">SW1</td><td><b>Jun 2026</b></td>
+            <td style="text-align:right;color:#34d399"><b>$202.68</b></td><td style="text-align:right;color:#34d399"><b>$100</b></td>
+            <td style="text-align:right">4.2</td><td style="text-align:right;color:#34d399"><b>$48.64</b></td>
+            <td style="text-align:right;color:#34d399"><b>3.1</b></td>
+            <td style="text-align:right;color:#34d399"><b>69.1%</b></td>
+          </tr>
+          <tr>
+            <td style="color:#60a5fa;font-weight:700">SW2</td><td>Jun 2025</td>
+            <td style="text-align:right">$122.34</td><td style="text-align:right">$72</td>
+            <td style="text-align:right">4.1</td><td style="text-align:right">$29.57</td>
+            <td style="text-align:right">2.9</td><td style="text-align:right">59.3%</td>
+          </tr>
+          <tr style="background:rgba(96,165,250,.04)">
+            <td style="color:#60a5fa;font-weight:700">SW2</td><td><b>Jun 2026</b></td>
+            <td style="text-align:right;color:#34d399"><b>$157.69</b></td><td style="text-align:right;color:#34d399"><b>$100</b></td>
+            <td style="text-align:right;color:#f87171">2.7</td><td style="text-align:right;color:#34d399"><b>$58.24</b></td>
+            <td style="text-align:right;color:#f87171">2.3</td>
+            <td style="text-align:right;color:#34d399"><b>71.9%</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-warn" style="margin-top:12px;font-size:12px;">
+      <b>SW2 unit volume note:</b> SW2 FW units fell &minus;38.5% YOY (753 &rarr; 463) while revenue grew +21.1%. This is explained by avg price/unit rising +97.0% ($29.57 &rarr; $58.24), indicating a significant product mix shift toward higher-value items. SKUs per basket also fell from 2.9 to 2.3 &mdash; fewer item types, higher unit prices. Likely reflects fewer small-value items and more premium/large SKUs in the assortment.
+    </div>
+  </div>
+
+  <div class="card card-sw">
+    <div class="card-title">June 2026 Tier Distribution (Both Stores)</div>
+    <div class="store-grid">
+      <div>
+        <div class="store-label lbl-sw1" style="margin-bottom:8px;">SW1 &mdash; Akwesasne</div>
+        <table class="tier-table">
+          <thead><tr><th>Tier</th><th>Bskt '26</th><th>Qualify %</th><th>FW Rev '26</th><th>FW Rev '25</th><th>YOY</th></tr></thead>
+          <tbody>
+            <tr><td class="t1">Tier 1: $50&ndash;$999 (10%)</td><td>422</td><td>69.1%</td><td>&mdash;</td><td>&mdash;</td><td class="up">+7.1% bkts</td></tr>
+            <tr><td class="t2">Tier 2: $1,000&ndash;$1,999 (15%)</td><td colspan="5" style="color:var(--muted);font-size:11px">See full report for tier breakdown</td></tr>
+            <tr><td class="t3">Tier 3: $2,000+ (20%)</td><td colspan="5" style="color:var(--muted);font-size:11px">See full report for tier breakdown</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="store-label lbl-sw2" style="margin-bottom:8px;">SW2 &mdash; Ft Covington</div>
+        <table class="tier-table">
+          <thead><tr><th>Tier</th><th>Bskt '26</th><th>Qualify %</th><th>FW Rev '26</th><th>FW Rev '25</th><th>YOY</th></tr></thead>
+          <tbody>
+            <tr><td class="t1">Tier 1: $50&ndash;$999 (10%)</td><td>123</td><td>71.9%</td><td>&mdash;</td><td>&mdash;</td><td class="up">+13.9% bkts</td></tr>
+            <tr><td class="t2">Tier 2: $1,000&ndash;$1,999 (15%)</td><td colspan="5" style="color:var(--muted);font-size:11px">See full report for tier breakdown</td></tr>
+            <tr><td class="t3">Tier 3: $2,000+ (20%)</td><td colspan="5" style="color:var(--muted);font-size:11px">See full report for tier breakdown</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin-top:10px;font-size:12px;">
+      June is the peak season month &mdash; see the <a href="41_Fireworks_June_2026_Campaign_Performance.html" target="_blank" style="color:#93c5fd;">Full Fireworks Report</a> for complete Tier 2/3 basket detail, tier migration analysis (YOY shift in basket tiers), weekly pattern, and top SKU breakdown.
+    </div>
+  </div>
+
+</div><!-- end smokers tab -->
+
+<div class="footer">
+  Generated July 7, 2026 &nbsp;|&nbsp; Prepared by <b style="color:var(--text);">Arthur Elliott</b> &nbsp;|&nbsp;
+  Analysis window: June 1&ndash;30, 2026 (Full Month) vs June 2025 &nbsp;|&nbsp;
+  Source reports: 37 &middot; 38 &middot; 41 &middot; 44 enriched transaction exports &nbsp;|&nbsp;
+  Bundle completion rates understated without dedicated combo PLUs &nbsp;|&nbsp;
+  Smart Water adoption = % of 1L SW transactions with 2+ units purchased
+</div>
+
+</div><!-- .page -->
+
+<script>
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tl','active-sw'));
+  document.getElementById('tab-' + name).classList.add('visible');
+  btn.classList.add(name === 'twinleaf' ? 'active-tl' : 'active-sw');
+}
+</script>
+</body>
+</html>

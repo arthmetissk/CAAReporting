@@ -1,0 +1,975 @@
+<title>July 2026 Promotion Results — CAA</title>
+<style>
+  /* ── TOKENS ── */
+  :root {
+    --bg:        #fafaf8;
+    --surface:   #ffffff;
+    --surface2:  #f4f3f0;
+    --border:    #e2e0db;
+    --text:      #111827;
+    --muted:     #6b7280;
+    --dim:       #9ca3af;
+
+    --tl:        #6d28d9;   /* Twinleaf violet */
+    --tl-soft:   #f5f3ff;
+    --tl-mid:    rgba(109,40,217,.12);
+    --tl-border: rgba(109,40,217,.25);
+
+    --sw:        #0369a1;   /* Smokers sky */
+    --sw-soft:   #f0f9ff;
+    --sw-mid:    rgba(3,105,161,.12);
+    --sw-border: rgba(3,105,161,.25);
+
+    --pos:       #059669;
+    --pos-bg:    #ecfdf5;
+    --neg:       #dc2626;
+    --neg-bg:    #fff1f2;
+    --warn:      #b45309;
+    --warn-bg:   #fffbeb;
+
+    --beer:      #92400e;
+    --beer-bg:   #fef3c7;
+    --beer-acc:  #d97706;
+
+    --r:         10px;
+    --shadow:    0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #0d1421;
+      --surface:   #141e30;
+      --surface2:  #1a2540;
+      --border:    rgba(255,255,255,.09);
+      --text:      #e2e8f0;
+      --muted:     #94a3b8;
+      --dim:       #64748b;
+
+      --tl-soft:   rgba(109,40,217,.15);
+      --tl-mid:    rgba(109,40,217,.18);
+      --tl-border: rgba(139,92,246,.35);
+
+      --sw-soft:   rgba(3,105,161,.15);
+      --sw-mid:    rgba(3,105,161,.18);
+      --sw-border: rgba(14,165,233,.35);
+
+      --pos-bg:    rgba(5,150,105,.15);
+      --neg-bg:    rgba(220,38,38,.15);
+      --warn-bg:   rgba(180,83,9,.15);
+      --warn:      #f59e0b;
+
+      --beer-bg:   rgba(146,64,14,.20);
+      --beer:      #fbbf24;
+      --beer-acc:  #f59e0b;
+
+      --shadow:    0 2px 8px rgba(0,0,0,.3);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg:#0d1421; --surface:#141e30; --surface2:#1a2540;
+    --border:rgba(255,255,255,.09); --text:#e2e8f0; --muted:#94a3b8; --dim:#64748b;
+    --tl-soft:rgba(109,40,217,.15); --tl-mid:rgba(109,40,217,.18); --tl-border:rgba(139,92,246,.35);
+    --sw-soft:rgba(3,105,161,.15); --sw-mid:rgba(3,105,161,.18); --sw-border:rgba(14,165,233,.35);
+    --pos-bg:rgba(5,150,105,.15); --neg-bg:rgba(220,38,38,.15);
+    --warn-bg:rgba(180,83,9,.15); --warn:#f59e0b;
+    --beer-bg:rgba(146,64,14,.20); --beer:#fbbf24; --beer-acc:#f59e0b;
+    --shadow:0 2px 8px rgba(0,0,0,.3);
+  }
+  :root[data-theme="light"] {
+    --bg:#fafaf8; --surface:#ffffff; --surface2:#f4f3f0;
+    --border:#e2e0db; --text:#111827; --muted:#6b7280; --dim:#9ca3af;
+    --tl-soft:#f5f3ff; --tl-mid:rgba(109,40,217,.12); --tl-border:rgba(109,40,217,.25);
+    --sw-soft:#f0f9ff; --sw-mid:rgba(3,105,161,.12); --sw-border:rgba(3,105,161,.25);
+    --pos:#059669; --pos-bg:#ecfdf5; --neg:#dc2626; --neg-bg:#fff1f2;
+    --warn:#b45309; --warn-bg:#fffbeb;
+    --beer:#92400e; --beer-bg:#fef3c7; --beer-acc:#d97706;
+    --shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+  }
+
+  /* ── RESET & BASE ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 40px 20px 80px; }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .masthead-left .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .masthead h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.15;
+    text-wrap: balance;
+    color: var(--text);
+  }
+  .masthead-meta {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.7;
+  }
+  .theme-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 5px 12px; font-size: 12px; cursor: pointer;
+    background: var(--surface); color: var(--muted);
+    margin-top: 8px; transition: border-color .15s;
+  }
+  .theme-toggle:hover { border-color: var(--tl); color: var(--text); }
+
+  /* ── EXEC SUMMARY ── */
+  .exec-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .exec-cell {
+    background: var(--surface);
+    padding: 16px 18px;
+  }
+  .exec-cell .store-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+  }
+  .exec-cell .promo-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+  .exec-cell .metric { font-size: 22px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+  .exec-cell .metric-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .exec-cell .delta { font-size: 12px; font-weight: 700; margin-top: 8px; }
+  .pos { color: var(--pos); }
+  .neg { color: var(--neg); }
+  .warn { color: var(--warn); }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin: 44px 0 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-header.tl { border-bottom-color: var(--tl); }
+  .section-header.sw { border-bottom-color: var(--sw); }
+  .store-badge {
+    font-size: 11px; font-weight: 800; letter-spacing: .07em;
+    text-transform: uppercase; padding: 4px 10px;
+    border-radius: 999px;
+  }
+  .store-badge.tl { background: var(--tl-soft); color: var(--tl); border: 1px solid var(--tl-border); }
+  .store-badge.sw { background: var(--sw-soft); color: var(--sw); border: 1px solid var(--sw-border); }
+  .section-header h2 { font-size: 1.25rem; font-weight: 800; }
+
+  /* ── PROMO BLOCK ── */
+  .promo-block { margin-bottom: 24px; }
+  .promo-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 12px; margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .promo-title-group .audience-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 3px;
+  }
+  .promo-title { font-size: 1.05rem; font-weight: 800; }
+  .promo-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .period-chip {
+    font-size: 11px; color: var(--muted); background: var(--surface2);
+    border: 1px solid var(--border); padding: 4px 10px; border-radius: 999px;
+    white-space: nowrap; flex-shrink: 0; align-self: flex-start;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+  }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .kpi-val { font-size: 24px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+  .kpi.accent-tl { background: var(--tl-soft); border-color: var(--tl-border); }
+  .kpi.accent-sw { background: var(--sw-soft); border-color: var(--sw-border); }
+  .kpi.accent-pos { background: var(--pos-bg); border-color: rgba(5,150,105,.3); }
+  .kpi.accent-neg { background: var(--neg-bg); border-color: rgba(220,38,38,.25); }
+  .kpi.accent-warn { background: var(--warn-bg); border-color: rgba(180,83,9,.25); }
+
+  /* ── BEER LIFT CALLOUT ── */
+  .beer-lift {
+    background: var(--beer-bg);
+    border: 2px solid var(--beer-acc);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin: 16px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .beer-lift::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--beer-acc), #fbbf24);
+  }
+  .beer-lift-eyebrow {
+    font-size: 10px; font-weight: 800; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--beer-acc); margin-bottom: 8px;
+  }
+  .beer-lift-headline {
+    font-size: 1.3rem; font-weight: 900; color: var(--beer); line-height: 1.2;
+    margin-bottom: 12px; text-wrap: balance;
+  }
+  .beer-lift-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .beer-stat { }
+  .beer-stat-val { font-size: 28px; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--beer); line-height: 1; }
+  .beer-stat-label { font-size: 11px; color: var(--warn); margin-top: 4px; font-weight: 600; }
+  .beer-stat-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .beer-note { font-size: 12px; color: var(--warn); margin-top: 14px; border-top: 1px solid rgba(180,83,9,.2); padding-top: 12px; line-height: 1.6; }
+
+  /* ── TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  /* ── STORE SPLIT TABLE ── */
+  .store-split {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  .store-split table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .store-split th {
+    background: var(--surface2); color: var(--muted);
+    font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; padding: 10px 14px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .store-split th:not(:first-child) { text-align: right; }
+  .store-split td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
+  .store-split td:not(:first-child) { text-align: right; }
+  .store-split tr:last-child td { border-bottom: none; }
+  .store-split tr:hover td { background: var(--surface2); }
+  .store-label-tl { font-weight: 700; color: var(--tl); }
+  .store-label-sw { font-weight: 700; color: var(--sw); }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    font-size: 12.5px; color: var(--muted); line-height: 1.65;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .insight strong { color: var(--text); }
+
+  /* ── NOTE BOX ── */
+  .note-box {
+    font-size: 12px; line-height: 1.6; padding: 10px 14px;
+    border-radius: 8px; border-left: 3px solid; margin-bottom: 12px;
+  }
+  .note-box.warn { border-color: var(--warn); background: var(--warn-bg); color: var(--warn); }
+  .note-box.pos  { border-color: var(--pos);  background: var(--pos-bg);  color: var(--pos); }
+  .note-box.info { border-color: var(--muted); background: var(--surface2); color: var(--muted); }
+
+  /* ── FLAVOR TABLE ── */
+  .flavor-bar-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .flavor-bar-row:last-child { border-bottom: none; }
+  .flavor-name { width: 130px; flex-shrink: 0; }
+  .flavor-bar-wrap { flex: 1; background: var(--surface2); border-radius: 3px; height: 8px; overflow: hidden; }
+  .flavor-bar-fill { height: 100%; border-radius: 3px; }
+  .flavor-units { width: 45px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); flex-shrink: 0; }
+  .t1-fill { background: #f97316; }
+  .t2-fill { background: #a78bfa; }
+  .t1-label { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #f97316; background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.3); border-radius: 999px; padding: 1px 6px; margin-right: 4px; vertical-align: middle; }
+
+  /* ── SEPARATOR ── */
+  hr.section-rule { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+  /* ── REPORT LINK CHIPS ── */
+  .report-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; align-self: flex-start; flex-shrink: 0; }
+  .period-chip, .report-link {
+    font-size: 11px; background: var(--surface2);
+    border: 1px solid var(--border); padding: 4px 10px; border-radius: 999px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .report-link {
+    font-weight: 600; color: var(--muted); text-decoration: none;
+    transition: color .15s, border-color .15s;
+  }
+  .report-link:hover { color: var(--text); border-color: var(--muted); }
+  .report-link.tl:hover { color: var(--tl); border-color: var(--tl-border); }
+  .report-link.sw:hover { color: var(--sw); border-color: var(--sw-border); }
+
+  /* ── FOOTER ── */
+  .footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--dim); line-height: 1.7; }
+  .footer a { color: var(--muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 720px) {
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .exec-grid { grid-template-columns: 1fr 1fr; }
+    .beer-lift-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .kpi-row { grid-template-columns: 1fr; }
+    .exec-grid { grid-template-columns: 1fr; }
+    .beer-lift-grid { grid-template-columns: 1fr; }
+    .masthead { flex-direction: column; align-items: flex-start; }
+    .masthead-meta { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+
+  <!-- MASTHEAD -->
+  <div class="masthead">
+    <div class="masthead-left">
+      <div class="eyebrow">Promotion Performance Review</div>
+      <h1>July 2026 Results<br><span style="color:var(--muted);font-weight:500;font-size:1.1rem">Twinleaf &amp; Smokers Warehouse</span></h1>
+    </div>
+    <div class="masthead-meta">
+      Period: July 1–31, 2026 (full month)<br>
+      YOY: July 2025 &nbsp;|&nbsp; MOM: June 2026<br>
+      Reports: 37c · 37d · 38c · 38d · 41d · 41e · 45 · 46 · 47a · 47b<br>
+      <button class="theme-toggle" onclick="(function(){var r=document.documentElement;var d=r.getAttribute('data-theme');r.setAttribute('data-theme',d==='dark'?'light':'dark');})()">&#9680; Toggle theme</button>
+    </div>
+  </div>
+
+  <!-- EXEC SUMMARY STRIP -->
+  <div class="exec-grid">
+    <div class="exec-cell">
+      <div class="store-tag">Twinleaf · Both Stores</div>
+      <div class="promo-name">Lunch Sandwich Deal $4.99</div>
+      <div class="metric">1,916</div>
+      <div class="metric-label">sandwich transactions &nbsp;·&nbsp; 11 full combos detected &nbsp;·&nbsp; 9 PP redemptions</div>
+      <div class="delta neg">−9.5% YOY &nbsp;|&nbsp; +1.8% MOM</div>
+    </div>
+    <div class="exec-cell">
+      <div class="store-tag">Twinleaf · Both Stores</div>
+      <div class="promo-name">Breakfast &amp; Coffee Combo $3.99</div>
+      <div class="metric">74</div>
+      <div class="metric-label">combo baskets detected</div>
+      <div class="delta pos">5.4% attach rate &nbsp;|&nbsp; $110.58 savings</div>
+    </div>
+    <div class="exec-cell" style="background:var(--beer-bg);border-color:var(--beer-acc)">
+      <div class="store-tag" style="color:var(--beer-acc)">Twinleaf · Both Stores</div>
+      <div class="promo-name" style="color:var(--beer)">Summer Cooler Deal</div>
+      <div class="metric" style="color:var(--beer)">+10</div>
+      <div class="metric-label" style="color:var(--warn)">qualifying 2-pack trips</div>
+      <div class="delta" style="color:var(--beer)">+8.9% YOY &nbsp;|&nbsp; 12.8% adoption</div>
+    </div>
+    <div class="exec-cell">
+      <div class="store-tag">Smokers Warehouse · Both</div>
+      <div class="promo-name">ZYN Stock Up Discount</div>
+      <div class="metric">1,338</div>
+      <div class="metric-label">units sold</div>
+      <div class="delta pos">+27.4% YOY &nbsp;|&nbsp; +14.8% MOM</div>
+    </div>
+    <div class="exec-cell">
+      <div class="store-tag">Smokers Warehouse · SW1</div>
+      <div class="promo-name">Spark the 4th &nbsp;<span style="font-size:11px;color:var(--muted)">(Jun 23–Jul 6)</span></div>
+      <div class="metric pos">100%</div>
+      <div class="metric-label">redemption rate (SW1)</div>
+      <div class="delta pos">15 of 15 qualifying baskets redeemed</div>
+    </div>
+    <div class="exec-cell" style="background:var(--pos-bg);border-color:var(--pos)">
+      <div class="store-tag" style="color:var(--pos)">All 4 Stores · Loyalty</div>
+      <div class="promo-name">Members Beat the Heat</div>
+      <div class="metric" style="color:var(--pos)">236</div>
+      <div class="metric-label">loyalty cold vault cards · Jul 2026</div>
+      <div class="delta pos">+25.5% YOY cards &nbsp;·&nbsp; $18,494 loyalty revenue</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       TWINLEAF
+  ════════════════════════════════════════ -->
+  <div class="section-header tl">
+    <span class="store-badge tl">Twinleaf</span>
+    <h2>TGC (Akwesasne) &amp; TExpress (Ft Covington)</h2>
+  </div>
+
+  <!-- ── SANDWICH DEAL ── -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Everyone — Ongoing</div>
+        <div class="promo-title">Lunch Sandwich Deal — $4.99 = Sandwich + Chip + Fountain</div>
+        <div class="promo-desc">Regular value $5.78–$5.98 · saves $0.79–$0.99 per purchase</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Full month Jul 1–31</span>
+        <a href="37c_Sandwich_Deal_Component_Breakdown_July2026.html" class="report-link tl" target="_blank">Component Breakdown →</a>
+        <a href="37d_Sandwich_Deal_Loyalty_Promo_Twinleaf_July2026.html" class="report-link tl" target="_blank">Loyalty Report →</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Sandwich Transactions (Sandwich Only)</div>
+        <div class="kpi-val">1,916</div>
+        <div class="kpi-sub"><span class="neg">−9.5% vs Jul 2025</span><br>+1.8% vs Jun 2026<br>Trips with a sandwich SKU — regardless of other items</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Chip Units</div>
+        <div class="kpi-val">499</div>
+        <div class="kpi-sub"><span class="neg">−6.9% YOY</span><br>2.4% sandwich basket attach rate</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Fountain Units</div>
+        <div class="kpi-val">460</div>
+        <div class="kpi-sub"><span class="pos">+293% YOY</span><br>1.1% sandwich basket attach rate</div>
+      </div>
+      <div class="kpi accent-pos">
+        <div class="kpi-label">Full $4.99 Combo — POS Detected</div>
+        <div class="kpi-val pos">11</div>
+        <div class="kpi-sub">Sandwich + Chip + Fountain in same trip<br>TGC 6 &nbsp;·&nbsp; TExpress 5 &nbsp;·&nbsp; 0.6% of sandwich transactions</div>
+      </div>
+    </div>
+
+    <div class="store-split">
+      <table>
+        <thead>
+          <tr><th>Store</th><th>Sandwich Transactions Jul 26</th><th>YOY</th><th>Chip Units</th><th>Chip Attach</th><th>Fountain Units</th><th>Full Combo Detected (POS)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="store-label-tl">TGC</td>
+            <td>1,222</td>
+            <td class="neg">−1.4%</td>
+            <td>211</td>
+            <td>1.3%</td>
+            <td>290</td>
+            <td class="pos">6</td>
+          </tr>
+          <tr>
+            <td class="store-label-tl">TExpress</td>
+            <td>694</td>
+            <td class="neg">−20.9%</td>
+            <td>288</td>
+            <td>4.3%</td>
+            <td>170</td>
+            <td class="pos">5</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note-box info">
+      <strong>How redemptions are counted — two sources:</strong><br>
+      <strong>Transaction data (POS co-occurrence):</strong> 11 trips where all three components — sandwich, chip, and fountain — appeared together in the same basket. This is detected by matching SKU co-occurrence in transaction records. It captures every customer, loyalty or not, who bought all three items in one visit. TGC 6 &nbsp;·&nbsp; TExpress 5.<br><br>
+      <strong>Patron Points app redemptions:</strong> 9 customers explicitly scanned the $4.99 deal through the Patron Points app in July. TGC 6 &nbsp;·&nbsp; TExpress 3. These are the confirmed deal redemptions tracked through the loyalty program. Source: ppSpecialsPromotions_20260813153911.xlsx.
+    </div>
+
+    <div class="insight">
+      <strong>Loyalty:</strong> TGC — 85 card holders, 83.5% multi-month repeat rate, 93.9% July return rate. TExpress — 77 card holders, 80.5% multi-month, 93.5% return. Sandwich buyers are strongly habitual — Jul 2025–Jul 2026 cumulative: 12,030 → 10,820 baskets (−10.1%), suggesting a gradual volume decline worth monitoring independent of the promo.
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- ── BREAKFAST & COFFEE ── -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Everyone — Ongoing</div>
+        <div class="promo-title">Breakfast &amp; Coffee Combo — $3.99 = Breakfast Sandwich + Free Coffee</div>
+        <div class="promo-desc">Regular $4.99–$5.69 · saves $1.00–$1.70 (coffee is free)</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Full month Jul 1–31</span>
+        <a href="38c_Breakfast_Coffee_Component_Breakdown_July2026.html" class="report-link tl" target="_blank">Component Breakdown →</a>
+        <a href="38d_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf_July2026.html" class="report-link tl" target="_blank">Loyalty Report →</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Breakfast Baskets</div>
+        <div class="kpi-val">1,380</div>
+        <div class="kpi-sub">TGC 715 <span class="pos">(+6.2% YOY)</span><br>TExp 665 <span class="pos">(+0.6% YOY)</span></div>
+      </div>
+      <div class="kpi accent-pos">
+        <div class="kpi-label">Combo Baskets Detected</div>
+        <div class="kpi-val pos">74</div>
+        <div class="kpi-sub">5.4% of bfast baskets<br>TGC 7.0% · TExp 3.6%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Customer Savings Delivered</div>
+        <div class="kpi-val">$110.58</div>
+        <div class="kpi-sub">TGC $75.15 · TExp $35.43<br>avg $1.49/combo</div>
+      </div>
+      <div class="kpi accent-pos">
+        <div class="kpi-label">Patron Points Redemptions</div>
+        <div class="kpi-val pos">18</div>
+        <div class="kpi-sub">TGC 15 · TExp 3<br>Source: ppSpecialsPromotions Jul 2026</div>
+      </div>
+    </div>
+
+    <div class="store-split">
+      <table>
+        <thead>
+          <tr><th>Store</th><th>Bfast Baskets Jul 26</th><th>YOY</th><th>Combo Baskets</th><th>Combo Rate</th><th>LY Rate</th><th>Customer Savings</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="store-label-tl">TGC</td>
+            <td>715</td>
+            <td class="pos">+6.2%</td>
+            <td>50</td>
+            <td class="pos">7.0%</td>
+            <td>5.1%</td>
+            <td>$75.15</td>
+          </tr>
+          <tr>
+            <td class="store-label-tl">TExpress</td>
+            <td>665</td>
+            <td class="pos">+0.6%</td>
+            <td>24</td>
+            <td>3.6%</td>
+            <td>7.6%</td>
+            <td>$35.43</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note-box info">
+      <strong>Patron Points vs POS detection:</strong> Patron Points reported <strong>18 Breakfast &amp; Coffee redemptions</strong> in July (TGC 15, TExpress 3), sourced from the loyalty app scan log. POS basket analysis detected 74 combo baskets via same-transaction co-occurrence of breakfast + coffee SKUs — these measure different things. The 74 POS combos capture all customers (loyalty and non-loyalty) who bought both items in one trip; the 18 PP redemptions are customers who explicitly scanned the deal through the Patron Points app.
+    </div>
+
+    <div class="insight">
+      <strong>Loyalty strength:</strong> TGC — 96.4% July return rate, avg 4.1 bfast visits in July, 85.3% multi-month rate. TExpress — 92.6% return, avg 3.2 visits, 82.2% multi-month. Breakfast buyers are the most habitual segment in the store. TExpress coffee units dropped −51.3% YOY (136 vs 279) — worth investigating supply or ringing behaviour at that location.
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- ── SUMMER COOLER DEAL / BEER ── -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Everyone — All July Long</div>
+        <div class="promo-title">&#127866; "Summer Cooler Deal" — Buy 2 Beer 12-Packs, Get a Free Bag of Ice</div>
+        <div class="promo-desc">All BEER dept 12-pack products qualify · Ice SKUs: 407022023107 · 66594</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Full month Jul 1–31</span>
+        <a href="45_Summer_Cooler_Deal_July_2026.html" class="report-link tl" target="_blank">Summer Cooler Deal →</a>
+      </div>
+    </div>
+
+    <!-- BEER LIFT CALLOUT -->
+    <div class="beer-lift">
+      <div class="beer-lift-eyebrow">&#9733; Key Result — Qualifying 2-Pack Purchases</div>
+      <div class="beer-lift-headline">The promotion successfully shifted customers toward 2-pack buying — qualifying trips rose +8.9% year-over-year even as overall beer volume was slightly softer</div>
+      <div class="beer-lift-grid">
+        <div class="beer-stat">
+          <div class="beer-stat-val">+10</div>
+          <div class="beer-stat-label">Incremental qualifying trips</div>
+          <div class="beer-stat-sub">112 (Jul 2025) → 122 (Jul 2026)</div>
+        </div>
+        <div class="beer-stat">
+          <div class="beer-stat-val">12.8%</div>
+          <div class="beer-stat-label">Promo adoption rate</div>
+          <div class="beer-stat-sub">Up from 11.4% in July 2025 (+12.5%)</div>
+        </div>
+        <div class="beer-stat">
+          <div class="beer-stat-val">$67.73</div>
+          <div class="beer-stat-label">Avg basket — qualifying trips</div>
+          <div class="beer-stat-sub">vs $45.95 baseline (+47.4% higher spend)</div>
+        </div>
+      </div>
+      <div class="beer-note">
+        <strong>Context:</strong> Overall July beer units were −3.1% YOY (1,093 vs 1,128), but this follows a very strong June (+16.1% YOY baseline). The swing of −184 units vs the June trend line reflects organic demand softness — not promo failure. What matters is that within the same customer pool, <strong>10 more trips converted to 2-pack qualifying purchases</strong>, and those trips spent 47% more per basket than the average beer buyer.
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Total Beer Units Jul 26</div>
+        <div class="kpi-val">1,093</div>
+        <div class="kpi-sub"><span class="neg">−3.1% vs Jul 2025</span><br>Revenue: $20,926</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Beer Transactions</div>
+        <div class="kpi-val">952</div>
+        <div class="kpi-sub"><span class="neg">−3.2% YOY</span><br>Avg 1.15 packs/trip</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Beer + Ice Combos</div>
+        <div class="kpi-val">15</div>
+        <div class="kpi-sub">12.3% of qualifying trips<br>Jul 2025: 13 (11.6%)</div>
+      </div>
+      <div class="kpi accent-warn">
+        <div class="kpi-label">Loyalty Beer Trips</div>
+        <div class="kpi-val warn">65</div>
+        <div class="kpi-sub"><span class="neg">−15.6% YOY (77→65)</span><br>6.2% promo adoption (loyalty)</div>
+      </div>
+    </div>
+
+    <div class="store-split">
+      <table>
+        <thead>
+          <tr><th>Store</th><th>Units Jul 26</th><th>YOY</th><th>Trips</th><th>Packs/Trip</th><th>Qualifying (2+)</th><th>Qualify %</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="store-label-tl">TExpress</td>
+            <td>401</td>
+            <td class="pos">+5.0%</td>
+            <td>363</td>
+            <td>1.10</td>
+            <td>34</td>
+            <td>9.4%</td>
+          </tr>
+          <tr>
+            <td class="store-label-tl">TGC</td>
+            <td>692</td>
+            <td class="neg">−7.2%</td>
+            <td>589</td>
+            <td>1.17</td>
+            <td>88</td>
+            <td class="pos">14.9%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight">
+      <strong>TGC is the stronger qualifying location:</strong> 14.9% of TGC beer trips qualified (88 trips) vs 9.4% at TExpress (34 trips). TGC adoption rate was up from 11.7% in July 2025. TExpress units were positive (+5.0%) but qualifying rate actually dipped (10.7% → 9.4%). Top co-purchased categories: Beer (additional packs, $5,811), Cigarettes/Tobacco ($3,146), Fuel ($3,064), Soda ($2,875), Food-to-Go ($2,299). Fuel visits (+17.4%) are a notable bright spot alongside beer trips.
+    </div>
+  </div>
+
+  <!-- MEMBERS BEAT THE HEAT -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Loyalty — All July</div>
+        <div class="promo-title">&#9728; "Members Beat the Heat" — Double Points on Cold Vault</div>
+        <div class="promo-desc">Double points on SODA &amp; BEER depts all month · loyalty vs non-loyalty cold vault comparison</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Full month</span>
+        <a href="47a_BeatHeat_Loyalty_July2026.html" class="report-link tl" target="_blank">Loyalty Performance →</a>
+        <a href="47b_BeatHeat_LoyVsNon_July2026.html" class="report-link tl" target="_blank">Loy vs Non-Loy →</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi accent-tl">
+        <div class="kpi-label">Twinleaf Loyalty Cards</div>
+        <div class="kpi-val" style="color:var(--tl)">152</div>
+        <div class="kpi-sub"><span class="pos">+20.6% vs Jul 2025</span><br>TGC 78 &nbsp;·&nbsp; TExpress 74</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Loyalty CV Revenue</div>
+        <div class="kpi-val">$17,346</div>
+        <div class="kpi-sub">TGC $10,626<br>TExpress $6,720</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Avg Basket / Visit</div>
+        <div class="kpi-val">$6.90</div>
+        <div class="kpi-sub">loyalty cold vault avg<br>2,512 loyalty visits Jul 26</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Trips per Card</div>
+        <div class="kpi-val">16.5</div>
+        <div class="kpi-sub">loyalty visits ÷ loyalty cards<br><span class="pos">Strong repeat frequency</span></div>
+      </div>
+    </div>
+
+    <div class="store-split">
+      <table>
+        <thead>
+          <tr><th>Store</th><th>Loyalty Cards Jul 26</th><th>YOY Cards</th><th>Loyalty Visits</th><th>Loyalty CV Rev</th><th>Avg Basket</th><th>Returning</th><th>New</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="store-label-tl">TGC</td>
+            <td>78</td>
+            <td class="pos">+13.0%</td>
+            <td>1,393</td>
+            <td>$10,626</td>
+            <td>$7.63</td>
+            <td>57</td>
+            <td>21</td>
+          </tr>
+          <tr>
+            <td class="store-label-tl">TExpress</td>
+            <td>74</td>
+            <td class="pos">+29.8%</td>
+            <td>1,119</td>
+            <td>$6,720</td>
+            <td>$6.00</td>
+            <td>50</td>
+            <td>24</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight">
+      <strong>Loyalty story:</strong> 152 Twinleaf loyalty members made 2,512 cold vault visits in July — averaging 16.5 trips per card holder. 107 of 152 (70.4%) were returning buyers who also purchased cold vault in July 2025, validating sustained engagement. 45 members purchased cold vault for the first time under their loyalty card this month. The double-points incentive was concentrated in high-frequency buyers: SODA leads cold vault volume at Twinleaf, driven by fountain drinks and packaged beverages.
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       SMOKERS WAREHOUSE
+  ════════════════════════════════════════ -->
+  <div class="section-header sw">
+    <span class="store-badge sw">Smokers Warehouse</span>
+    <h2>SW1 (Akwesasne) &amp; SW2 (Ft Covington)</h2>
+  </div>
+
+  <!-- ── ZYN DISCOUNT ── -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Everyone — Ongoing through Aug 22</div>
+        <div class="promo-title">&#128230; "Stock Up on ZYN" — ZYN Discount Promotion</div>
+        <div class="promo-desc">Tier 1 new flavors: $1.50 off/can · $7.50 off/roll &nbsp;|&nbsp; Tier 2 established: $0.30 off/can · $1.50 off/roll</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Jul 1–31 (report) · through Aug 22</span>
+        <a href="46_ZYN_BuyDown_SW_July2026.html" class="report-link sw" target="_blank">ZYN Discount →</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi accent-sw">
+        <div class="kpi-label">Total ZYN Units Jul 26</div>
+        <div class="kpi-val" style="color:var(--sw)">1,338</div>
+        <div class="kpi-sub"><span class="pos">+27.4% vs Jul 2025</span><br><span class="pos">+14.8% vs Jun 2026</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Tier 1 — New Flavors</div>
+        <div class="kpi-val" style="color:#f97316">238</div>
+        <div class="kpi-sub">17.8% of total ZYN<br>First full month of launch</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Tier 2 — Established</div>
+        <div class="kpi-val">1,100</div>
+        <div class="kpi-sub">82.2% of total ZYN<br>SW1 808 · SW2 292</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-val">$10,463</div>
+        <div class="kpi-sub">SW1 $8,144 · SW2 $2,320<br>Est. discount cost ~$1,170</div>
+      </div>
+    </div>
+
+    <!-- Flavor breakdown -->
+    <div class="two-col">
+      <div class="store-split">
+        <table>
+          <thead><tr><th>Store</th><th>Units Jul 26</th><th>Jul 25</th><th>YOY</th><th>Tier 1</th><th>Tier 2</th><th>Revenue</th></tr></thead>
+          <tbody>
+            <tr><td class="store-label-sw">SW1</td><td>1,008</td><td>837</td><td class="pos">+20.4%</td><td>200</td><td>808</td><td>$8,144</td></tr>
+            <tr><td class="store-label-sw">SW2</td><td>330</td><td>213</td><td class="pos">+54.9%</td><td>38</td><td>292</td><td>$2,320</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);">
+          <div style="font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Top Flavors by Units — Both Stores Jul 26</div>
+          <div class="flavor-bar-row"><span class="flavor-name"><span class="t1-label">T1</span>Black Cherry</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t1-fill" style="width:42%"></div></div><span class="flavor-units">96</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name"><span class="t1-label">T1</span>Peach</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t1-fill" style="width:41%"></div></div><span class="flavor-units">94</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name"><span class="t1-label">T1</span>Dragon Berry</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t1-fill" style="width:21%"></div></div><span class="flavor-units">48</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name">Wintergreen</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t2-fill" style="width:100%"></div></div><span class="flavor-units">229</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name">Peppermint</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t2-fill" style="width:91%"></div></div><span class="flavor-units">208</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name">Spearmint</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t2-fill" style="width:90%"></div></div><span class="flavor-units">207</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name">Citrus</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t2-fill" style="width:63%"></div></div><span class="flavor-units">144</span></div>
+          <div class="flavor-bar-row"><span class="flavor-name">Cool Mint</span><div class="flavor-bar-wrap"><div class="flavor-bar-fill t2-fill" style="width:44%"></div></div><span class="flavor-units">100</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <strong>Loyalty — ZYN card holders:</strong> SW1 — 54 card holders total (all-time), 75.9% multi-month rate. 11 returning buyers in July, <strong>100% came back</strong> (11 of 11), averaging 3.6 trips in the month. 7 card holders tried Tier 1 new flavors. SW2 — 44 card holders, 56.8% multi-month, 75% July return rate. New flavor adoption is the key signal to track in August — a 60%+ Tier 1 retention rate would confirm habit formation over trial.
+    </div>
+  </div>
+
+  <hr class="section-rule">
+
+  <!-- ── SPARK THE 4TH ── -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Everyone — Limited Run</div>
+        <div class="promo-title">&#10024; "Spark the 4th" — Buy 2 Green Widow 108S, Get 1 Flying Flamingo Free</div>
+        <div class="promo-desc">Green Widow SKU 857205003950 · Flying Flamingo SKU 757201525312 (500-gram cake)</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Jun 23 – Jul 6</span>
+        <a href="41e_Spark_the_4th_Jun23_Jul6_2026.html" class="report-link sw" target="_blank">Spark the 4th →</a>
+        <a href="41d_Fireworks_Jun26_Jul30_Spark4th_2026.html" class="report-link sw" target="_blank">Full Fireworks →</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Qualifying Baskets (≥2 GW)</div>
+        <div class="kpi-val">15</div>
+        <div class="kpi-sub">SW1 only<br>SW2: 0 qualifying purchases</div>
+      </div>
+      <div class="kpi accent-pos">
+        <div class="kpi-label">Confirmed Redemptions</div>
+        <div class="kpi-val pos">15</div>
+        <div class="kpi-sub"><strong>100% redemption rate</strong><br>Every qualifying basket redeemed</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Fireworks — SW1 Jul 30 Window</div>
+        <div class="kpi-val">$282,923</div>
+        <div class="kpi-sub"><span class="pos">+35.1% vs 2025</span><br>Jun 26–Jul 30, 1,504 trips</div>
+      </div>
+      <div class="kpi accent-warn">
+        <div class="kpi-label">Fireworks — SW2 Jul 30 Window</div>
+        <div class="kpi-val warn">$67,935</div>
+        <div class="kpi-sub"><span class="neg">−0.3% vs 2025</span><br>443 trips (−34 YOY)</div>
+      </div>
+    </div>
+
+    <div class="note-box pos">
+      <strong>SW1 execution was flawless:</strong> Every single customer who bought 2+ Green Widow units received their free Flying Flamingo. This indicates strong cashier awareness and POS compliance at Akwesasne.
+    </div>
+    <div class="note-box warn">
+      <strong>SW2 gap:</strong> Only 5 Green Widow line items were recorded at Ft Covington during the promo window, and none were 2+ unit purchases. Green Widow may not have been prominently displayed or adequately stocked at SW2 — worth investigating for any future SKU-specific promotions.
+    </div>
+
+    <div class="insight">
+      <strong>Fireworks season (extended Jun 26–Jul 30):</strong> SW1 had an exceptional season — $282,923 in fireworks revenue, 272 more trips than last year, +35.1% YOY. SW2 was essentially flat (−0.3%). The dual Canada Day / US July 4th window continues to be the strongest fireworks period on the calendar, with Jul 1 and Jul 4 both visible as demand peaks in the daily trend charts.
+    </div>
+  </div>
+
+  <!-- SMOKERS MEMBERS BEAT THE HEAT -->
+  <div class="promo-block">
+    <div class="promo-header">
+      <div class="promo-title-group">
+        <div class="audience-tag">Loyalty — All July</div>
+        <div class="promo-title">&#9728; "Members Beat the Heat" — Double Points on Cold Vault</div>
+        <div class="promo-desc">SODA &amp; BEER departments · loyalty vs non-loyalty comparison &nbsp;|&nbsp; Smokers Warehouse</div>
+      </div>
+      <div class="report-chips">
+        <span class="period-chip">Full month</span>
+        <a href="47a_BeatHeat_Loyalty_July2026.html" class="report-link sw" target="_blank">Loyalty Performance →</a>
+        <a href="47b_BeatHeat_LoyVsNon_July2026.html" class="report-link sw" target="_blank">Loy vs Non-Loy →</a>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi accent-sw">
+        <div class="kpi-label">Smokers Loyalty Cards</div>
+        <div class="kpi-val" style="color:var(--sw)">84</div>
+        <div class="kpi-sub"><span class="pos">+35.5% vs Jul 2025</span><br>SW1 52 &nbsp;·&nbsp; SW2 32</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Loyalty CV Revenue</div>
+        <div class="kpi-val">$1,148</div>
+        <div class="kpi-sub">SW1 $643<br>SW2 $505</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Avg Basket / Visit</div>
+        <div class="kpi-val">$4.48</div>
+        <div class="kpi-sub">loyalty cold vault avg<br>256 loyalty visits Jul 26</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Retention Rate</div>
+        <div class="kpi-val">54.8%</div>
+        <div class="kpi-sub">46 of 84 returning<br><span class="pos">38 new loyalty CV buyers</span></div>
+      </div>
+    </div>
+
+    <div class="store-split">
+      <table>
+        <thead>
+          <tr><th>Store</th><th>Loyalty Cards Jul 26</th><th>YOY Cards</th><th>Loyalty Visits</th><th>Loyalty CV Rev</th><th>Avg Basket</th><th>Returning</th><th>New</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="store-label-sw">SW1</td>
+            <td>52</td>
+            <td class="pos">+33.3%</td>
+            <td>151</td>
+            <td>$643</td>
+            <td>$4.26</td>
+            <td>28</td>
+            <td>24</td>
+          </tr>
+          <tr>
+            <td class="store-label-sw">SW2</td>
+            <td>32</td>
+            <td class="pos">+39.1%</td>
+            <td>105</td>
+            <td>$505</td>
+            <td>$4.81</td>
+            <td>18</td>
+            <td>14</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight">
+      <strong>Loyalty story:</strong> 84 Smokers loyalty members purchased cold vault (SODA or BEER) in July — a +35.5% increase over 62 cards in July 2025. Nearly half (38 of 84, 45.2%) were new cold vault loyalty buyers this month, indicating the double-points incentive attracted members who don't typically record cold vault purchases under their card. Cold vault transaction volumes at Smokers are smaller than Twinleaf (256 visits vs 2,512) but the YOY growth rate is the strongest across all four stores — especially SW2 at +39.1%.
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Reports in folder:
+    <a href="37c_Sandwich_Deal_Component_Breakdown_July2026.html">Sandwich Deal — Component Breakdown</a> ·
+    <a href="37d_Sandwich_Deal_Loyalty_Promo_Twinleaf_July2026.html">Loyalty Report</a> &nbsp;|&nbsp;
+    <a href="38c_Breakfast_Coffee_Component_Breakdown_July2026.html">Breakfast &amp; Coffee — Component Breakdown</a> ·
+    <a href="38d_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf_July2026.html">Loyalty Report</a> &nbsp;|&nbsp;
+    <a href="41d_Fireworks_Jun26_Jul30_Spark4th_2026.html">Fireworks &amp; Spark the 4th</a> ·
+    <a href="41e_Spark_the_4th_Jun23_Jul6_2026.html">Spark the 4th (standalone)</a> &nbsp;|&nbsp;
+    <a href="45_Summer_Cooler_Deal_July_2026.html">Summer Cooler Deal</a> &nbsp;|&nbsp;
+    <a href="46_ZYN_BuyDown_SW_July2026.html">ZYN Discount — SW</a> &nbsp;|&nbsp;
+    <a href="47a_BeatHeat_Loyalty_July2026.html">Members Beat the Heat — Loyalty Performance</a> ·
+    <a href="47b_BeatHeat_LoyVsNon_July2026.html">Loyalty vs Non-Loyalty</a><br>
+    Source: Twinleaf and Smokers Warehouse enriched transaction files · Patron Points ppSpecialsPromotions &nbsp;|&nbsp; YOY vs July 2025 &nbsp;|&nbsp; MOM vs June 2026 &nbsp;|&nbsp; Generated 2026-08-17
+  </div>
+
+</div>
