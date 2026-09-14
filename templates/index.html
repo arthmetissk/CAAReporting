@@ -3,77 +3,143 @@
 {% block content %}
 <section class="dashboard-head">
   <div>
-    <span class="section-kicker">Campaign performance review</span>
-    <h1>CAA Campaign Measurement Story</h1>
+    <span class="section-kicker">August 2026 · Twinleaf + Smokers Warehouse</span>
+    <h1>Campaign Results & Recommendations</h1>
+    <p class="page-lead">{{ executive_blurb }}</p>
   </div>
   <div class="header-actions">
-    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary Report</a>
-    <a class="primary-button compact" href="/month-story">Campaign Timeline</a>
+    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary HTML</a>
+    <button class="primary-button compact" type="button" data-query="Summarize August results with metrics" id="summarizeBtn">Summarize in chat</button>
   </div>
 </section>
 
 <section class="summary-strip">
   <article class="strip-card">
-    <span class="strip-label">Campaign Window</span>
-    <span class="strip-value">May-Aug 2026</span>
+    <span class="strip-label">Best campaign</span>
+    <span class="strip-value">Vape 4×</span>
+    <span class="strip-foot">SW1 + SW2 · loyalty +32%</span>
   </article>
   <article class="strip-card">
-    <span class="strip-label">Monthly Reports</span>
-    <span class="strip-value">04</span>
+    <span class="strip-label">Smokers Warehouse</span>
+    <span class="strip-value">SW1 / SW2</span>
+    <span class="strip-foot">Vape + Fireworks</span>
   </article>
   <article class="strip-card">
-    <span class="strip-label">Continuous Families</span>
-    <span class="strip-value">03</span>
+    <span class="strip-label">Twinleaf</span>
+    <span class="strip-value">TXP / TGC</span>
+    <span class="strip-foot">Grab N Go + Bagel/Coffee</span>
   </article>
   <article class="strip-card">
-    <span class="strip-label">One-Off Moments</span>
-    <span class="strip-value">08+</span>
+    <span class="strip-label">Priority action</span>
+    <span class="strip-value">Re-run Vape</span>
+    <span class="strip-foot">Q4 at SW stores</span>
   </article>
 </section>
 
+<section class="section-title">
+  <span>August Campaign Scorecards</span>
+  <div class="brand-filter" id="brandFilter">
+    <button type="button" class="filter-chip active" data-brand="all">All stores</button>
+    <button type="button" class="filter-chip" data-brand="Smokers Warehouse">Smokers Warehouse</button>
+    <button type="button" class="filter-chip" data-brand="Twinleaf">Twinleaf</button>
+  </div>
+</section>
+<section id="reports" class="report-grid scorecard-grid">
+  {% for report in reports %}
+  <article class="report-card scorecard" data-brand="{{ report.brand }}">
+    <div class="report-card-top">
+      <span class="report-category">{{ report.category }}</span>
+      <span class="status-pill status-{{ report.status|lower }}">{{ report.status }}</span>
+    </div>
+    <div class="report-name">{{ report.title }}</div>
+    <div class="brand-row">
+      <span class="brand-badge brand-{{ report.brand|lower|replace(' ', '-') }}">{{ report.brand }}</span>
+      {% for store in report.store_labels %}
+      <span class="store-chip">{{ store }}</span>
+      {% endfor %}
+    </div>
+    <p class="report-summary">{{ report.summary }}</p>
+    <div class="metric-grid">
+      {% for metric in report.metrics[:4] %}
+      <div class="metric-chip">
+        <span class="metric-label">{{ metric.label }}</span>
+        <span class="metric-value">{{ metric.value }}</span>
+        <span class="metric-delta">{{ metric.delta }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="store-breakdown">
+      {% for row in report.store_breakdown %}
+      <div class="store-row">
+        <strong>{{ row.store }}</strong>
+        <span>{{ row.detail }}</span>
+        <em>{{ row.delta }}</em>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="takeaway"><strong>Takeaway:</strong> {{ report.takeaway }}</p>
+    <div class="report-actions">
+      <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open full report</a>
+      <button class="small-button" type="button" data-query="Summarize {{ report.title }} with metrics and store results">Ask chat</button>
+    </div>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title" id="recommendations">
+  <span>Recommendations</span>
+</section>
+<section class="recommendation-grid">
+  {% for rec in recommendations %}
+  <article class="recommendation-card">
+    <div class="recommendation-head">
+      <span class="rec-title">{{ rec.title }}</span>
+      <span class="impact impact-{{ rec.impact.lower() }}">{{ rec.impact }}</span>
+    </div>
+    <div class="brand-row compact">
+      <span class="timing-chip">{{ rec.timing }}</span>
+      <span class="brand-badge brand-{{ rec.brand|lower|replace(' ', '-')|replace('+', '') }}">{{ rec.brand }}</span>
+      {% for store in rec.stores %}
+      <span class="store-chip">{{ store }}</span>
+      {% endfor %}
+    </div>
+    <p class="rec-detail">{{ rec.detail }}</p>
+    <button class="small-button" type="button" data-query="Explain recommendation: {{ rec.title }}">Ask why</button>
+  </article>
+  {% endfor %}
+</section>
+
+<section class="section-title">
+  <span>Key Takeaways</span>
+</section>
 <section class="hero-grid">
   <article class="hero-panel">
     <div class="panel-title">
-      <span>Executive Summary</span>
-      <span class="panel-chip positive">Overall Momentum</span>
+      <span>Executive Read</span>
+      <span class="panel-chip positive">August</span>
     </div>
-    <div class="hero-copy">
-      <p>
-        The campaign sequence from May through August demonstrates a clear path from audience discovery and trial formation to loyalty and repeat-purchase behavior. The most strategic campaign system is not a single promotion; it is a family of connected offers, bundles, seasonal programs, and loyalty loops that build over time.
-      </p>
-      <div class="hero-highlight-list">
-        {% for item in highlights %}
-        <div class="highlight-row">
-          <span class="check">✓</span>
-          <span>{{ item }}</span>
-        </div>
-        {% endfor %}
+    <div class="hero-highlight-list">
+      {% for item in highlights %}
+      <div class="highlight-row">
+        <span class="check">✓</span>
+        <span>{{ item }}</span>
       </div>
+      {% endfor %}
     </div>
   </article>
-
   <article class="signal-panel">
     <div class="panel-title">
-      <span>Campaign Signal Index</span>
-      <span class="panel-chip">Signals</span>
+      <span>Signal Index</span>
+      <span class="panel-chip">Relative strength</span>
     </div>
     <div class="signal-list">
+      {% for report in reports %}
       <div class="signal-row">
-        <span class="signal-label">Fireworks</span>
-        <span class="signal-bar"><span class="bar-fill bar-fireworks" style="width:72%"></span></span>
+        <span class="signal-label">{{ report.title.split(' ')[0] }}</span>
+        <span class="signal-bar"><span class="bar-fill" style="width:{{ report.signal }}%"></span></span>
+        <span class="signal-meta">{{ report.brand.split(' ')[0] }}</span>
       </div>
-      <div class="signal-row">
-        <span class="signal-label">Vape Loyalty</span>
-        <span class="signal-bar"><span class="bar-fill bar-vape" style="width:90%"></span></span>
-      </div>
-      <div class="signal-row">
-        <span class="signal-label">FoodToGo</span>
-        <span class="signal-bar"><span class="bar-fill bar-food" style="width:74%"></span></span>
-      </div>
-      <div class="signal-row">
-        <span class="signal-label">Bagel Combo</span>
-        <span class="signal-bar"><span class="bar-fill bar-bagel" style="width:64%"></span></span>
-      </div>
+      {% endfor %}
     </div>
   </article>
 </section>
@@ -83,18 +149,16 @@
 </section>
 <section class="campaign-calendar-panel">
   <div class="legend-bar">
-    <span class="legend-title">Campaign Type Legend</span>
-    <span class="legend-chip continuous-chip">Continuous</span>
-    <span class="legend-chip oneoff-chip">One-off</span>
-    <span class="legend-chip seasonal-chip">Seasonal</span>
-    <span class="legend-chip dependent-chip">Dependent Family</span>
+    <span class="legend-title">Brand</span>
+    <span class="legend-chip continuous-chip">Twinleaf</span>
+    <span class="legend-chip oneoff-chip">Smokers Warehouse</span>
   </div>
   <div class="calendar-table">
     <div class="calendar-row calendar-head">
       <span class="calendar-month-head">Month</span>
       <span class="calendar-campaign-head">Campaign</span>
-      <span class="calendar-type-head">Type</span>
-      <span class="calendar-status-head">Status</span>
+      <span class="calendar-type-head">Brand</span>
+      <span class="calendar-status-head">Stores</span>
       <span class="calendar-objective-head">Objective</span>
     </div>
     {% for month in campaign_monthly_story %}
@@ -102,37 +166,13 @@
       <div class="calendar-row">
         <span class="calendar-month">{{ month.month }}</span>
         <span class="calendar-campaign">{{ campaign.name }}</span>
-        <span class="calendar-type type-{{ campaign.type.lower() | replace(' ', '-') }}">{{ campaign.type }}</span>
-        <span class="calendar-status">{{ campaign.status }}</span>
+        <span class="calendar-type">{{ campaign.brand }}</span>
+        <span class="calendar-status">{{ campaign.stores|join(', ') }}</span>
         <span class="calendar-objective">{{ campaign.objective }}</span>
       </div>
       {% endfor %}
     {% endfor %}
   </div>
-</section>
-
-<section class="section-title">
-  <span>Monthly Campaign Flow</span>
-</section>
-<section id="campaign-timeline" class="timeline-grid">
-  {% for month in campaign_monthly_story %}
-  <article class="timeline-card">
-    <div class="timeline-card-head">
-      <span class="timeline-month">{{ month.month }}</span>
-      <span class="timeline-theme">{{ month.theme }}</span>
-    </div>
-    <p class="timeline-summary">{{ month.summary }}</p>
-    <div class="timeline-campaign-list">
-      {% for campaign in month.campaigns %}
-      <div class="timeline-campaign-row">
-        <span class="campaign-name">{{ campaign.name }}</span>
-        <span class="campaign-type type-{{ campaign.type.lower() | replace(' ', '-') }}">{{ campaign.type }}</span>
-        <span class="campaign-status">{{ campaign.status }}</span>
-      </div>
-      {% endfor %}
-    </div>
-  </article>
-  {% endfor %}
 </section>
 
 <section class="section-title">
@@ -144,67 +184,15 @@
     <span class="month-label">{{ month.month }}</span>
     <span class="month-theme">{{ month.theme }}</span>
     <p class="month-summary">{{ month.summary }}</p>
-    <div class="month-objective">
-      <span class="objective-label">Objective</span>
-      <span class="objective-text">{{ month.objective }}</span>
+    <div class="brand-row compact">
+      <span class="brand-badge">{{ month.brand }}</span>
+      {% for store in month.stores %}
+      <span class="store-chip">{{ store }}</span>
+      {% endfor %}
     </div>
     <div class="month-actions">
       <a class="small-link" href="/monthly-summary/{{ month.slug }}" target="_blank">Open summary</a>
       <a class="mini-link" href="/month-story">Month story</a>
-    </div>
-  </article>
-  {% endfor %}
-</section>
-
-<section class="section-title">
-  <span>Campaign Families</span>
-</section>
-<section class="family-grid">
-  {% for family in interrelated_campaigns %}
-  <article class="family-card">
-    <div class="family-head">
-      <span class="family-title">{{ family.family }}</span>
-    </div>
-    <p class="family-summary">{{ family.summary }}</p>
-    <div class="family-files">
-      {% for file in family.reports %}
-      <a class="mini-link" href="/shared-report/{{ file }}">{{ file }}</a>
-      {% endfor %}
-    </div>
-  </article>
-  {% endfor %}
-</section>
-
-<section class="section-title">
-  <span>Recommendations</span>
-</section>
-<section id="recommendations" class="recommendation-grid">
-  {% for rec in recommendations %}
-  <article class="recommendation-card">
-    <div class="recommendation-head">
-      <span class="rec-title">{{ rec.title }}</span>
-      <span class="impact impact-{{ rec.impact.lower() }}">{{ rec.impact }}</span>
-    </div>
-    <p class="rec-detail">{{ rec.detail }}</p>
-  </article>
-  {% endfor %}
-</section>
-
-<section class="section-title">
-  <span>Supporting Reports</span>
-</section>
-<section id="reports" class="report-grid">
-  {% for report in reports %}
-  <article class="report-card">
-    <div class="report-card-top">
-      <span class="report-category">{{ report.category }}</span>
-      <span class="report-status">Report</span>
-    </div>
-    <div class="report-name">{{ report.title }}</div>
-    <p class="report-summary">{{ report.summary }}</p>
-    <div class="report-actions">
-      <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open report</a>
-      <button class="small-button" data-query="Analyze {{ report.title }}">Ask</button>
     </div>
   </article>
   {% endfor %}

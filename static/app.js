@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const goButton = document.getElementById('chatSubmit');
-  const queryInput = document.getElementById('chatQuery');
-  const output = document.getElementById('chatOutput');
   const drawer = document.getElementById('chatDrawer');
   const drawerClose = document.getElementById('chatClose');
   const launcher = document.getElementById('chatLauncher');
@@ -9,48 +6,86 @@ document.addEventListener('DOMContentLoaded', function () {
   const drawerQueryInput = document.getElementById('chatDrawerQuery');
   const drawerOutput = document.getElementById('chatDrawerOutput');
 
-  function addOutput(target, text, isUser) {
+  function openDrawer() {
+    if (!drawer) return;
+    drawer.classList.add('open');
+    if (drawerQueryInput) drawerQueryInput.focus();
+  }
+
+  function addMessage(target, text, className) {
     if (!target) return;
     const row = document.createElement('div');
-    row.className = isUser ? 'chat-output-user' : 'chat-output-message';
+    row.className = className;
     row.textContent = text;
     target.appendChild(row);
   }
 
-  function askQuestion(input, outputTarget, submitTarget) {
-    const query = (input.value || '').trim();
-    if (!query) return;
-    addOutput(outputTarget, query, true);
-    if (outputTarget.scrollTop !== undefined) {
-      outputTarget.scrollTop = outputTarget.scrollHeight;
-    }
+  function addMetrics(target, metrics) {
+    if (!target || !metrics || !metrics.length) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-metrics';
+    metrics.slice(0, 6).forEach(function (m) {
+      const chip = document.createElement('div');
+      chip.className = 'chat-metric-chip';
+      chip.innerHTML =
+        '<span class="metric-label">' + (m.campaign ? m.campaign.split(' ')[0] + ' · ' : '') + m.label + '</span>' +
+        '<span class="metric-value">' + m.value + '</span>' +
+        '<span class="metric-delta">' + (m.delta || '') + '</span>';
+      wrap.appendChild(chip);
+    });
+    target.appendChild(wrap);
+  }
+
+  function addRecs(target, recs) {
+    if (!target || !recs || !recs.length) return;
+    addMessage(
+      target,
+      'Actions: ' + recs.map(function (r) { return r.title; }).join(' · '),
+      'chat-drawer-message chat-recs'
+    );
+  }
+
+  function askQuestion(query) {
+    const q = (query || '').trim();
+    if (!q || !drawerOutput) return;
+
+    openDrawer();
+    addMessage(drawerOutput, q, 'chat-output-user');
+    drawerOutput.scrollTop = drawerOutput.scrollHeight;
+    if (drawerQueryInput) drawerQueryInput.value = '';
+
+    const thinking = document.createElement('div');
+    thinking.className = 'chat-drawer-message';
+    thinking.textContent = 'Pulling campaign metrics…';
+    drawerOutput.appendChild(thinking);
 
     fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: query })
+      body: JSON.stringify({ query: q })
     })
-    .then(response => response.json())
-    .then(data => {
-      outputTarget.innerHTML = '';
-      addOutput(outputTarget, data.answer || 'No answer available.', false);
-      if (data.recommendations && data.recommendations.length > 0) {
-        const recText = 'Recommendations: ' + data.recommendations.map(r => r.title).join(' • ');
-        addOutput(outputTarget, recText, false);
-      }
-    })
-    .catch(err => {
-      outputTarget.innerHTML = '';
-      addOutput(outputTarget, 'The campaign intelligence assistant is unavailable. Please try again.', false);
-    });
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        thinking.remove();
+        addMessage(drawerOutput, data.answer || 'No answer available.', 'chat-drawer-message');
+        addMetrics(drawerOutput, data.metrics);
+        addRecs(drawerOutput, data.recommendations);
+        drawerOutput.scrollTop = drawerOutput.scrollHeight;
+      })
+      .catch(function () {
+        thinking.remove();
+        addMessage(
+          drawerOutput,
+          'Chat is unavailable right now. Open the August scorecards for metrics, or try again.',
+          'chat-drawer-message'
+        );
+      });
   }
 
   if (launcher && drawer) {
     launcher.addEventListener('click', function () {
       drawer.classList.toggle('open');
-      if (drawer.classList.contains('open')) {
-        if (drawerQueryInput) drawerQueryInput.focus();
-      }
+      if (drawer.classList.contains('open') && drawerQueryInput) drawerQueryInput.focus();
     });
   }
 
@@ -60,31 +95,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  if (goButton && queryInput && output) {
-    goButton.addEventListener('click', function () {
-      askQuestion(queryInput, output, goButton);
-    });
-  }
-
-  if (drawerGoButton && drawerQueryInput && drawerOutput) {
+  if (drawerGoButton && drawerQueryInput) {
     drawerGoButton.addEventListener('click', function () {
-      askQuestion(drawerQueryInput, drawerOutput, drawerGoButton);
+      askQuestion(drawerQueryInput.value);
     });
-
     drawerQueryInput.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') {
-        askQuestion(drawerQueryInput, drawerOutput, drawerGoButton);
-      }
+      if (event.key === 'Enter') askQuestion(drawerQueryInput.value);
     });
   }
 
-  const askButtons = Array.from(document.getElementsByClassName('small-button'));
-  askButtons.forEach(btn => {
+  document.querySelectorAll('[data-query]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      if (!queryInput) return;
-      const text = btn.getAttribute('data-query') || 'What is the strategic recommendation?';
-      queryInput.value = text;
-      if (goButton) goButton.click();
+      askQuestion(btn.getAttribute('data-query') || '');
     });
   });
+
+  const filter = document.getElementById('brandFilter');
+  if (filter) {
+    filter.querySelectorAll('.filter-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        filter.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        const brand = chip.getAttribute('data-brand');
+        document.querySelectorAll('.scorecard').forEach(function (card) {
+          const show = brand === 'all' || card.getAttribute('data-brand') === brand;
+          card.hidden = !show;
+        });
+      });
+    });
+  }
 });

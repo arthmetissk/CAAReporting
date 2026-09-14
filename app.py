@@ -1,112 +1,125 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, session, jsonify, send_from_directory
 from pathlib import Path
 import os
 import re
 
+from campaign_knowledge import (
+    AUGUST_CAMPAIGNS,
+    RECOMMENDATIONS,
+    SUMMARY_HIGHLIGHTS,
+    CHAT_SUGGESTIONS,
+    STORES,
+    reports_for_ui,
+    full_knowledge_text,
+    answer_from_knowledge,
+    executive_summary_answer,
+    store_labels,
+)
+
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "caa-secret-key-2026")
+# Render sometimes leaves SECRET_KEY blank after secret edits; empty string disables sessions
+# and makes POST /login return 500 when writing the auth cookie.
+app.secret_key = os.getenv("SECRET_KEY") or "caa-secret-key-2026"
 
 WORKSPACE = Path(__file__).resolve().parent
 REPORT_DIR = WORKSPACE
-ALL_CAMPAIGNS_DIR = WORKSPACE.parent / "All Campaigns"
+ALL_CAMPAIGNS_DIR = WORKSPACE / "All Campaigns"
 SUMMARY_FILE = WORKSPACE / "CAA_August2026_Campaign_Summary.html"
+AUGUST_SUMMARY_IN_ARCHIVE = ALL_CAMPAIGNS_DIR / "2026_August_CAA_Campaign_Summary.html"
 
-APP_USERNAME = os.getenv("APP_USERNAME", "caa")
-APP_PASSWORD = os.getenv("APP_PASSWORD", "twinleaf1234")
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+APP_USERNAME = (os.getenv("APP_USERNAME") or "caa").strip()
+APP_PASSWORD = (os.getenv("APP_PASSWORD") or "twinleaf1234").strip()
+ANTHROPIC_API_KEY = (os.getenv("ANTHROPIC_API_KEY") or "").strip() or None
+CHAT_MODEL = (os.getenv("CHAT_MODEL") or "claude-3-5-sonnet-20241022").strip()
 
-REPORTS = [
-    {"id": "fireworks", "filename": "2026_August_41f_Fireworks_Campaign.html", "title": "Fireworks Campaign", "category": "Seasonal activation", "summary": "High-impact seasonal campaign with storefront uplift and audience expansion.", "folder": "All Campaigns"},
-    {"id": "vape-loyalty", "filename": "2026_August_41g_Vape_Loyalty_Campaign.html", "title": "Vape Loyalty Campaign", "category": "Loyalty & retention", "summary": "Retention program measured against repeat visit and wallet depth.", "folder": "All Campaigns"},
-    {"id": "foodtogoto", "filename": "2026_August_41h_FoodToGo_Loyalty_Campaign.html", "title": "FoodToGo Loyalty Campaign", "category": "On-the-go food", "summary": "Food-to-go behavior, offer activation, and repeat conversion analysis.", "folder": "All Campaigns"},
-    {"id": "bagelcoffee", "filename": "2026_August_41i_BagelCoffeeCombo_Snapshot.html", "title": "Bagel Coffee Combo Snapshot", "category": "Bundle snapshot", "summary": "Cross-category breakfast bundle performance snapshot.", "folder": "All Campaigns"},
-]
-
-SUMMARY_HIGHLIGHTS = [
-    "The strongest campaign signal is the way loyalty, frequency, and bundle behavior connect across the month-to-month story.",
-    "Campaign growth is strongest when customers are moved from one-time reach into repeat purchase loops.",
-    "The best-performing reports show that budget should continue to concentrate on creative, channels, and categories with repeat conversion evidence.",
-    "The measurement story is clearer when promotions are grouped around shared audience, offer, and loyalty mechanics.",
-]
+REPORTS = reports_for_ui()
 
 MONTHLY_SUMMARIES = [
-    {"slug": "may", "month": "May 2026", "filename": "2026_May_Main_Campaign_Performance_Summary.html", "theme": "Loyalty registration and trial mechanics", "objective": "Build a repeat conversion base using food, beverage, and seasonal offers.", "summary": "May establishes category relevance, trial mechanics, and campaign offer behavior that can scale into a repeat loyalty system.", "reports": ["2026_May_39_Pizza_Gas_Loyalty_Twinleaf.html", "2026_May_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_May_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html"]},
-    {"slug": "june", "month": "June 2026", "filename": "2026_June_Main_Campaign_Performance_Summary.html", "theme": "Summer activation and reward stretch", "objective": "Extend the loyalty and seasonality rhythm into broader broadcast and offer testing.", "summary": "June connects activation, food behavior, drink offers, and regional campaign performance to create a stronger summer campaign narrative.", "reports": ["2026_June_41_Fireworks_June_2026_Campaign_Performance.html", "2026_June_44_Smart_Water_2for5_Campaign_Performance.html", "2026_June_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html"]},
-    {"slug": "july", "month": "July 2026", "filename": "2026_July_Promotions_Summary.html", "theme": "Summer creative momentum and promotional acceleration", "objective": "Turn summer traffic into basket-building, reward-led loyalty behavior.", "summary": "July deepens the campaign vocabulary by pairing high-summer promotions with cross-category creative and warmer-weather deal logic.", "reports": ["2026_July_45_Summer_Cooler_Deal.html", "2026_July_47a_BeatHeat_Loyalty.html", "2026_July_46_ZYN_BuyDown_SW.html"]},
-    {"slug": "august", "month": "August 2026", "filename": "2026_August_CAA_Campaign_Summary.html", "theme": "August campaign intelligence summary", "objective": "Create an optimized August measurement readout for loyalty, food, coffee, vape, and seasonal activation.", "summary": "August confirms the strongest campaign system is built around loyalty loops, category relevance, and repeat customer conversion.", "reports": ["2026_August_41f_Fireworks_Campaign.html", "2026_August_41g_Vape_Loyalty_Campaign.html", "2026_August_41h_FoodToGo_Loyalty_Campaign.html", "2026_August_41i_BagelCoffeeCombo_Snapshot.html"]},
-]
-
-RECOMMENDATIONS = [
-    {"title": "Scale the loyalty bundle machine", "impact": "High", "detail": "Invest further in the cross-category loyalty and bundle patterns that create frequency and basket lift."},
-    {"title": "Connect month-to-month creative and offer momentum", "impact": "High", "detail": "Carry forward the most effective seasonal and loyalty creative into each succeeding month narrative."},
-    {"title": "Protect repeat purchase economics", "impact": "Medium", "detail": "Make repeat conversion and review cycle behavior a central requirement before adding new spend to underperforming reports."},
-    {"title": "Reframe budget by campaign family", "impact": "Medium", "detail": "Compare customer movement across promotions, identify the most productive customer range, and reallocate spend by winning campaign family."},
+    {"slug": "may", "month": "May 2026", "filename": "2026_May_Main_Campaign_Performance_Summary.html", "theme": "Loyalty registration and trial mechanics", "objective": "Build a repeat conversion base using food, beverage, and seasonal offers.", "summary": "May establishes category relevance, trial mechanics, and campaign offer behavior that can scale into a repeat loyalty system.", "brand": "Mostly Twinleaf", "stores": ["TXP", "TGC", "SW1"], "reports": ["2026_May_39_Pizza_Gas_Loyalty_Twinleaf.html", "2026_May_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_May_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html"]},
+    {"slug": "june", "month": "June 2026", "filename": "2026_June_Main_Campaign_Performance_Summary.html", "theme": "Summer activation and reward stretch", "objective": "Extend the loyalty and seasonality rhythm into broader broadcast and offer testing.", "summary": "June connects activation, food behavior, drink offers, and regional campaign performance to create a stronger summer campaign narrative.", "brand": "Twinleaf + Smokers Warehouse", "stores": ["TXP", "TGC", "SW1", "SW2"], "reports": ["2026_June_41_Fireworks_June_2026_Campaign_Performance.html", "2026_June_44_Smart_Water_2for5_Campaign_Performance.html", "2026_June_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html"]},
+    {"slug": "july", "month": "July 2026", "filename": "2026_July_Promotions_Summary.html", "theme": "Summer creative momentum and promotional acceleration", "objective": "Turn summer traffic into basket-building, reward-led loyalty behavior.", "summary": "July deepens the campaign vocabulary by pairing high-summer promotions with cross-category creative and warmer-weather deal logic.", "brand": "Twinleaf + Smokers Warehouse", "stores": ["TXP", "TGC", "SW1", "SW2"], "reports": ["2026_July_45_Summer_Cooler_Deal.html", "2026_July_47a_BeatHeat_Loyalty.html", "2026_July_46_ZYN_BuyDown_SW.html"]},
+    {"slug": "august", "month": "August 2026", "filename": "2026_August_CAA_Campaign_Summary.html", "theme": "August campaign intelligence summary", "objective": "Create an optimized August measurement readout for loyalty, food, coffee, vape, and seasonal activation.", "summary": "August confirms the strongest campaign system is built around loyalty loops, category relevance, and repeat customer conversion.", "brand": "Twinleaf + Smokers Warehouse", "stores": ["SW1", "SW2", "TXP", "TGC"], "reports": ["2026_August_41f_Fireworks_Campaign.html", "2026_August_41g_Vape_Loyalty_Campaign.html", "2026_August_41h_FoodToGo_Loyalty_Campaign.html", "2026_August_41i_BagelCoffeeCombo_Snapshot.html"]},
 ]
 
 STORY_MONTHS = [
-    {"month": "May", "theme": "Loyalty registration and trial mechanics", "campaigns": ["Pizza/Gas Loyalty", "Thunder Ice Cream", "Game Cigarillos", "Fireworks Summer Promo Projection"], "insight": "May established the customer base and offer patterns that lead later into summer loyalty and creative loops."},
-    {"month": "June", "theme": "Fireworks and loyalty stretch into June", "campaigns": ["Fireworks June", "Sandwich Deal", "Breakfast Coffee Combo", "Smart Water"], "insight": "June connected activation events with reward mechanics and started identifying the strongest cross-category repetition signals."},
-    {"month": "July", "theme": "Summer loyalty expansion and platform-building", "campaigns": ["Summer Cooler Deal", "ZYN BuyDown", "BeatHeat loyalty", "Promotions Summary"], "insight": "July deepened the seasonal rhythm; the campaign family widened from localized offers into broad dollar and loyalty behavior comparisons."},
-    {"month": "August", "theme": "August campaign intelligence summary", "campaigns": ["Fireworks", "Vape Loyalty", "FoodToGo", "Bagel Coffee Combo"], "insight": "August confirms that the strongest story is loyalty-driven behavior that produces repeat frequency and more disciplined product relevance."},
+    {"month": "May", "theme": "Loyalty registration and trial mechanics", "campaigns": ["Pizza/Gas Loyalty (Twinleaf)", "Thunder Ice Cream (Twinleaf)", "Game Cigarillos (SW)", "Fireworks Summer Promo Projection (SW)"], "insight": "May established the customer base and offer patterns that lead later into summer loyalty and creative loops."},
+    {"month": "June", "theme": "Fireworks and loyalty stretch into June", "campaigns": ["Fireworks June (SW)", "Sandwich Deal (Twinleaf)", "Breakfast Coffee Combo (Twinleaf)", "Smart Water (Twinleaf)"], "insight": "June connected activation events with reward mechanics and started identifying the strongest cross-category repetition signals."},
+    {"month": "July", "theme": "Summer loyalty expansion and platform-building", "campaigns": ["Summer Cooler Deal (Twinleaf)", "ZYN BuyDown (SW)", "BeatHeat loyalty (Twinleaf)", "Promotions Summary"], "insight": "July deepened the seasonal rhythm; the campaign family widened from localized offers into broad dollar and loyalty behavior comparisons."},
+    {"month": "August", "theme": "August campaign intelligence summary", "campaigns": ["Fireworks (SW1/SW2)", "Vape Loyalty (SW1/SW2)", "FoodToGo (TXP/TGC)", "Bagel Coffee Combo (TXP/TGC)"], "insight": "August confirms that the strongest story is loyalty-driven behavior that produces repeat frequency and more disciplined product relevance."},
 ]
 
 INTERRELATED_CAMPAIGNS = [
-    {"family": "Loyalty and breakfast bundles", "reports": ["2026_May_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html", "2026_June_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html", "2026_July_38d_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html"], "summary": "The breakfast and coffee bundle campaign family shows that loyalty offer design can be used to carry a consistent customer story from May into July."},
-    {"family": "Sandwich deal loyalty mechanics", "reports": ["2026_May_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_June_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_July_37d_Sandwich_Deal_Loyalty_Promo_Twinleaf.html"], "summary": "The sandwich loyalty campaign demonstrates a multi-month offer ladder where loyalty behavior and repeat food occasions move together."},
-    {"family": "Fireworks and seasonal summer programs", "reports": ["2026_May_35_Fireworks_Promo_Smokers_Warehouse.html", "2026_June_41_Fireworks_June_2026_Campaign_Performance.html", "2026_August_41f_Fireworks_Campaign.html"], "summary": "Fireworks and summer promotional behavior become more understandable as separate campaign moments that need conversion quality and basket economics instead of pure volume behavior."},
+    {"family": "Loyalty and breakfast bundles", "brand": "Twinleaf", "stores": ["TXP", "TGC"], "reports": ["2026_May_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html", "2026_June_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html", "2026_July_38d_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html"], "summary": "Twinleaf breakfast/coffee bundle family carries a consistent loyalty story from May into July across Express and Gas & Convenience."},
+    {"family": "Sandwich deal loyalty mechanics", "brand": "Twinleaf", "stores": ["TXP", "TGC"], "reports": ["2026_May_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_June_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_July_37d_Sandwich_Deal_Loyalty_Promo_Twinleaf.html"], "summary": "Twinleaf sandwich loyalty shows a multi-month offer ladder where repeat meal occasions move with carded behavior."},
+    {"family": "Fireworks and seasonal summer programs", "brand": "Smokers Warehouse", "stores": ["SW1", "SW2"], "reports": ["2026_May_35_Fireworks_Promo_Smokers_Warehouse.html", "2026_June_41_Fireworks_June_2026_Campaign_Performance.html", "2026_August_41f_Fireworks_Campaign.html"], "summary": "Smokers Warehouse fireworks should be judged on summer peak (June/July), not August clearance economics."},
 ]
 
 CAMPAIGN_MONTHLY_STORY = [
     {
         "month": "May 2026",
         "theme": "Loyalty foundations",
-        "summary": "The campaign story starts with a loyalty registration and offer design pattern. The strongest continuity themes emerge through Restaurant and Gas category loyalty loops.",
+        "summary": "The campaign story starts with loyalty registration and offer design. Twinleaf leads food/gas loops; Smokers Warehouse runs seasonal tobacco activations.",
         "campaigns": [
-            {"name": "Pizza & Gas Loyalty", "type": "Continuous", "status": "Active family", "objective": "Build carded customer repeat behavior."},
-            {"name": "Sandwich Deal Loyalty", "type": "Continuous", "status": "Active family", "objective": "Create repeat meal occasion behavior."},
-            {"name": "Breakfast Coffee Combo", "type": "Continuous", "status": "Active family", "objective": "Link breakfast and coffee category intent."},
-            {"name": "Thunder Ice Cream", "type": "One-off", "status": "Seasonal burst", "objective": "Create summer trial behavior."},
-            {"name": "Game Cigarillos", "type": "One-off", "status": "Activation", "objective": "Promote category conversion."}
-        ]
+            {"name": "Pizza & Gas Loyalty", "type": "Continuous", "status": "Active family", "objective": "Build carded customer repeat behavior.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Sandwich Deal Loyalty", "type": "Continuous", "status": "Active family", "objective": "Create repeat meal occasion behavior.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Breakfast Coffee Combo", "type": "Continuous", "status": "Active family", "objective": "Link breakfast and coffee category intent.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Thunder Ice Cream", "type": "One-off", "status": "Seasonal burst", "objective": "Create summer trial behavior.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Game Cigarillos", "type": "One-off", "status": "Activation", "objective": "Promote category conversion.", "brand": "Smokers Warehouse", "stores": ["SW1", "SW2"]},
+        ],
     },
     {
         "month": "June 2026",
         "theme": "Activation and scale",
-        "summary": "June extends the loyalty themes and makes the summer event logic stronger. Fireworks and water promotions deepen connection to seasonal spend behavior.",
+        "summary": "June extends Twinleaf loyalty themes and strengthens Smokers Warehouse summer event logic.",
         "campaigns": [
-            {"name": "Sandwich Deal Loyalty", "type": "Continuous", "status": "Active family", "objective": "Repeat meal deal behavior."},
-            {"name": "Breakfast Coffee Combo", "type": "Continuous", "status": "Active family", "objective": "Bundle drink and food loop."},
-            {"name": "Fireworks June", "type": "One-off", "status": "Seasonal activation", "objective": "Seasonal awareness and store traffic."},
-            {"name": "Smart Water 2-for-5", "type": "One-off", "status": "Trade promotion", "objective": "Category lift and shopper trial."}
-        ]
+            {"name": "Sandwich Deal Loyalty", "type": "Continuous", "status": "Active family", "objective": "Repeat meal deal behavior.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Breakfast Coffee Combo", "type": "Continuous", "status": "Active family", "objective": "Bundle drink and food loop.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Fireworks June", "type": "One-off", "status": "Seasonal activation", "objective": "Seasonal awareness and store traffic.", "brand": "Smokers Warehouse", "stores": ["SW1", "SW2"]},
+            {"name": "Smart Water 2-for-5", "type": "One-off", "status": "Trade promotion", "objective": "Category lift and shopper trial.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+        ],
     },
     {
         "month": "July 2026",
         "theme": "Summer offer acceleration",
-        "summary": "July turns the campaign mix into a more promotional summer story with higher frequency, improved heat and occasion relevance, and wider seasonal creative testing.",
+        "summary": "July turns the mix into a broader summer story across Twinleaf heat/cooler offers and Smokers Warehouse category buy-downs.",
         "campaigns": [
-            {"name": "Summer Cooler Deal", "type": "One-off", "status": "Seasonal deal", "objective": "Grow summer category relevance."},
-            {"name": "ZYN BuyDown", "type": "One-off", "status": "Category activation", "objective": "Drive category trial and trade behavior."},
-            {"name": "BeatHeat Loyalty", "type": "Continuous", "status": "Active family", "objective": "Protect consumer loyalty across heat occasions."},
-            {"name": "Breakfast Coffee Combo", "type": "Continuous", "status": "Active family", "objective": "Retain breakfast and coffee consistency."}
-        ]
+            {"name": "Summer Cooler Deal", "type": "One-off", "status": "Seasonal deal", "objective": "Grow summer category relevance.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "ZYN BuyDown", "type": "One-off", "status": "Category activation", "objective": "Drive category trial and trade behavior.", "brand": "Smokers Warehouse", "stores": ["SW1", "SW2"]},
+            {"name": "BeatHeat Loyalty", "type": "Continuous", "status": "Active family", "objective": "Protect consumer loyalty across heat occasions.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Breakfast Coffee Combo", "type": "Continuous", "status": "Active family", "objective": "Retain breakfast and coffee consistency.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+        ],
     },
     {
         "month": "August 2026",
         "theme": "Optimization and learning",
-        "summary": "August summarizes the strongest campaign family patterns and confirms the shift toward loyalty, category fit, and repeat behavior measurement.",
+        "summary": "August measurement split is clear: Smokers Warehouse = Vape + Fireworks; Twinleaf = Grab N Go + Bagel/Coffee.",
         "campaigns": [
-            {"name": "Fireworks Campaign", "type": "One-off", "status": "Seasonal activation", "objective": "Seasonal reach and basket intent."},
-            {"name": "Vape Loyalty Campaign", "type": "Continuous", "status": "Active family", "objective": "Retention through category loyalty."},
-            {"name": "FoodToGo Loyalty", "type": "Continuous", "status": "Active family", "objective": "Meal occasion repeat conversion."},
-            {"name": "Bagel Coffee Combo", "type": "Continuous", "status": "Bundle family", "objective": "Bundle store visit and frequency behavior."}
-        ]
-    }
+            {"name": "Fireworks Campaign", "type": "One-off", "status": "Seasonal activation", "objective": "Seasonal reach and basket intent.", "brand": "Smokers Warehouse", "stores": ["SW1", "SW2"]},
+            {"name": "Vape Loyalty Campaign", "type": "Continuous", "status": "Active family", "objective": "Retention through category loyalty.", "brand": "Smokers Warehouse", "stores": ["SW1", "SW2"]},
+            {"name": "FoodToGo Loyalty", "type": "Continuous", "status": "Active family", "objective": "Meal occasion repeat conversion.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+            {"name": "Bagel Coffee Combo", "type": "Continuous", "status": "Bundle family", "objective": "Bundle store visit and frequency behavior.", "brand": "Twinleaf", "stores": ["TXP", "TGC"]},
+        ],
+    },
 ]
 
 
 def report_lookup():
     return {r["id"]: r for r in REPORTS}
+
+
+def template_context():
+    return {
+        "reports": REPORTS,
+        "recommendations": RECOMMENDATIONS,
+        "highlights": SUMMARY_HIGHLIGHTS,
+        "story_months": STORY_MONTHS,
+        "interrelated_campaigns": INTERRELATED_CAMPAIGNS,
+        "monthly_summaries": MONTHLY_SUMMARIES,
+        "campaign_monthly_story": CAMPAIGN_MONTHLY_STORY,
+        "chat_suggestions": CHAT_SUGGESTIONS,
+        "stores": STORES,
+        "executive_blurb": executive_summary_answer(),
+    }
 
 
 @app.before_request
@@ -139,46 +152,76 @@ def logout():
 
 @app.route("/")
 def dashboard():
-    return render_template("index.html", reports=REPORTS, recommendations=RECOMMENDATIONS, highlights=SUMMARY_HIGHLIGHTS, story_months=STORY_MONTHS, interrelated_campaigns=INTERRELATED_CAMPAIGNS, monthly_summaries=MONTHLY_SUMMARIES, campaign_monthly_story=CAMPAIGN_MONTHLY_STORY)
+    return render_template("index.html", **template_context())
 
 
 @app.route("/month-story")
 def month_story():
-    return render_template("month_story.html", reports=REPORTS, recommendations=RECOMMENDATIONS, highlights=SUMMARY_HIGHLIGHTS, story_months=STORY_MONTHS, interrelated_campaigns=INTERRELATED_CAMPAIGNS, monthly_summaries=MONTHLY_SUMMARIES, campaign_monthly_story=CAMPAIGN_MONTHLY_STORY)
+    return render_template("month_story.html", **template_context())
+
+
+def safe_campaign_file(filename: str):
+    """Resolve a report only if it stays inside All Campaigns."""
+    if not filename or Path(filename).name != filename:
+        return None
+    file_path = (ALL_CAMPAIGNS_DIR / filename).resolve()
+    try:
+        file_path.relative_to(ALL_CAMPAIGNS_DIR.resolve())
+    except ValueError:
+        return None
+    return file_path if file_path.is_file() else None
 
 
 @app.route("/monthly-summary/<month_slug>")
 def monthly_summary(month_slug):
     month = next((m for m in MONTHLY_SUMMARIES if m["slug"] == month_slug), None)
-    if month:
-        return send_from_directory(ALL_CAMPAIGNS_DIR, month["filename"])
+    if not month:
+        return "Monthly summary not found", 404
+    file_path = safe_campaign_file(month["filename"])
+    if file_path:
+        return send_from_directory(ALL_CAMPAIGNS_DIR, file_path.name)
     return "Monthly summary not found", 404
 
 
 @app.route("/summary-report")
 def summary_report():
-    return send_from_directory(REPORT_DIR, SUMMARY_FILE.name)
+    if AUGUST_SUMMARY_IN_ARCHIVE.is_file():
+        return send_from_directory(ALL_CAMPAIGNS_DIR, AUGUST_SUMMARY_IN_ARCHIVE.name)
+    if SUMMARY_FILE.is_file():
+        return send_from_directory(REPORT_DIR, SUMMARY_FILE.name)
+    return "Summary report not found", 404
 
 
-@app.route("/shared-report/<filename>")
+@app.route("/shared-report/<path:filename>")
 def shared_report(filename):
-    file_path = ALL_CAMPAIGNS_DIR / filename
-    if file_path.exists():
-        return send_from_directory(ALL_CAMPAIGNS_DIR, filename)
+    file_path = safe_campaign_file(Path(filename).name)
+    if file_path:
+        return send_from_directory(ALL_CAMPAIGNS_DIR, file_path.name)
     return "Shared report not found", 404
 
 
 @app.route("/support-report/<report_id>")
 def support_report(report_id):
     report = report_lookup().get(report_id)
-    if report:
-        return send_from_directory(ALL_CAMPAIGNS_DIR, report["filename"])
+    if not report:
+        return "Report not found", 404
+    file_path = safe_campaign_file(report["filename"])
+    if file_path:
+        return send_from_directory(ALL_CAMPAIGNS_DIR, file_path.name)
+    root_fallback = REPORT_DIR / {
+        "fireworks": "41f_August2026_Fireworks_Campaign.html",
+        "vape-loyalty": "41g_August2026_Vape_Loyalty_Campaign.html",
+        "foodtogoto": "41h_August2026_FoodToGo_Loyalty_Campaign.html",
+        "bagelcoffee": "41i_August2026_BagelCoffeeCombo_Snapshot.html",
+    }.get(report_id, "")
+    if root_fallback.is_file():
+        return send_from_directory(REPORT_DIR, root_fallback.name)
     return "Report not found", 404
 
 
 @app.route("/api/reports")
 def api_reports():
-    return jsonify({"reports": REPORTS})
+    return jsonify({"reports": REPORTS, "stores": STORES})
 
 
 @app.route("/api/recommendations")
@@ -186,83 +229,121 @@ def api_recommendations():
     return jsonify({"recommendations": RECOMMENDATIONS})
 
 
+@app.route("/api/summary")
+def api_summary():
+    return jsonify({
+        "summary": executive_summary_answer(),
+        "highlights": SUMMARY_HIGHLIGHTS,
+        "campaigns": REPORTS,
+        "recommendations": RECOMMENDATIONS,
+    })
+
+
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
     data = request.get_json(silent=True) or {}
     query = (data.get("query") or "").strip()
     if not query:
-        return jsonify({"answer": "Ask about a campaign, report, category, channel, or recommendation theme.", "recommendations": RECOMMENDATIONS[:2]})
-    return jsonify({"answer": generate_chat_answer(query), "recommendations": RECOMMENDATIONS[:3]})
+        return jsonify({
+            "answer": "Try: “Summarize August results with metrics” or pick a suggested question.",
+            "recommendations": RECOMMENDATIONS[:2],
+            "metrics": [],
+            "campaigns": [],
+            "suggestions": CHAT_SUGGESTIONS,
+        })
+
+    answer, campaigns, recs = generate_chat_payload(query)
+    metrics = []
+    for c in campaigns[:2]:
+        for m in c.get("metrics", [])[:3]:
+            metrics.append({
+                "campaign": c["title"],
+                "brand": c.get("brand"),
+                "stores": store_labels(c.get("stores", [])),
+                **m,
+            })
+
+    return jsonify({
+        "answer": answer,
+        "recommendations": recs,
+        "metrics": metrics,
+        "campaigns": [
+            {
+                "id": c["id"],
+                "title": c["title"],
+                "brand": c.get("brand"),
+                "stores": store_labels(c.get("stores", [])),
+                "status": c.get("status"),
+            }
+            for c in campaigns[:3]
+        ],
+        "suggestions": CHAT_SUGGESTIONS,
+    })
 
 
 @app.route("/api/healthcheck")
 def healthcheck():
-    return jsonify({"status": "ok", "reports": len(REPORTS)})
+    archive_count = len(list(ALL_CAMPAIGNS_DIR.glob("*.html"))) if ALL_CAMPAIGNS_DIR.is_dir() else 0
+    return jsonify({
+        "status": "ok",
+        "reports": len(REPORTS),
+        "monthly_summaries": len(MONTHLY_SUMMARIES),
+        "archive_html_files": archive_count,
+        "chat_enabled": bool(ANTHROPIC_API_KEY),
+        "secret_key_configured": bool(app.secret_key),
+    })
 
 
-def generate_chat_answer(query):
-    # Prefer Anthropic if API key exists, but always answer with a concise strategic fallback.
+def generate_chat_payload(query):
+    """Prefer grounded knowledge; optionally refine with Anthropic using the same facts."""
+    grounded_answer, campaigns, recs = answer_from_knowledge(query)
+
     if ANTHROPIC_API_KEY:
         try:
             from anthropic import Anthropic
             client = Anthropic(api_key=ANTHROPIC_API_KEY)
-            report_titles = ", ".join(r["title"] for r in REPORTS)
-            month_story = ", ".join(f"{m['month']}::{m['theme']}" for m in MONTHLY_SUMMARIES)
-            prompt_text = (
-                "Campaign files: " + report_titles + ". "
-                "Campaign story: " + month_story + ". "
-                "User question: " + query
-            )
             response = client.messages.create(
-                model="claude-3-5-sonnet-20241022",
-                max_tokens=280,
-                temperature=0.2,
-                system="You are a campaign intelligence assistant. Review the campaign performance context and respond in 2-4 sentences. Include a clear strategic insight and one recommendation.",
-                messages=[{ "role": "user", "content": prompt_text }]
+                model=CHAT_MODEL,
+                max_tokens=320,
+                temperature=0.1,
+                system=(
+                    "You are CAA's campaign analyst. Answer in 3-5 concise sentences. "
+                    "Always cite brand/stores (Smokers Warehouse SW1/SW2 or Twinleaf TXP/TGC) and exact metrics from the knowledge block. "
+                    "End with one concrete recommendation. Never invent numbers."
+                ),
+                messages=[{
+                    "role": "user",
+                    "content": (
+                        full_knowledge_text()
+                        + "\n\nDraft answer already grounded in metrics:\n"
+                        + grounded_answer
+                        + "\n\nUser question: "
+                        + query
+                        + "\n\nRewrite the draft to be clearer and more succinct while keeping every metric accurate."
+                    ),
+                }],
             )
-            if response:
-                text = []
-                for block in getattr(response, "content", []):
-                    if hasattr(block, "text"):
-                        text.append(block.text)
-                if text:
-                    return clean_chat_text(" ".join(text))
+            text = []
+            for block in getattr(response, "content", []):
+                if hasattr(block, "text"):
+                    text.append(block.text)
+            if text:
+                return clean_chat_text(" ".join(text)), campaigns, recs
         except Exception:
             pass
 
-    q = (query or "").lower()
-
-    families = [f["family"] for f in INTERRELATED_CAMPAIGNS]
-
-    # Key performance inference from the integrated campaign story and report family context.
-    if any(term in q for term in ["performance", "perform", "campaign", "measure", "month", "summary", "revenue", "recommend"]):
-        return (
-            "Across the May-August campaign sequence, the strongest evidence is that loyalty, repeat purchase, and bundle mechanics create more durable performance than isolated one-off lifts. "
-            "The campaign families with the clearest continuity are " + ", ".join(families[:2]) + ", while the strongest campaign actions remain tied to repeat frequency and category relevance. "
-            "Prioritize expanding the repeat-loyalty offer logic and funding the campaign families that convert trial into repeat value."
-        )
-
-    if "fireworks" in q or "seasonal" in q:
-        return "Fireworks should be reviewed as a campaign moment that needs conversion-quality support rather than pure volume delivery. The best next recommendation is to pair seasonal awareness with a basket-building offer that converts one-time store traffic into repeat spend."
-
-    if "vape" in q or "loyalty" in q or "vape loyalty" in q:
-        return "Vape Loyalty is the clearest repeat-value family in the current campaign story because loyalty momentum and category behavior are moving together. Review the customer segment that proves repeat behavior and scale the offer design that deepens product relevance and frequency."
-
-    if "food" in q or "foodtog" in q or "food-to-go" in q or "foodtogo" in q:
-        return "FoodToGo should be evaluated through a tighter meal-occasion loyalty loop that rewards repeat food decisions while keeping basket economics disciplined. The recommended action is to protect the high-frequency offer structure and measure reward pull against meal repeat conversion."
-
-    if "bagel" in q or "coffee" in q or "combo" in q:
-        return "The Bagel Coffee Combo pattern suggests a cross-category bundle is an effective discovery and frequency driver. Review whether the bundle creates a repeat coffee-and-food habit and then extend that mechanics into the stronger loyalty family."
-
-    if "recommend" in q or "strategy" in q or "opportunity" in q:
-        return "Review the month-by-month offer families and prioritize loyalty loops that prove repeat purchase, then scale the strongest bundle mechanics across the campaign family. Protect the creative and category combinations that turn campaign attention into repeat value and budget discipline."
-
-    return "The campaign performance pattern is most coherent when reviewed as a connected month-by-month loyalty system rather than as a single August report. Review the strongest family loops across May-August, protect the creative and bundle mechanics that create repeat behavior, and move future budget toward the campaigns with the clearest repeat-value signal."
+    return grounded_answer, campaigns, recs
 
 
 def clean_chat_text(text):
     text = text.replace("\n", " ")
     return re.sub(r"\s+", " ", text).strip()
+
+
+# Back-compat for tests
+def generate_chat_answer(query):
+    answer, _, _ = generate_chat_payload(query)
+    return answer
 
 
 if __name__ == "__main__":
