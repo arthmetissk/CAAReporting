@@ -3,92 +3,250 @@
 {% block content %}
 <section class="dashboard-head">
   <div>
-    <span class="section-kicker">August 2026 · Twinleaf + Smokers Warehouse</span>
-    <h1>Campaign Results & Recommendations</h1>
+    <span class="section-kicker">May–August 2026 · Twinleaf + Smokers Warehouse</span>
+    <h1>Campaign Stories, Families & Store Detail</h1>
     <p class="page-lead">{{ executive_blurb }}</p>
   </div>
   <div class="header-actions">
-    <a class="secondary-button" href="/summary-report" target="_blank">Open Summary HTML</a>
-    <button class="primary-button compact" type="button" data-query="Summarize August results with metrics" id="summarizeBtn">Summarize in chat</button>
+    <a class="secondary-button" href="/summary-report" target="_blank">August Summary HTML</a>
+    <button class="primary-button compact" type="button" data-query="Summarize August results with metrics">Ask chat</button>
   </div>
 </section>
 
-<section class="summary-strip">
-  <article class="strip-card">
-    <span class="strip-label">Best campaign</span>
-    <span class="strip-value">Vape 4×</span>
-    <span class="strip-foot">SW1 + SW2 · loyalty +32%</span>
-  </article>
-  <article class="strip-card">
-    <span class="strip-label">Smokers Warehouse</span>
-    <span class="strip-value">SW1 / SW2</span>
-    <span class="strip-foot">Vape + Fireworks</span>
-  </article>
-  <article class="strip-card">
-    <span class="strip-label">Twinleaf</span>
-    <span class="strip-value">TXP / TGC</span>
-    <span class="strip-foot">Grab N Go + Bagel/Coffee</span>
-  </article>
-  <article class="strip-card">
-    <span class="strip-label">Priority action</span>
-    <span class="strip-value">Re-run Vape</span>
-    <span class="strip-foot">Q4 at SW stores</span>
-  </article>
+<section class="browse-tabs" id="browseTabs">
+  <button type="button" class="browse-tab active" data-panel="months">By month</button>
+  <button type="button" class="browse-tab" data-panel="families">Continuous families</button>
+  <button type="button" class="browse-tab" data-panel="stores">By store</button>
+  <button type="button" class="browse-tab" data-panel="campaigns">All campaigns</button>
+  <button type="button" class="browse-tab" data-panel="august">August scorecards</button>
 </section>
 
-<section class="section-title">
-  <span>August Campaign Scorecards</span>
-  <div class="brand-filter" id="brandFilter">
-    <button type="button" class="filter-chip active" data-brand="all">All stores</button>
-    <button type="button" class="filter-chip" data-brand="Smokers Warehouse">Smokers Warehouse</button>
-    <button type="button" class="filter-chip" data-brand="Twinleaf">Twinleaf</button>
-  </div>
-</section>
-<section id="reports" class="report-grid scorecard-grid">
-  {% for report in reports %}
-  <article class="report-card scorecard" data-brand="{{ report.brand }}">
-    <div class="report-card-top">
-      <span class="report-category">{{ report.category }}</span>
-      <span class="status-pill status-{{ report.status|lower }}">{{ report.status }}</span>
-    </div>
-    <div class="report-name">{{ report.title }}</div>
-    <div class="brand-row">
-      <span class="brand-badge brand-{{ report.brand|lower|replace(' ', '-') }}">{{ report.brand }}</span>
-      {% for store in report.store_labels %}
-      <span class="store-chip">{{ store }}</span>
-      {% endfor %}
-    </div>
-    <p class="report-summary">{{ report.summary }}</p>
-    <div class="metric-grid">
-      {% for metric in report.metrics[:4] %}
-      <div class="metric-chip">
-        <span class="metric-label">{{ metric.label }}</span>
-        <span class="metric-value">{{ metric.value }}</span>
-        <span class="metric-delta">{{ metric.delta }}</span>
+<!-- BY MONTH -->
+<section class="browse-panel active" id="panel-months">
+  <section class="section-title"><span>Monthly stories</span></section>
+  <section class="monthly-story-grid">
+    {% for month in month_cards %}
+    <article class="month-story-card" id="month-{{ month.slug }}">
+      <div class="report-card-top">
+        <span class="month-label">{{ month.month }}</span>
+        <span class="status-pill">{{ month.status }}</span>
       </div>
-      {% endfor %}
-    </div>
-    <div class="store-breakdown">
-      {% for row in report.store_breakdown %}
-      <div class="store-row">
-        <strong>{{ row.store }}</strong>
-        <span>{{ row.detail }}</span>
-        <em>{{ row.delta }}</em>
+      <h2 class="report-name">{{ month.theme }}</h2>
+      <div class="brand-row compact">
+        {% for brand in month.brands %}
+        <span class="brand-badge brand-{{ brand|lower|replace(' ', '-') }}">{{ brand }}</span>
+        {% endfor %}
+        {% for store in month.stores %}
+        <span class="store-chip">{{ store }}</span>
+        {% endfor %}
       </div>
-      {% endfor %}
-    </div>
-    <p class="takeaway"><strong>Takeaway:</strong> {{ report.takeaway }}</p>
-    <div class="report-actions">
-      <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open full report</a>
-      <button class="small-button" type="button" data-query="Summarize {{ report.title }} with metrics and store results">Ask chat</button>
-    </div>
-  </article>
-  {% endfor %}
+      <p class="report-summary">{{ month.summary }}</p>
+      <div class="metric-grid">
+        {% for metric in month.metrics %}
+        <div class="metric-chip">
+          <span class="metric-label">{{ metric.label }}</span>
+          <span class="metric-value">{{ metric.value }}</span>
+          <span class="metric-delta">{{ metric.delta }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="hero-highlight-list compact-list">
+        {% for item in month.highlights[:4] %}
+        <div class="highlight-row"><span class="check">✓</span><span>{{ item }}</span></div>
+        {% endfor %}
+      </div>
+      <div class="month-campaign-links">
+        {% for c in month.campaigns %}
+        <a class="mini-link" href="/support-report/{{ c.id }}" target="_blank">{{ c.title }}</a>
+        {% endfor %}
+      </div>
+      <div class="report-actions">
+        <a class="small-link" href="/monthly-summary/{{ month.slug }}" target="_blank">Open month HTML</a>
+        <button class="small-button" type="button" data-query="Summarize {{ month.month }} like the August story">Ask chat</button>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
 </section>
 
-<section class="section-title" id="recommendations">
-  <span>Recommendations</span>
+<!-- FAMILIES -->
+<section class="browse-panel" id="panel-families" hidden>
+  <section class="section-title">
+    <span>Campaigns that stretch across months</span>
+  </section>
+  <section class="family-story-grid">
+    {% for family in families %}
+    <article class="family-story-card" id="family-{{ family.id }}">
+      <div class="report-card-top">
+        <span class="report-category">Continuous family</span>
+        <span class="brand-badge brand-{{ family.brand|lower|replace(' ', '-') }}">{{ family.brand }}</span>
+      </div>
+      <h2 class="report-name">{{ family.name }}</h2>
+      <div class="brand-row compact">
+        {% for store in family.store_labels %}
+        <span class="store-chip">{{ store }}</span>
+        {% endfor %}
+        {% for m in family.months %}
+        <span class="timing-chip">{{ m }}</span>
+        {% endfor %}
+      </div>
+      <p class="report-summary"><strong>Offer:</strong> {{ family.offer }}</p>
+      <p class="report-summary">{{ family.summary }}</p>
+      <div class="family-arc">
+        {% for step in family.arc %}
+        <div class="arc-step">
+          <strong>{{ step.month }}</strong>
+          <span>{{ step.headline }}</span>
+          <em>{{ step.detail }}</em>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="takeaway"><strong>Takeaway:</strong> {{ family.takeaway }}</p>
+      <div class="month-campaign-links">
+        {% for c in family.campaigns %}
+        <a class="mini-link" href="/support-report/{{ c.id }}" target="_blank">{{ c.month }} · {{ c.title }}</a>
+        {% endfor %}
+      </div>
+      <div class="report-actions">
+        <button class="small-button" type="button" data-query="Show the {{ family.name }} family across months">Ask chat</button>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
 </section>
+
+<!-- STORES -->
+<section class="browse-panel" id="panel-stores" hidden>
+  <section class="section-title">
+    <span>Browse by store</span>
+    <div class="brand-filter" id="storeFilter">
+      <button type="button" class="filter-chip active" data-store="all">All</button>
+      {% for key, store in stores.items() %}
+      <button type="button" class="filter-chip" data-store="{{ key }}">{{ key }}</button>
+      {% endfor %}
+    </div>
+  </section>
+  <section class="store-map-grid">
+    {% for key, store in stores.items() %}
+    <article class="store-map-card" data-store-card="{{ key }}">
+      <div class="report-card-top">
+        <span class="store-chip">{{ key }}</span>
+        <span class="brand-badge brand-{{ store.brand|lower|replace(' ', '-') }}">{{ store.brand }}</span>
+      </div>
+      <h2 class="report-name">{{ store.name }}</h2>
+      <p class="report-summary">{{ store.location }}</p>
+      <div class="month-campaign-links">
+        {% for c in all_campaigns if key in c.stores %}
+        <a class="mini-link" href="/support-report/{{ c.id }}" target="_blank">{{ c.month }} · {{ c.title }}</a>
+        {% endfor %}
+      </div>
+      <button class="small-button" type="button" data-query="What happened at {{ key }}?">Ask chat about {{ key }}</button>
+    </article>
+    {% endfor %}
+  </section>
+</section>
+
+<!-- ALL CAMPAIGNS -->
+<section class="browse-panel" id="panel-campaigns" hidden>
+  <section class="section-title">
+    <span>All campaigns</span>
+    <div class="brand-filter" id="campaignFilters">
+      <button type="button" class="filter-chip active" data-month="all">All months</button>
+      <button type="button" class="filter-chip" data-month="may">May</button>
+      <button type="button" class="filter-chip" data-month="june">June</button>
+      <button type="button" class="filter-chip" data-month="july">July</button>
+      <button type="button" class="filter-chip" data-month="august">August</button>
+    </div>
+  </section>
+  <section class="report-grid scorecard-grid" id="allCampaignGrid">
+    {% for report in all_campaigns %}
+    <article class="report-card scorecard" data-month="{{ report.month_slug }}" data-brand="{{ report.brand }}" data-stores="{{ report.stores|join(',') }}">
+      <div class="report-card-top">
+        <span class="report-category">{{ report.month }} · {{ report.category }}</span>
+        <span class="status-pill status-{{ report.status|lower|replace('@','-')|replace(' ','-') }}">{{ report.status }}</span>
+      </div>
+      <div class="report-name">{{ report.title }}</div>
+      <div class="brand-row">
+        <span class="brand-badge brand-{{ report.brand|lower|replace(' ', '-')|replace('+','') }}">{{ report.brand }}</span>
+        {% for store in report.store_labels %}
+        <span class="store-chip">{{ store }}</span>
+        {% endfor %}
+        {% if report.family and report.family != 'one-off' %}
+        <span class="timing-chip">Family: {{ report.family }}</span>
+        {% endif %}
+      </div>
+      <p class="report-summary">{{ report.summary }}</p>
+      <div class="metric-grid">
+        {% for metric in report.metrics[:4] %}
+        <div class="metric-chip">
+          <span class="metric-label">{{ metric.label }}</span>
+          <span class="metric-value">{{ metric.value }}</span>
+          <span class="metric-delta">{{ metric.delta }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="store-breakdown">
+        {% for row in report.store_breakdown %}
+        <div class="store-row">
+          <strong>{{ row.store }}</strong>
+          <span>{{ row.detail }}</span>
+          <em>{{ row.delta }}</em>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="report-actions">
+        <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open report</a>
+        <button class="small-button" type="button" data-query="Summarize {{ report.title }} with metrics and store results">Ask chat</button>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+</section>
+
+<!-- AUGUST SCORECARDS (kept) -->
+<section class="browse-panel" id="panel-august" hidden>
+  <section class="section-title">
+    <span>August campaign scorecards</span>
+    <div class="brand-filter" id="brandFilter">
+      <button type="button" class="filter-chip active" data-brand="all">All stores</button>
+      <button type="button" class="filter-chip" data-brand="Smokers Warehouse">Smokers Warehouse</button>
+      <button type="button" class="filter-chip" data-brand="Twinleaf">Twinleaf</button>
+    </div>
+  </section>
+  <section id="reports" class="report-grid scorecard-grid">
+    {% for report in reports %}
+    <article class="report-card scorecard august-card" data-brand="{{ report.brand }}">
+      <div class="report-card-top">
+        <span class="report-category">{{ report.category }}</span>
+        <span class="status-pill status-{{ report.status|lower }}">{{ report.status }}</span>
+      </div>
+      <div class="report-name">{{ report.title }}</div>
+      <div class="brand-row">
+        <span class="brand-badge brand-{{ report.brand|lower|replace(' ', '-') }}">{{ report.brand }}</span>
+        {% for store in report.store_labels %}
+        <span class="store-chip">{{ store }}</span>
+        {% endfor %}
+      </div>
+      <p class="report-summary">{{ report.summary }}</p>
+      <div class="metric-grid">
+        {% for metric in report.metrics[:4] %}
+        <div class="metric-chip">
+          <span class="metric-label">{{ metric.label }}</span>
+          <span class="metric-value">{{ metric.value }}</span>
+          <span class="metric-delta">{{ metric.delta }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="report-actions">
+        <a class="small-link" href="/support-report/{{ report.id }}" target="_blank">Open full report</a>
+        <button class="small-button" type="button" data-query="Summarize {{ report.title }} with metrics and store results">Ask chat</button>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+</section>
+
+<section class="section-title" id="recommendations"><span>Portfolio recommendations</span></section>
 <section class="recommendation-grid">
   {% for rec in recommendations %}
   <article class="recommendation-card">
@@ -98,102 +256,13 @@
     </div>
     <div class="brand-row compact">
       <span class="timing-chip">{{ rec.timing }}</span>
-      <span class="brand-badge brand-{{ rec.brand|lower|replace(' ', '-')|replace('+', '') }}">{{ rec.brand }}</span>
+      <span class="brand-badge">{{ rec.brand }}</span>
       {% for store in rec.stores %}
       <span class="store-chip">{{ store }}</span>
       {% endfor %}
     </div>
     <p class="rec-detail">{{ rec.detail }}</p>
     <button class="small-button" type="button" data-query="Explain recommendation: {{ rec.title }}">Ask why</button>
-  </article>
-  {% endfor %}
-</section>
-
-<section class="section-title">
-  <span>Key Takeaways</span>
-</section>
-<section class="hero-grid">
-  <article class="hero-panel">
-    <div class="panel-title">
-      <span>Executive Read</span>
-      <span class="panel-chip positive">August</span>
-    </div>
-    <div class="hero-highlight-list">
-      {% for item in highlights %}
-      <div class="highlight-row">
-        <span class="check">✓</span>
-        <span>{{ item }}</span>
-      </div>
-      {% endfor %}
-    </div>
-  </article>
-  <article class="signal-panel">
-    <div class="panel-title">
-      <span>Signal Index</span>
-      <span class="panel-chip">Relative strength</span>
-    </div>
-    <div class="signal-list">
-      {% for report in reports %}
-      <div class="signal-row">
-        <span class="signal-label">{{ report.title.split(' ')[0] }}</span>
-        <span class="signal-bar"><span class="bar-fill" style="width:{{ report.signal }}%"></span></span>
-        <span class="signal-meta">{{ report.brand.split(' ')[0] }}</span>
-      </div>
-      {% endfor %}
-    </div>
-  </article>
-</section>
-
-<section class="section-title">
-  <span>Campaign Calendar</span>
-</section>
-<section class="campaign-calendar-panel">
-  <div class="legend-bar">
-    <span class="legend-title">Brand</span>
-    <span class="legend-chip continuous-chip">Twinleaf</span>
-    <span class="legend-chip oneoff-chip">Smokers Warehouse</span>
-  </div>
-  <div class="calendar-table">
-    <div class="calendar-row calendar-head">
-      <span class="calendar-month-head">Month</span>
-      <span class="calendar-campaign-head">Campaign</span>
-      <span class="calendar-type-head">Brand</span>
-      <span class="calendar-status-head">Stores</span>
-      <span class="calendar-objective-head">Objective</span>
-    </div>
-    {% for month in campaign_monthly_story %}
-      {% for campaign in month.campaigns %}
-      <div class="calendar-row">
-        <span class="calendar-month">{{ month.month }}</span>
-        <span class="calendar-campaign">{{ campaign.name }}</span>
-        <span class="calendar-type">{{ campaign.brand }}</span>
-        <span class="calendar-status">{{ campaign.stores|join(', ') }}</span>
-        <span class="calendar-objective">{{ campaign.objective }}</span>
-      </div>
-      {% endfor %}
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section-title">
-  <span>Monthly Summary Archive</span>
-</section>
-<section class="monthly-summary-grid">
-  {% for month in monthly_summaries %}
-  <article class="monthly-card">
-    <span class="month-label">{{ month.month }}</span>
-    <span class="month-theme">{{ month.theme }}</span>
-    <p class="month-summary">{{ month.summary }}</p>
-    <div class="brand-row compact">
-      <span class="brand-badge">{{ month.brand }}</span>
-      {% for store in month.stores %}
-      <span class="store-chip">{{ store }}</span>
-      {% endfor %}
-    </div>
-    <div class="month-actions">
-      <a class="small-link" href="/monthly-summary/{{ month.slug }}" target="_blank">Open summary</a>
-      <a class="mini-link" href="/month-story">Month story</a>
-    </div>
   </article>
   {% endfor %}
 </section>

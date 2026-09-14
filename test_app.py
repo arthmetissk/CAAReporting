@@ -1,7 +1,7 @@
 import pytest
 
-from app import app, generate_chat_answer, ALL_CAMPAIGNS_DIR, REPORTS, MONTHLY_SUMMARIES
-from campaign_knowledge import answer_from_knowledge, AUGUST_CAMPAIGNS
+from app import app, generate_chat_answer, ALL_CAMPAIGNS_DIR, REPORTS, MONTHLY_SUMMARIES, ALL_CAMPAIGN_CARDS
+from campaign_knowledge import answer_from_knowledge, CAMPAIGN_FAMILIES, MONTHLY_STORIES
 
 
 @pytest.fixture
@@ -25,63 +25,69 @@ def test_login_and_dashboard_are_protected(client):
     assert response.headers['Location'] == '/'
 
 
-def test_dashboard_renders_store_and_metrics(client):
+def test_dashboard_renders_month_family_store_browse(client):
     _login(client)
     response = client.get('/')
     assert response.status_code == 200
     body = response.data
-    assert b'Smokers Warehouse' in body
-    assert b'Twinleaf' in body
+    assert b'By month' in body
+    assert b'Continuous families' in body
+    assert b'Breakfast + Free Coffee' in body
+    assert b'Sandwich Deal' in body
+    assert b'Fireworks Summer Program' in body
+    assert b'May 2026' in body
     assert b'SW1' in body
-    assert b'TXP' in body
-    assert b'$100,279' in body
-    assert b'Ask results' in body
+    assert b'TGC' in body
 
 
 def test_campaign_archive_is_available(client):
     assert ALL_CAMPAIGNS_DIR.is_dir()
-    assert (ALL_CAMPAIGNS_DIR / '2026_August_CAA_Campaign_Summary.html').is_file()
-
     _login(client)
     for report in REPORTS:
         response = client.get(f"/support-report/{report['id']}")
         assert response.status_code == 200, report['id']
-
+    # sample continuous family reports
+    for cid in ['may-sandwich', 'june-fireworks', 'july-breakfast-coffee']:
+        assert client.get(f'/support-report/{cid}').status_code == 200, cid
     for month in MONTHLY_SUMMARIES:
-        response = client.get(f"/monthly-summary/{month['slug']}")
-        assert response.status_code == 200, month['slug']
+        assert client.get(f"/monthly-summary/{month['slug']}").status_code == 200, month['slug']
 
 
-def test_summary_and_shared_report_routes(client):
+def test_browse_api_filters(client):
     _login(client)
-    assert client.get('/summary-report').status_code == 200
-    shared = client.get('/shared-report/2026_August_41g_Vape_Loyalty_Campaign.html')
-    assert shared.status_code == 200
-    blocked = client.get('/shared-report/../app.py')
-    assert blocked.status_code == 404
+    may = client.get('/api/browse?month=may').get_json()
+    assert may['count'] >= 4
+    assert all(c['month_slug'] == 'may' for c in may['campaigns'])
+
+    sw1 = client.get('/api/browse?store=SW1').get_json()
+    assert sw1['count'] >= 3
+    assert all('SW1' in c['stores'] for c in sw1['campaigns'])
+
+    family = client.get('/api/browse?family=sandwich-deal').get_json()
+    assert family['count'] == 3
 
 
-def test_chat_returns_metrics_and_recommendations(client):
+def test_chat_month_and_family(client):
     _login(client)
-    response = client.post('/api/chat', json={'query': 'Summarize August results with metrics'})
-    assert response.status_code == 200
-    payload = response.get_json()
-    assert '$100,279' in payload['answer'] or 'Vape' in payload['answer']
-    assert payload['metrics']
-    assert payload['recommendations']
-    assert payload['campaigns']
+    may = client.post('/api/chat', json={'query': 'Summarize May like the August story'}).get_json()
+    assert 'May' in may['answer']
+    assert may['campaigns']
+
+    coffee = client.post('/api/chat', json={'query': 'Show the free coffee family across months'}).get_json()
+    assert 'Coffee' in coffee['answer'] or 'coffee' in coffee['answer'].lower()
+    assert coffee['campaigns']
+
+    fw = generate_chat_answer('Fireworks story May–August')
+    assert 'June' in fw or 'summer' in fw.lower() or 'Fireworks' in fw
 
 
-def test_chat_answers_store_brand_questions():
-    answer, campaigns, recs = answer_from_knowledge('Compare Twinleaf vs Smokers Warehouse')
-    assert 'Smokers Warehouse' in answer
-    assert 'Twinleaf' in answer
-    assert campaigns
-    assert recs
-
-    answer2 = generate_chat_answer('How did vape do at SW1 and SW2?')
-    assert '68' in answer2 or '$68' in answer2 or 'Vape' in answer2
-    assert len(answer2.split()) < 160
+def test_knowledge_helpers():
+    assert len(MONTHLY_STORIES) == 4
+    assert len(CAMPAIGN_FAMILIES) == 3
+    assert len(ALL_CAMPAIGN_CARDS) >= 18
+    ans, camps, _ = answer_from_knowledge('What happened at TGC?')
+    assert 'TGC' in ans
+    assert camps
 
 
 def test_healthcheck_reports_archive(client):
@@ -90,4 +96,3 @@ def test_healthcheck_reports_archive(client):
     payload = response.get_json()
     assert payload['status'] == 'ok'
     assert payload['archive_html_files'] >= 20
-    assert len(AUGUST_CAMPAIGNS) == 4

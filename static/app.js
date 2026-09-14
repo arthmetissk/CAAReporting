@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!target || !recs || !recs.length) return;
     addMessage(
       target,
-      'Actions: ' + recs.map(function (r) { return r.title; }).join(' · '),
+      'Actions: ' + recs.map(function (r) { return r.title || r; }).join(' · '),
       'chat-drawer-message chat-recs'
     );
   }
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         thinking.remove();
         addMessage(
           drawerOutput,
-          'Chat is unavailable right now. Open the August scorecards for metrics, or try again.',
+          'Chat is unavailable right now. Use By month / Families / Stores tabs for metrics.',
           'chat-drawer-message'
         );
       });
@@ -110,6 +110,24 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+  // Browse tabs
+  const tabs = document.getElementById('browseTabs');
+  if (tabs) {
+    tabs.querySelectorAll('.browse-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.querySelectorAll('.browse-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        const panel = tab.getAttribute('data-panel');
+        document.querySelectorAll('.browse-panel').forEach(function (p) {
+          const match = p.id === 'panel-' + panel;
+          p.hidden = !match;
+          p.classList.toggle('active', match);
+        });
+      });
+    });
+  }
+
+  // August brand filter
   const filter = document.getElementById('brandFilter');
   if (filter) {
     filter.querySelectorAll('.filter-chip').forEach(function (chip) {
@@ -117,9 +135,39 @@ document.addEventListener('DOMContentLoaded', function () {
         filter.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
         chip.classList.add('active');
         const brand = chip.getAttribute('data-brand');
-        document.querySelectorAll('.scorecard').forEach(function (card) {
+        document.querySelectorAll('.august-card').forEach(function (card) {
           const show = brand === 'all' || card.getAttribute('data-brand') === brand;
           card.hidden = !show;
+        });
+      });
+    });
+  }
+
+  // All-campaigns month filter
+  const campaignFilters = document.getElementById('campaignFilters');
+  if (campaignFilters) {
+    campaignFilters.querySelectorAll('.filter-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        campaignFilters.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        const month = chip.getAttribute('data-month');
+        document.querySelectorAll('#allCampaignGrid .scorecard').forEach(function (card) {
+          card.hidden = !(month === 'all' || card.getAttribute('data-month') === month);
+        });
+      });
+    });
+  }
+
+  // Store filter
+  const storeFilter = document.getElementById('storeFilter');
+  if (storeFilter) {
+    storeFilter.querySelectorAll('.filter-chip').forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        storeFilter.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        const store = chip.getAttribute('data-store');
+        document.querySelectorAll('[data-store-card]').forEach(function (card) {
+          card.hidden = !(store === 'all' || card.getAttribute('data-store-card') === store);
         });
       });
     });

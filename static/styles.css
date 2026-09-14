@@ -1188,6 +1188,99 @@ body::before {
   color: var(--muted);
 }
 
+.browse-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 18px;
+}
+
+.browse-tab {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.browse-tab.active {
+  background: var(--sage-dark);
+  color: var(--panel);
+  border-color: var(--sage-dark);
+}
+
+.browse-panel {
+  margin-bottom: 28px;
+}
+
+.monthly-story-grid,
+.family-story-grid,
+.store-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.month-story-card,
+.family-story-card,
+.store-map-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.month-story-card .report-name,
+.family-story-card .report-name,
+.store-map-card .report-name {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  margin: 6px 0 8px;
+  color: var(--sage-dark);
+}
+
+.month-campaign-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.family-arc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.arc-step {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #f7f5ef;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.arc-step strong {
+  color: var(--sage-dark);
+  font-size: 12px;
+}
+
+.arc-step em {
+  font-style: normal;
+  color: var(--muted2);
+}
+
+.compact-list .highlight-row {
+  font-size: 12px;
+}
+
 .sidebar-stores {
   display: flex;
   flex-direction: column;

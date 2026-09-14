@@ -9,11 +9,16 @@ from campaign_knowledge import (
     SUMMARY_HIGHLIGHTS,
     CHAT_SUGGESTIONS,
     STORES,
+    MONTHLY_STORIES,
     reports_for_ui,
+    all_campaigns_for_ui,
+    families_for_ui,
+    months_for_ui,
     full_knowledge_text,
     answer_from_knowledge,
     executive_summary_answer,
     store_labels,
+    campaign_by_id,
 )
 
 app = Flask(__name__)
@@ -33,12 +38,26 @@ ANTHROPIC_API_KEY = (os.getenv("ANTHROPIC_API_KEY") or "").strip() or None
 CHAT_MODEL = (os.getenv("CHAT_MODEL") or "claude-3-5-sonnet-20241022").strip()
 
 REPORTS = reports_for_ui()
+ALL_CAMPAIGN_CARDS = all_campaigns_for_ui()
+FAMILY_CARDS = families_for_ui()
+MONTH_CARDS = months_for_ui()
 
 MONTHLY_SUMMARIES = [
-    {"slug": "may", "month": "May 2026", "filename": "2026_May_Main_Campaign_Performance_Summary.html", "theme": "Loyalty registration and trial mechanics", "objective": "Build a repeat conversion base using food, beverage, and seasonal offers.", "summary": "May establishes category relevance, trial mechanics, and campaign offer behavior that can scale into a repeat loyalty system.", "brand": "Mostly Twinleaf", "stores": ["TXP", "TGC", "SW1"], "reports": ["2026_May_39_Pizza_Gas_Loyalty_Twinleaf.html", "2026_May_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html", "2026_May_38_Breakfast_Coffee_Combo_Loyalty_Promo_Twinleaf.html"]},
-    {"slug": "june", "month": "June 2026", "filename": "2026_June_Main_Campaign_Performance_Summary.html", "theme": "Summer activation and reward stretch", "objective": "Extend the loyalty and seasonality rhythm into broader broadcast and offer testing.", "summary": "June connects activation, food behavior, drink offers, and regional campaign performance to create a stronger summer campaign narrative.", "brand": "Twinleaf + Smokers Warehouse", "stores": ["TXP", "TGC", "SW1", "SW2"], "reports": ["2026_June_41_Fireworks_June_2026_Campaign_Performance.html", "2026_June_44_Smart_Water_2for5_Campaign_Performance.html", "2026_June_37_Sandwich_Deal_Loyalty_Promo_Twinleaf.html"]},
-    {"slug": "july", "month": "July 2026", "filename": "2026_July_Promotions_Summary.html", "theme": "Summer creative momentum and promotional acceleration", "objective": "Turn summer traffic into basket-building, reward-led loyalty behavior.", "summary": "July deepens the campaign vocabulary by pairing high-summer promotions with cross-category creative and warmer-weather deal logic.", "brand": "Twinleaf + Smokers Warehouse", "stores": ["TXP", "TGC", "SW1", "SW2"], "reports": ["2026_July_45_Summer_Cooler_Deal.html", "2026_July_47a_BeatHeat_Loyalty.html", "2026_July_46_ZYN_BuyDown_SW.html"]},
-    {"slug": "august", "month": "August 2026", "filename": "2026_August_CAA_Campaign_Summary.html", "theme": "August campaign intelligence summary", "objective": "Create an optimized August measurement readout for loyalty, food, coffee, vape, and seasonal activation.", "summary": "August confirms the strongest campaign system is built around loyalty loops, category relevance, and repeat customer conversion.", "brand": "Twinleaf + Smokers Warehouse", "stores": ["SW1", "SW2", "TXP", "TGC"], "reports": ["2026_August_41f_Fireworks_Campaign.html", "2026_August_41g_Vape_Loyalty_Campaign.html", "2026_August_41h_FoodToGo_Loyalty_Campaign.html", "2026_August_41i_BagelCoffeeCombo_Snapshot.html"]},
+    {
+        "slug": m["slug"],
+        "month": m["month"],
+        "filename": m["filename"],
+        "theme": m["theme"],
+        "objective": m["recommendations"][0] if m.get("recommendations") else m["theme"],
+        "summary": m["summary"],
+        "brand": " + ".join(m["brands"]),
+        "stores": m["stores"],
+        "reports": [campaign_by_id(cid)["filename"] for cid in m["campaign_ids"] if campaign_by_id(cid)],
+        "highlights": m["highlights"],
+        "metrics": m["metrics"],
+        "status": m["status"],
+    }
+    for m in MONTHLY_STORIES
 ]
 
 STORY_MONTHS = [
@@ -104,12 +123,15 @@ CAMPAIGN_MONTHLY_STORY = [
 
 
 def report_lookup():
-    return {r["id"]: r for r in REPORTS}
+    return {r["id"]: r for r in ALL_CAMPAIGN_CARDS}
 
 
 def template_context():
     return {
         "reports": REPORTS,
+        "all_campaigns": ALL_CAMPAIGN_CARDS,
+        "families": FAMILY_CARDS,
+        "month_cards": MONTH_CARDS,
         "recommendations": RECOMMENDATIONS,
         "highlights": SUMMARY_HIGHLIGHTS,
         "story_months": STORY_MONTHS,
@@ -208,12 +230,16 @@ def support_report(report_id):
     file_path = safe_campaign_file(report["filename"])
     if file_path:
         return send_from_directory(ALL_CAMPAIGNS_DIR, file_path.name)
-    root_fallback = REPORT_DIR / {
+    root_fallback = REPORT_DIR / report["filename"]
+    # Also try root-level August copies
+    august_root = {
         "fireworks": "41f_August2026_Fireworks_Campaign.html",
         "vape-loyalty": "41g_August2026_Vape_Loyalty_Campaign.html",
         "foodtogoto": "41h_August2026_FoodToGo_Loyalty_Campaign.html",
         "bagelcoffee": "41i_August2026_BagelCoffeeCombo_Snapshot.html",
-    }.get(report_id, "")
+    }.get(report_id)
+    if august_root and (REPORT_DIR / august_root).is_file():
+        return send_from_directory(REPORT_DIR, august_root)
     if root_fallback.is_file():
         return send_from_directory(REPORT_DIR, root_fallback.name)
     return "Report not found", 404
@@ -221,7 +247,35 @@ def support_report(report_id):
 
 @app.route("/api/reports")
 def api_reports():
-    return jsonify({"reports": REPORTS, "stores": STORES})
+    return jsonify({"reports": REPORTS, "all_campaigns": ALL_CAMPAIGN_CARDS, "stores": STORES})
+
+
+@app.route("/api/browse")
+def api_browse():
+    """Filter campaigns by month, store, family, or campaign id."""
+    month = (request.args.get("month") or "").strip().lower()
+    store = (request.args.get("store") or "").strip().upper()
+    family = (request.args.get("family") or "").strip().lower()
+    campaign_id = (request.args.get("campaign") or "").strip().lower()
+
+    items = ALL_CAMPAIGN_CARDS
+    if campaign_id:
+        items = [c for c in items if c["id"] == campaign_id]
+    if month:
+        items = [c for c in items if c["month_slug"] == month or c["month"].lower().startswith(month)]
+    if store:
+        items = [c for c in items if store in c["stores"]]
+    if family:
+        items = [c for c in items if c.get("family") == family]
+
+    return jsonify({
+        "filters": {"month": month, "store": store, "family": family, "campaign": campaign_id},
+        "count": len(items),
+        "campaigns": items,
+        "months": MONTH_CARDS,
+        "families": FAMILY_CARDS,
+        "stores": STORES,
+    })
 
 
 @app.route("/api/recommendations")
