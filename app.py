@@ -19,6 +19,7 @@ from campaign_knowledge import (
     executive_summary_answer,
     store_labels,
     campaign_by_id,
+    metric_rows,
 )
 
 app = Flask(__name__)
@@ -317,31 +318,27 @@ def api_chat():
 
     answer, campaigns, recs = generate_chat_payload(query)
     metrics = []
-    for c in campaigns[:2]:
-        for m in c.get("metrics", [])[:3]:
-            metrics.append({
-                "campaign": c["title"],
-                "brand": c.get("brand"),
-                "stores": store_labels(c.get("stores", [])),
-                **m,
-            })
+    for c in campaigns[:4]:
+        metrics.extend(metric_rows(c, limit=2))
+    metrics = metrics[:8]
 
-    formatted = structure_chat_answer(answer, recs)
+    formatted = structure_chat_answer(answer, recs, campaigns)
 
     return jsonify({
         "answer": answer,
         "formatted": formatted,
-        "recommendations": recs,
+        "recommendations": recs[:3],
         "metrics": metrics,
         "campaigns": [
             {
                 "id": c["id"],
                 "title": c["title"],
+                "month": c.get("month"),
                 "brand": c.get("brand"),
                 "stores": store_labels(c.get("stores", [])),
                 "status": c.get("status"),
             }
-            for c in campaigns[:3]
+            for c in campaigns[:4]
         ],
         "suggestions": CHAT_SUGGESTIONS,
     })
@@ -370,27 +367,30 @@ def generate_chat_payload(query):
             client = Anthropic(api_key=ANTHROPIC_API_KEY)
             response = client.messages.create(
                 model=CHAT_MODEL,
-                max_tokens=360,
+                max_tokens=420,
                 temperature=0.1,
                 system=(
                     "You are CAA's campaign analyst. Never invent metrics. "
+                    "Write one cohesive performance summary, then one recommendation. "
+                    "Every metric MUST include its month (May/June/July/August 2026). "
                     "Respond in this exact layout:\n"
-                    "HEADLINE: <one clear sentence>\n"
+                    "HEADLINE: <one sentence naming the scope (month/family/store)>\n"
                     "POINTS:\n"
-                    "- <metric-backed point with brand/stores>\n"
-                    "- <metric-backed point>\n"
-                    "- <metric-backed point>\n"
-                    "NEXT: <one concrete recommendation>\n"
-                    "Keep each point under 25 words."
+                    "- <performance point with month + metric>\n"
+                    "- <performance point with month + metric>\n"
+                    "- <performance point with month + brand/stores>\n"
+                    "NEXT: <one concrete recommendation tied to that performance>\n"
+                    "Do not list bare numbers without a month. Keep each point under 30 words."
                 ),
                 messages=[{
                     "role": "user",
                     "content": (
                         full_knowledge_text()
-                        + "\n\nDraft grounded answer:\n"
+                        + "\n\nGrounded draft (preserve months and metrics):\n"
                         + grounded_answer
                         + "\n\nUser question: "
                         + query
+                        + "\n\nRewrite into a cohesive performance narrative + recommendation."
                     ),
                 }],
             )
@@ -406,24 +406,39 @@ def generate_chat_payload(query):
     return grounded_answer, campaigns, recs
 
 
-def structure_chat_answer(answer, recs):
+def structure_chat_answer(answer, recs, campaigns=None):
     """Turn free text into a clean headline / bullets / next-step card."""
     raw = (answer or "").strip()
-    if not raw:
-        return {"headline": "No answer available.", "bullets": [], "next_step": None}
+    campaigns = campaigns or []
+    scope_bits = []
+    months = []
+    for c in campaigns[:4]:
+        if c.get("month") and c["month"] not in months:
+            months.append(c["month"])
+    if months:
+        scope_bits.append(" · ".join(months))
+    brands = []
+    for c in campaigns[:4]:
+        b = c.get("brand")
+        if b and b not in brands:
+            brands.append(b)
+    if brands:
+        scope_bits.append(" · ".join(brands[:2]))
 
-    # Structured Anthropic layout
+    if not raw:
+        return {"headline": "No answer available.", "context": "", "bullets": [], "next_step": None}
+
     if re.search(r"(?im)^HEADLINE:", raw):
         headline_m = re.search(r"(?im)^HEADLINE:\s*(.+)$", raw)
         next_m = re.search(r"(?im)^NEXT:\s*(.+)$", raw)
         points = re.findall(r"(?im)^(?:-|\*|•)\s*(.+)$", raw)
         return {
             "headline": (headline_m.group(1).strip() if headline_m else raw.splitlines()[0]),
+            "context": " | ".join(scope_bits),
             "bullets": [p.strip() for p in points if p.strip()][:6],
             "next_step": (next_m.group(1).strip() if next_m else None),
         }
 
-    # Fallback: split dense paragraphs into readable bullets
     text = clean_chat_text(raw)
     sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
     headline = sentences[0] if sentences else text
@@ -438,7 +453,6 @@ def structure_chat_answer(answer, recs):
         first = recs[0]
         next_step = first.get("title") if isinstance(first, dict) else str(first)
 
-    # Prefer shorter bullets when a sentence is very long
     compact = []
     for b in bullets[:6]:
         if len(b) > 180 and " — " in b:
@@ -448,6 +462,7 @@ def structure_chat_answer(answer, recs):
 
     return {
         "headline": headline,
+        "context": " | ".join(scope_bits),
         "bullets": compact[:5],
         "next_step": next_step,
     }

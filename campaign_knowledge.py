@@ -494,16 +494,34 @@ def months_for_ui():
 
 
 def metrics_brief(campaign, limit=4):
+    month = campaign.get("month", "")
     parts = []
     for m in campaign.get("metrics", [])[:limit]:
         delta = f" ({m['delta']})" if m.get("delta") else ""
         parts.append(f"{m['label']} {m['value']}{delta}")
-    return "; ".join(parts)
+    body = "; ".join(parts)
+    return f"{month}: {body}" if month else body
+
+
+def metric_rows(campaign, limit=3):
+    rows = []
+    for m in campaign.get("metrics", [])[:limit]:
+        rows.append({
+            "month": campaign.get("month"),
+            "campaign": campaign.get("title"),
+            "brand": campaign.get("brand"),
+            "stores": store_labels(campaign.get("stores", [])),
+            "label": m["label"],
+            "value": m["value"],
+            "delta": m.get("delta", ""),
+        })
+    return rows
 
 
 def full_knowledge_text():
     blocks = [
-        "CAA May–August 2026 campaign facts. Brands: Smokers Warehouse=SW1/SW2; Twinleaf=TXP/TGC. Use exact metrics only.",
+        "CAA May–August 2026 campaign facts. Brands: Smokers Warehouse=SW1/SW2; Twinleaf=TXP/TGC. "
+        "Always name the month with every metric. Never invent numbers.",
         "Continuous families: " + " || ".join(
             f"{f['name']} ({', '.join(f['months'])}) stores={', '.join(f['stores'])}: {f['summary']}"
             for f in CAMPAIGN_FAMILIES
@@ -512,7 +530,8 @@ def full_knowledge_text():
     for m in MONTHLY_STORIES:
         blocks.append(
             f"MONTH {m['month']}: theme={m['theme']}; summary={m['summary']}; "
-            f"highlights={'; '.join(m['highlights'])}; metrics={'; '.join(x['label']+': '+x['value']+' '+x['delta'] for x in m['metrics'])}; "
+            f"highlights={'; '.join(m['highlights'])}; "
+            f"metrics={'; '.join(m['month']+' '+x['label']+': '+x['value']+' '+x['delta'] for x in m['metrics'])}; "
             f"recs={'; '.join(m['recommendations'])}"
         )
     for c in CAMPAIGNS:
@@ -528,10 +547,12 @@ def full_knowledge_text():
 
 def executive_summary_answer():
     return (
-        "May–August 2026 story: Twinleaf continuous families are Sandwich (free chip/fountain) and Breakfast+Free Coffee — "
-        "TGC leads growth, TXP needs attach/POS discipline. Smokers Warehouse fireworks arc peaks in June (~$151k, +17% YoY) "
-        "and should not be judged on August clearance. August’s best single campaign is Vape 4× Points at SW1/SW2 "
-        "(loyalty +32% to $68.5k). Browse by month, store, campaign, or family for the detailed metrics."
+        "HEADLINE: May–August 2026 performance is a Twinleaf loyalty-family story plus a Smokers Warehouse fireworks arc, topped by August Vape 4× Points.\n"
+        "POINTS:\n"
+        "- May–July Twinleaf: Sandwich (free chip/fountain) and Breakfast+Free Coffee are continuous; TGC leads growth while TXP needs attach/POS discipline.\n"
+        "- June Smokers Warehouse fireworks peaked near $151k (+17% YoY); August fireworks $5.8k (−56%) is clearance, not the summer verdict (summer FW $433k, +49%).\n"
+        "- August SW1/SW2 Vape 4× Points is the clearest single-month win: total $100,279 (+3.6% YoY), loyalty $68,492 (+32%).\n"
+        "NEXT: Re-run Vape 4× in Q4 at SW1/SW2; plan 2027 fireworks for May–June; protect Twinleaf free-coffee/sandwich families and fix TXP combo POS."
     )
 
 
@@ -588,19 +609,30 @@ def match_campaigns(query: str):
 
 
 def summarize_family(f):
-    arc = " → ".join(f"{a['month']}: {a['headline']}" for a in f["arc"])
+    points = [
+        f"Family window: {', '.join(f['months'])} at {f['brand']} ({', '.join(store_labels(f['stores']))}). Offer: {f['offer']}."
+    ]
+    for step in f["arc"]:
+        points.append(f"{step['month']}: {step['headline']} — {step['detail']}")
+    points.append(f"Read-across: {f['takeaway']}")
     return (
-        f"{f['name']} ({f['brand']} · {', '.join(store_labels(f['stores']))}) runs {', '.join(f['months'])}. "
-        f"Offer: {f['offer']}. {f['summary']} Arc: {arc}. Takeaway: {f['takeaway']} Next: {f['recommendation']}"
+        f"HEADLINE: {f['name']} is a multi-month {f['brand']} program across {', '.join(f['months'])}.\n"
+        "POINTS:\n" + "\n".join(f"- {p}" for p in points) + "\n"
+        f"NEXT: {f['recommendation']}"
     )
 
 
 def summarize_month(m):
-    mets = "; ".join(f"{x['label']} {x['value']} ({x['delta']})" for x in m["metrics"])
+    points = [f"{m['month']} theme: {m['theme']} across {', '.join(m['brands'])} ({', '.join(store_labels(m['stores']))})."]
+    points.append(m["summary"])
+    for h in m["highlights"][:3]:
+        points.append(f"{m['month']}: {h}")
+    for metric in m["metrics"][:4]:
+        points.append(f"{m['month']} metric — {metric['label']}: {metric['value']} ({metric['delta']}).")
     return (
-        f"{m['month']} — {m['theme']} ({', '.join(m['brands'])}; stores {', '.join(store_labels(m['stores']))}). "
-        f"{m['summary']} Highlights: {' '.join(m['highlights'][:3])} "
-        f"Metrics: {mets}. Recommendations: {' '.join(m['recommendations'][:2])}"
+        f"HEADLINE: {m['month']} performance — {m['theme']}.\n"
+        "POINTS:\n" + "\n".join(f"- {p}" for p in points) + "\n"
+        f"NEXT: {m['recommendations'][0]}"
     )
 
 
@@ -609,12 +641,42 @@ def summarize_store(store_key: str):
     if not store:
         return None
     camps = [c for c in CAMPAIGNS if store_key in c["stores"]]
-    bits = []
-    for c in camps[:8]:
-        bits.append(f"{c['month']} {c['title']}: {metrics_brief(c, 2)}")
+    # Keep chronological
+    order = {"May": 1, "June": 2, "July": 3, "August": 4}
+    camps = sorted(camps, key=lambda c: (order.get(c["month"], 9), c["title"]))
+    points = [
+        f"{store['short']} ({store['brand']}) appears in {len(camps)} tracked campaigns from May–August 2026."
+    ]
+    for c in camps[:6]:
+        top = c["metrics"][0] if c.get("metrics") else None
+        if top:
+            points.append(
+                f"{c['month']} — {c['title']}: {top['label']} {top['value']} ({top.get('delta', '')})."
+            )
+        else:
+            points.append(f"{c['month']} — {c['title']}: {c['summary']}")
+    next_step = camps[-1]["recommendation"] if camps else "Review store-level scorecards by month."
     return (
-        f"{store['short']} ({store['brand']}) appears in {len(camps)} tracked campaigns May–August. "
-        + " | ".join(bits)
+        f"HEADLINE: {store['short']} campaign performance across May–August 2026.\n"
+        "POINTS:\n" + "\n".join(f"- {p}" for p in points) + "\n"
+        f"NEXT: {next_step}"
+    )
+
+
+def summarize_campaign(c):
+    points = [
+        f"{c['month']} scope: {c['brand']} at {', '.join(store_labels(c['stores']))}. Offer: {c['offer']}.",
+        f"{c['month']} result: {c['summary']}",
+    ]
+    for m in c.get("metrics", [])[:4]:
+        points.append(f"{c['month']} — {m['label']}: {m['value']} ({m.get('delta', '')}).")
+    for row in c.get("store_breakdown", [])[:2]:
+        points.append(f"{c['month']} store {row['store']}: {row['detail']} ({row['delta']}).")
+    points.append(f"{c['month']} takeaway: {c['takeaway']}")
+    return (
+        f"HEADLINE: {c['month']} {c['title']} performance summary.\n"
+        "POINTS:\n" + "\n".join(f"- {p}" for p in points) + "\n"
+        f"NEXT: {c['recommendation']}"
     )
 
 
@@ -624,7 +686,7 @@ def answer_from_knowledge(query: str):
     months = match_months(q)
     campaigns = match_campaigns(q)
 
-    wants_summary = any(t in q for t in ["summar", "overview", "story", "results", "at a glance", "how did", "overall"])
+    wants_summary = any(t in q for t in ["summar", "overview", "story", "results", "at a glance", "how did", "overall", "performance"])
     wants_recs = any(t in q for t in ["recommend", "next step", "action", "should we", "priority", "q4"])
     wants_family = any(t in q for t in ["family", "across month", "multi-month", "stretch", "continuous", "ongoing"]) or bool(families)
     wants_store = any(k.lower() in q for k in STORES) or any(t in q for t in ["akwesasne", "covington", "express", "store"])
@@ -633,37 +695,70 @@ def answer_from_knowledge(query: str):
         f = families[0]
         linked = [campaign_by_id(cid) for cid in f["campaign_ids"] if campaign_by_id(cid)]
         recs = [r for r in RECOMMENDATIONS if f["brand"].split()[0] in r["brand"] or any(s in r["stores"] for s in f["stores"])]
-        return summarize_family(f), linked, recs[:3] or RECOMMENDATIONS[:3]
+        return summarize_family(f), linked, (recs[:3] or RECOMMENDATIONS[:3])
 
-    if months and (wants_summary or "month" in q or months[0]["slug"] in q):
-        m = months[0]
-        linked = [campaign_by_id(cid) for cid in m["campaign_ids"] if campaign_by_id(cid)]
-        return summarize_month(m), linked, [{"title": r, "impact": "Medium", "detail": r, "brand": m["brands"][0], "stores": m["stores"], "timing": m["month"]} for r in m["recommendations"][:3]]
+    if months and (wants_summary or "month" in q or months[0]["slug"] in q or not campaigns):
+        # Prefer explicit month summary when a month is named
+        if months and (wants_summary or months[0]["slug"] in q or months[0]["month"].split()[0].lower() in q):
+            m = months[0]
+            linked = [campaign_by_id(cid) for cid in m["campaign_ids"] if campaign_by_id(cid)]
+            month_recs = [
+                {"title": r, "impact": "Medium", "detail": r, "brand": m["brands"][0], "stores": m["stores"], "timing": m["month"]}
+                for r in m["recommendations"][:3]
+            ]
+            return summarize_month(m), linked, month_recs
 
     store_key = next((k for k in STORES if k.lower() in q or STORES[k]["location"].lower().split("/")[0].strip() in q), None)
     if wants_store and store_key:
         text = summarize_store(store_key)
-        linked = [c for c in CAMPAIGNS if store_key in c["stores"]][:4]
+        linked = [c for c in CAMPAIGNS if store_key in c["stores"]]
+        order = {"May": 1, "June": 2, "July": 3, "August": 4}
+        linked = sorted(linked, key=lambda c: (order.get(c["month"], 9), c["title"]))[:6]
         return text, linked, RECOMMENDATIONS[:3]
 
     if campaigns:
+        # If multiple months matched via family-like query without family hit, stitch top campaigns cohesively
+        if wants_summary and len(campaigns) > 1 and len({c["month"] for c in campaigns[:4]}) > 1:
+            top = campaigns[:4]
+            points = []
+            for c in top:
+                m0 = c["metrics"][0] if c.get("metrics") else None
+                if m0:
+                    points.append(f"{c['month']} — {c['title']}: {m0['label']} {m0['value']} ({m0.get('delta', '')}).")
+                else:
+                    points.append(f"{c['month']} — {c['title']}: {c['summary']}")
+            answer = (
+                "HEADLINE: Combined performance view across the matched campaigns.\n"
+                "POINTS:\n" + "\n".join(f"- {p}" for p in points) + "\n"
+                f"NEXT: {top[0]['recommendation']}"
+            )
+            return answer, top, RECOMMENDATIONS[:3]
         c = campaigns[0]
-        store_bits = "; ".join(f"{b['store']}: {b['detail']} ({b['delta']})" for b in c["store_breakdown"])
-        answer = (
-            f"{c['title']} — {c['month']} · {c['brand']} · {', '.join(store_labels(c['stores']))}. "
-            f"Offer: {c['offer']}. {c['summary']} Metrics: {metrics_brief(c, 4)}. By store: {store_bits}. "
-            f"Takeaway: {c['takeaway']} Next: {c['recommendation']}"
-        )
-        return answer, campaigns[:3], RECOMMENDATIONS[:3]
+        return summarize_campaign(c), campaigns[:3], [
+            {"title": c["recommendation"], "impact": "High", "detail": c["recommendation"], "brand": c["brand"], "stores": c["stores"], "timing": c["month"]}
+        ] + RECOMMENDATIONS[:2]
 
     if wants_recs:
-        rec_text = "Top recommendations: " + " ".join(
-            f"{i+1}) {r['title']} ({r['brand']} — {', '.join(r['stores'])}): {r['detail']}"
-            for i, r in enumerate(RECOMMENDATIONS[:4])
+        rec_text = (
+            "HEADLINE: Priority actions from the May–August 2026 campaign read.\n"
+            "POINTS:\n"
+            + "\n".join(
+                f"- {r['timing']}: {r['title']} ({r['brand']} · {', '.join(r['stores'])}) — {r['detail']}"
+                for r in RECOMMENDATIONS[:4]
+            )
+            + f"\nNEXT: {RECOMMENDATIONS[0]['title']}"
         )
         return rec_text, AUGUST_CAMPAIGNS, RECOMMENDATIONS[:4]
 
-    if wants_summary:
+    if wants_summary or months:
+        if months:
+            m = months[0]
+            linked = [campaign_by_id(cid) for cid in m["campaign_ids"] if campaign_by_id(cid)]
+            month_recs = [
+                {"title": r, "impact": "Medium", "detail": r, "brand": m["brands"][0], "stores": m["stores"], "timing": m["month"]}
+                for r in m["recommendations"][:3]
+            ]
+            return summarize_month(m), linked, month_recs
         return executive_summary_answer(), AUGUST_CAMPAIGNS, RECOMMENDATIONS[:3]
 
     return executive_summary_answer(), AUGUST_CAMPAIGNS, RECOMMENDATIONS[:3]

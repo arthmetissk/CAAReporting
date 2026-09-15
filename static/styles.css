@@ -1387,6 +1387,13 @@ body::before {
   font-weight: 700;
 }
 
+.chat-answer-context {
+  margin: -4px 0 10px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--muted);
+}
+
 .chat-answer-list {
   margin: 0 0 10px;
   padding-left: 18px;

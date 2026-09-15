@@ -74,14 +74,20 @@ def test_chat_month_and_family(client):
     assert may['campaigns']
     assert may['formatted']['headline']
     assert isinstance(may['formatted']['bullets'], list)
+    assert any('May' in b for b in may['formatted']['bullets'])
+    assert may['metrics']
+    assert all(m.get('month') for m in may['metrics'])
 
     coffee = client.post('/api/chat', json={'query': 'Show the free coffee family across months'}).get_json()
     assert 'Coffee' in coffee['answer'] or 'coffee' in coffee['answer'].lower()
     assert coffee['campaigns']
     assert coffee['formatted']['headline']
+    joined = ' '.join(coffee['formatted']['bullets'])
+    assert 'May' in joined and ('June' in joined or 'July' in joined)
 
     fw = generate_chat_answer('Fireworks story May–August')
     assert 'June' in fw or 'summer' in fw.lower() or 'Fireworks' in fw
+    assert 'HEADLINE:' in fw or 'June' in fw
 
 
 def test_knowledge_helpers():

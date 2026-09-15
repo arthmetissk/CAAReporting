@@ -25,11 +25,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const headline = formatted.headline || data.answer || 'No answer available.';
     const bullets = formatted.bullets || [];
     const nextStep = formatted.next_step;
+    const context = formatted.context || '';
 
-    card.appendChild(el('div', 'chat-answer-kicker', 'Insight'));
+    card.appendChild(el('div', 'chat-answer-kicker', 'Performance summary'));
     card.appendChild(el('h3', 'chat-answer-headline', headline));
+    if (context) {
+      card.appendChild(el('div', 'chat-answer-context', context));
+    }
 
     if (bullets.length) {
+      card.appendChild(el('div', 'chat-section-label', 'What the data shows'));
       const list = el('ul', 'chat-answer-list');
       bullets.forEach(function (point) {
         list.appendChild(el('li', null, point));
@@ -38,40 +43,33 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (data.metrics && data.metrics.length) {
+      card.appendChild(el('div', 'chat-section-label', 'Metrics by month'));
       const metricsWrap = el('div', 'chat-metrics');
-      data.metrics.slice(0, 6).forEach(function (m) {
+      data.metrics.slice(0, 8).forEach(function (m) {
         const chip = el('div', 'chat-metric-chip');
-        chip.appendChild(el('span', 'metric-label', (m.campaign ? m.campaign.split(' ')[0] + ' · ' : '') + m.label));
+        const monthPrefix = m.month ? (m.month + ' · ') : '';
+        const campaignBit = m.campaign ? m.campaign.replace(/ — .*$/, '').split(' ').slice(0, 3).join(' ') : '';
+        chip.appendChild(el('span', 'metric-label', monthPrefix + (campaignBit ? campaignBit + ' · ' : '') + m.label));
         chip.appendChild(el('span', 'metric-value', m.value));
         chip.appendChild(el('span', 'metric-delta', m.delta || ''));
         metricsWrap.appendChild(chip);
       });
-      card.appendChild(el('div', 'chat-section-label', 'Key metrics'));
       card.appendChild(metricsWrap);
     }
 
     if (data.campaigns && data.campaigns.length) {
+      card.appendChild(el('div', 'chat-section-label', 'Campaigns referenced'));
       const refs = el('div', 'chat-ref-row');
       data.campaigns.forEach(function (c) {
-        const chip = el('span', 'chat-ref-chip', c.title + (c.stores && c.stores.length ? ' · ' + c.stores.map(function (s) { return s.split(' ')[0]; }).join('/') : ''));
-        refs.appendChild(chip);
+        const label = (c.month ? c.month + ' · ' : '') + c.title;
+        refs.appendChild(el('span', 'chat-ref-chip', label));
       });
-      card.appendChild(el('div', 'chat-section-label', 'Referenced'));
       card.appendChild(refs);
     }
 
-    if (nextStep || (data.recommendations && data.recommendations.length)) {
-      card.appendChild(el('div', 'chat-section-label', 'Recommended next step'));
-      if (nextStep) {
-        card.appendChild(el('p', 'chat-next-step', nextStep));
-      }
-      if (data.recommendations && data.recommendations.length) {
-        const recList = el('ul', 'chat-answer-list chat-rec-list');
-        data.recommendations.slice(0, 3).forEach(function (r) {
-          recList.appendChild(el('li', null, r.title || r));
-        });
-        card.appendChild(recList);
-      }
+    if (nextStep) {
+      card.appendChild(el('div', 'chat-section-label', 'Recommendation'));
+      card.appendChild(el('p', 'chat-next-step', nextStep));
     }
 
     target.appendChild(card);
