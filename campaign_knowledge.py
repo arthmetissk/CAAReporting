@@ -545,7 +545,17 @@ def full_knowledge_text():
     return "\n".join(blocks)
 
 
+def executive_blurb_text():
+    """Clean dashboard intro copy (never show HEADLINE/POINTS markup on the page)."""
+    return (
+        "May–August 2026 spans Twinleaf loyalty families (sandwich and free coffee) and a Smokers Warehouse "
+        "fireworks arc that peaks in June, with August’s clearest win in Vape 4× Points at SW1/SW2. "
+        "Use the tabs below to browse by month, continuous family, store, or campaign."
+    )
+
+
 def executive_summary_answer():
+    """Structured chat fallback only — parsed into headline/bullets/next step."""
     return (
         "HEADLINE: May–August 2026 performance is a Twinleaf loyalty-family story plus a Smokers Warehouse fireworks arc, topped by August Vape 4× Points.\n"
         "POINTS:\n"

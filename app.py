@@ -17,6 +17,7 @@ from campaign_knowledge import (
     full_knowledge_text,
     answer_from_knowledge,
     executive_summary_answer,
+    executive_blurb_text,
     store_labels,
     campaign_by_id,
     metric_rows,
@@ -151,7 +152,7 @@ def template_context():
         "campaign_monthly_story": CAMPAIGN_MONTHLY_STORY,
         "chat_suggestions": CHAT_SUGGESTIONS,
         "stores": STORES,
-        "executive_blurb": executive_summary_answer(),
+        "executive_blurb": executive_blurb_text(),
         "chat_disclaimer": CHAT_DISCLAIMER,
     }
 
@@ -298,7 +299,7 @@ def api_recommendations():
 @app.route("/api/summary")
 def api_summary():
     return jsonify({
-        "summary": executive_summary_answer(),
+        "summary": executive_blurb_text(),
         "highlights": SUMMARY_HIGHLIGHTS,
         "campaigns": REPORTS,
         "recommendations": RECOMMENDATIONS,
