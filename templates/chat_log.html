@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block title %}Chat Audit Log{% endblock %}
+{% block content %}
+<section class="dashboard-head">
+  <div>
+    <span class="section-kicker">Audit trail</span>
+    <h1>Campaign chat log</h1>
+    <p class="prepared-by">Prepared by: Arthur Elliott</p>
+    <p class="page-lead">{{ disclaimer }}</p>
+  </div>
+</section>
+
+<section class="chat-log-table-wrap">
+  <table class="chat-log-table">
+    <thead>
+      <tr>
+        <th>When (UTC)</th>
+        <th>User</th>
+        <th>On-topic</th>
+        <th>Question</th>
+        <th>Answer summary</th>
+        <th>Model</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for turn in turns %}
+      <tr class="{% if not turn.on_topic %}off-topic{% endif %}">
+        <td>{{ turn.created_at }}</td>
+        <td>{{ turn.username or '—' }}</td>
+        <td>{% if turn.on_topic %}Yes{% else %}No{% if turn.refusal_reason %} ({{ turn.refusal_reason }}){% endif %}{% endif %}</td>
+        <td>{{ turn.query }}</td>
+        <td>
+          {% if turn.formatted and turn.formatted.headline %}
+            {{ turn.formatted.headline }}
+          {% elif turn.answer %}
+            {{ turn.answer[:180] }}{% if turn.answer|length > 180 %}…{% endif %}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>{{ turn.model_used or '—' }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6">No chat turns logged yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

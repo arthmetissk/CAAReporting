@@ -12,6 +12,10 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Local chat audit DB (generated at runtime)
+data/
+*.db
+
 # Render and local environment files
 .env
 .env.*

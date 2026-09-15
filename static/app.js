@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', function () {
       card.appendChild(el('p', 'chat-next-step', nextStep));
     }
 
+    const disclaimer = el('p', 'chat-answer-disclaimer', data.disclaimer || 'AI-generated summary — verify figures against the official campaign HTML reports before decisions.');
+    card.appendChild(disclaimer);
+
     target.appendChild(card);
   }
 

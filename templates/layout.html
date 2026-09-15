@@ -42,6 +42,10 @@
           <span>Summary Report</span>
           <span class="nav-icon">»</span>
         </a>
+        <a class="nav-link" href="/chat-log">
+          <span>Chat audit log</span>
+          <span class="nav-icon">»</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
@@ -67,17 +71,18 @@
     <div class="chat-drawer-top">
       <div>
         <span class="chat-drawer-title">Campaign results chat</span>
-        <span class="chat-drawer-sub">Metrics · stores · recommendations</span>
+        <span class="chat-drawer-sub">Campaign questions only · audited</span>
       </div>
       <button class="chat-close" id="chatClose" type="button">×</button>
     </div>
+    <div class="chat-disclaimer" id="chatDisclaimer">{{ chat_disclaimer }}</div>
     <div class="chat-suggestions" id="chatSuggestions">
       {% for tip in chat_suggestions %}
       <button type="button" class="suggest-chip" data-query="{{ tip }}">{{ tip }}</button>
       {% endfor %}
     </div>
     <div class="chat-drawer-output" id="chatDrawerOutput">
-      <div class="chat-drawer-message">Ask about a month, store, or continuous family. Answers are formatted as insight, key points, metrics, and next step.</div>
+      <div class="chat-drawer-message">Ask only about CAA campaigns, months, stores, or recommendations. Answers are AI-assisted and should be checked against the report numbers.</div>
     </div>
     <div class="chat-drawer-controls">
       <input type="text" id="chatDrawerQuery" class="chat-drawer-input" placeholder="Ask about vape, fireworks, Twinleaf, SW1…">

@@ -99,6 +99,29 @@ def test_knowledge_helpers():
     assert camps
 
 
+def test_chat_guardrail_and_audit_log(client):
+    _login(client)
+    refused = client.post('/api/chat', json={'query': 'Tell me a joke about crypto'}).get_json()
+    assert refused['on_topic'] is False
+    assert 'campaign' in refused['formatted']['headline'].lower() or 'CAA' in refused['formatted']['headline']
+    assert refused['disclaimer']
+
+    ok = client.post('/api/chat', json={'query': 'Summarize August results with metrics'}).get_json()
+    assert ok['on_topic'] is True
+    assert ok['disclaimer']
+    assert ok['metrics']
+
+    log = client.get('/api/chat-log?limit=20').get_json()
+    assert log['count'] >= 2
+    queries = [t['query'] for t in log['turns']]
+    assert 'Tell me a joke about crypto' in queries
+    assert 'Summarize August results with metrics' in queries
+
+    page = client.get('/chat-log')
+    assert page.status_code == 200
+    assert b'Chat audit log' in page.data or b'Campaign chat log' in page.data
+
+
 def test_healthcheck_reports_archive(client):
     response = client.get('/api/healthcheck')
     assert response.status_code == 200

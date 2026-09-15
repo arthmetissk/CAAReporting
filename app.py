@@ -21,11 +21,21 @@ from campaign_knowledge import (
     campaign_by_id,
     metric_rows,
 )
+from chat_log import (
+    CHAT_DISCLAIMER,
+    init_chat_log,
+    is_campaign_question,
+    off_topic_response,
+    log_chat_turn,
+    recent_chat_context,
+    list_chat_logs,
+)
 
 app = Flask(__name__)
 # Render sometimes leaves SECRET_KEY blank after secret edits; empty string disables sessions
 # and makes POST /login return 500 when writing the auth cookie.
 app.secret_key = os.getenv("SECRET_KEY") or "caa-secret-key-2026"
+init_chat_log()
 
 WORKSPACE = Path(__file__).resolve().parent
 REPORT_DIR = WORKSPACE
@@ -142,6 +152,7 @@ def template_context():
         "chat_suggestions": CHAT_SUGGESTIONS,
         "stores": STORES,
         "executive_blurb": executive_summary_answer(),
+        "chat_disclaimer": CHAT_DISCLAIMER,
     }
 
 
@@ -298,11 +309,14 @@ def api_summary():
 def api_chat():
     data = request.get_json(silent=True) or {}
     query = (data.get("query") or "").strip()
+    username = session.get("username")
+
     if not query:
-        return jsonify({
+        payload = {
             "answer": "Try a suggested question below, or ask about a month, store, or campaign family.",
             "formatted": {
                 "headline": "Ask about CAA campaign results",
+                "context": "Campaign scope only",
                 "bullets": [
                     "Summarize a month (May–August)",
                     "Review a continuous family (sandwich, free coffee, fireworks)",
@@ -314,34 +328,96 @@ def api_chat():
             "metrics": [],
             "campaigns": [],
             "suggestions": CHAT_SUGGESTIONS,
-        })
+            "on_topic": True,
+            "disclaimer": CHAT_DISCLAIMER,
+        }
+        return jsonify(payload)
 
-    answer, campaigns, recs = generate_chat_payload(query)
+    allowed, reason = is_campaign_question(query)
+    if not allowed:
+        payload = off_topic_response()
+        payload["suggestions"] = CHAT_SUGGESTIONS
+        log_chat_turn(
+            username=username,
+            query=query,
+            answer=payload["answer"],
+            formatted=payload["formatted"],
+            metrics=[],
+            campaigns=[],
+            recommendations=[],
+            on_topic=False,
+            refusal_reason=reason,
+            model_used="guardrail",
+        )
+        return jsonify(payload)
+
+    answer, campaigns, recs, model_used = generate_chat_payload(query)
     metrics = []
     for c in campaigns[:4]:
         metrics.extend(metric_rows(c, limit=2))
     metrics = metrics[:8]
 
     formatted = structure_chat_answer(answer, recs, campaigns)
+    campaign_payload = [
+        {
+            "id": c["id"],
+            "title": c["title"],
+            "month": c.get("month"),
+            "brand": c.get("brand"),
+            "stores": store_labels(c.get("stores", [])),
+            "status": c.get("status"),
+        }
+        for c in campaigns[:4]
+    ]
+    rec_payload = recs[:3]
+
+    log_chat_turn(
+        username=username,
+        query=query,
+        answer=answer,
+        formatted=formatted,
+        metrics=metrics,
+        campaigns=campaign_payload,
+        recommendations=rec_payload,
+        on_topic=True,
+        model_used=model_used,
+    )
 
     return jsonify({
         "answer": answer,
         "formatted": formatted,
-        "recommendations": recs[:3],
+        "recommendations": rec_payload,
         "metrics": metrics,
-        "campaigns": [
-            {
-                "id": c["id"],
-                "title": c["title"],
-                "month": c.get("month"),
-                "brand": c.get("brand"),
-                "stores": store_labels(c.get("stores", [])),
-                "status": c.get("status"),
-            }
-            for c in campaigns[:4]
-        ],
+        "campaigns": campaign_payload,
         "suggestions": CHAT_SUGGESTIONS,
+        "on_topic": True,
+        "disclaimer": CHAT_DISCLAIMER,
     })
+
+
+@app.route("/api/chat-log")
+def api_chat_log():
+    limit = request.args.get("limit", 100, type=int)
+    limit = max(1, min(limit, 500))
+    on_topic_only = request.args.get("on_topic", "").lower() in {"1", "true", "yes"}
+    turns = list_chat_logs(limit=limit, on_topic_only=on_topic_only)
+    return jsonify({
+        "disclaimer": CHAT_DISCLAIMER,
+        "count": len(turns),
+        "turns": turns,
+    })
+
+
+@app.route("/chat-log")
+def chat_log_page():
+    turns = list_chat_logs(limit=200)
+    return render_template(
+        "chat_log.html",
+        turns=turns,
+        disclaimer=CHAT_DISCLAIMER,
+        chat_suggestions=CHAT_SUGGESTIONS,
+        chat_disclaimer=CHAT_DISCLAIMER,
+    )
 
 
 @app.route("/api/healthcheck")
@@ -358,8 +434,12 @@ def healthcheck():
 
 
 def generate_chat_payload(query):
-    """Prefer grounded knowledge; optionally refine with Anthropic using the same facts."""
+    """Prefer grounded knowledge; optionally refine with Anthropic using the same facts.
+
+    Returns (answer, campaigns, recs, model_used).
+    """
     grounded_answer, campaigns, recs = answer_from_knowledge(query)
+    prior = recent_chat_context(limit=5)
 
     if ANTHROPIC_API_KEY:
         try:
@@ -370,9 +450,10 @@ def generate_chat_payload(query):
                 max_tokens=420,
                 temperature=0.1,
                 system=(
-                    "You are CAA's campaign analyst. Never invent metrics. "
+                    "You are CAA's campaign analyst for May–August 2026 reports only. "
+                    "Refuse anything outside campaign/store/brand/metric questions. "
+                    "Never invent metrics. Every metric MUST include its month. "
                     "Write one cohesive performance summary, then one recommendation. "
-                    "Every metric MUST include its month (May/June/July/August 2026). "
                     "Respond in this exact layout:\n"
                     "HEADLINE: <one sentence naming the scope (month/family/store)>\n"
                     "POINTS:\n"
@@ -380,12 +461,13 @@ def generate_chat_payload(query):
                     "- <performance point with month + metric>\n"
                     "- <performance point with month + brand/stores>\n"
                     "NEXT: <one concrete recommendation tied to that performance>\n"
-                    "Do not list bare numbers without a month. Keep each point under 30 words."
+                    "Keep each point under 30 words."
                 ),
                 messages=[{
                     "role": "user",
                     "content": (
                         full_knowledge_text()
+                        + ("\n\n" + prior if prior else "")
                         + "\n\nGrounded draft (preserve months and metrics):\n"
                         + grounded_answer
                         + "\n\nUser question: "
@@ -399,11 +481,11 @@ def generate_chat_payload(query):
                 if hasattr(block, "text"):
                     text.append(block.text)
             if text:
-                return "\n".join(text).strip(), campaigns, recs
+                return "\n".join(text).strip(), campaigns, recs, CHAT_MODEL
         except Exception:
             pass
 
-    return grounded_answer, campaigns, recs
+    return grounded_answer, campaigns, recs, "knowledge"
 
 
 def structure_chat_answer(answer, recs, campaigns=None):
@@ -475,7 +557,7 @@ def clean_chat_text(text):
 
 # Back-compat for tests
 def generate_chat_answer(query):
-    answer, _, _ = generate_chat_payload(query)
+    answer, _, _, _ = generate_chat_payload(query)
     return answer
 
 
