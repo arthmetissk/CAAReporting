@@ -72,10 +72,13 @@ def test_chat_month_and_family(client):
     may = client.post('/api/chat', json={'query': 'Summarize May like the August story'}).get_json()
     assert 'May' in may['answer']
     assert may['campaigns']
+    assert may['formatted']['headline']
+    assert isinstance(may['formatted']['bullets'], list)
 
     coffee = client.post('/api/chat', json={'query': 'Show the free coffee family across months'}).get_json()
     assert 'Coffee' in coffee['answer'] or 'coffee' in coffee['answer'].lower()
     assert coffee['campaigns']
+    assert coffee['formatted']['headline']
 
     fw = generate_chat_answer('Fireworks story May–August')
     assert 'June' in fw or 'summer' in fw.lower() or 'Fireworks' in fw

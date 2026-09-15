@@ -299,7 +299,16 @@ def api_chat():
     query = (data.get("query") or "").strip()
     if not query:
         return jsonify({
-            "answer": "Try: “Summarize August results with metrics” or pick a suggested question.",
+            "answer": "Try a suggested question below, or ask about a month, store, or campaign family.",
+            "formatted": {
+                "headline": "Ask about CAA campaign results",
+                "bullets": [
+                    "Summarize a month (May–August)",
+                    "Review a continuous family (sandwich, free coffee, fireworks)",
+                    "Compare stores (SW1, SW2, TXP, TGC)",
+                ],
+                "next_step": None,
+            },
             "recommendations": RECOMMENDATIONS[:2],
             "metrics": [],
             "campaigns": [],
@@ -317,8 +326,11 @@ def api_chat():
                 **m,
             })
 
+    formatted = structure_chat_answer(answer, recs)
+
     return jsonify({
         "answer": answer,
+        "formatted": formatted,
         "recommendations": recs,
         "metrics": metrics,
         "campaigns": [
@@ -358,22 +370,27 @@ def generate_chat_payload(query):
             client = Anthropic(api_key=ANTHROPIC_API_KEY)
             response = client.messages.create(
                 model=CHAT_MODEL,
-                max_tokens=320,
+                max_tokens=360,
                 temperature=0.1,
                 system=(
-                    "You are CAA's campaign analyst. Answer in 3-5 concise sentences. "
-                    "Always cite brand/stores (Smokers Warehouse SW1/SW2 or Twinleaf TXP/TGC) and exact metrics from the knowledge block. "
-                    "End with one concrete recommendation. Never invent numbers."
+                    "You are CAA's campaign analyst. Never invent metrics. "
+                    "Respond in this exact layout:\n"
+                    "HEADLINE: <one clear sentence>\n"
+                    "POINTS:\n"
+                    "- <metric-backed point with brand/stores>\n"
+                    "- <metric-backed point>\n"
+                    "- <metric-backed point>\n"
+                    "NEXT: <one concrete recommendation>\n"
+                    "Keep each point under 25 words."
                 ),
                 messages=[{
                     "role": "user",
                     "content": (
                         full_knowledge_text()
-                        + "\n\nDraft answer already grounded in metrics:\n"
+                        + "\n\nDraft grounded answer:\n"
                         + grounded_answer
                         + "\n\nUser question: "
                         + query
-                        + "\n\nRewrite the draft to be clearer and more succinct while keeping every metric accurate."
                     ),
                 }],
             )
@@ -382,11 +399,58 @@ def generate_chat_payload(query):
                 if hasattr(block, "text"):
                     text.append(block.text)
             if text:
-                return clean_chat_text(" ".join(text)), campaigns, recs
+                return "\n".join(text).strip(), campaigns, recs
         except Exception:
             pass
 
     return grounded_answer, campaigns, recs
+
+
+def structure_chat_answer(answer, recs):
+    """Turn free text into a clean headline / bullets / next-step card."""
+    raw = (answer or "").strip()
+    if not raw:
+        return {"headline": "No answer available.", "bullets": [], "next_step": None}
+
+    # Structured Anthropic layout
+    if re.search(r"(?im)^HEADLINE:", raw):
+        headline_m = re.search(r"(?im)^HEADLINE:\s*(.+)$", raw)
+        next_m = re.search(r"(?im)^NEXT:\s*(.+)$", raw)
+        points = re.findall(r"(?im)^(?:-|\*|•)\s*(.+)$", raw)
+        return {
+            "headline": (headline_m.group(1).strip() if headline_m else raw.splitlines()[0]),
+            "bullets": [p.strip() for p in points if p.strip()][:6],
+            "next_step": (next_m.group(1).strip() if next_m else None),
+        }
+
+    # Fallback: split dense paragraphs into readable bullets
+    text = clean_chat_text(raw)
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
+    headline = sentences[0] if sentences else text
+    bullets = sentences[1:] if len(sentences) > 1 else []
+
+    next_step = None
+    action_words = ("recommend", "next", "re-run", "shift", "fix", "add", "keep", "plan", "protect", "move")
+    if bullets and any(w in bullets[-1].lower() for w in action_words):
+        next_step = bullets[-1]
+        bullets = bullets[:-1]
+    elif recs:
+        first = recs[0]
+        next_step = first.get("title") if isinstance(first, dict) else str(first)
+
+    # Prefer shorter bullets when a sentence is very long
+    compact = []
+    for b in bullets[:6]:
+        if len(b) > 180 and " — " in b:
+            compact.extend([p.strip() for p in b.split(" — ") if p.strip()][:2])
+        else:
+            compact.append(b)
+
+    return {
+        "headline": headline,
+        "bullets": compact[:5],
+        "next_step": next_step,
+    }
 
 
 def clean_chat_text(text):

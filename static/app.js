@@ -12,37 +12,69 @@ document.addEventListener('DOMContentLoaded', function () {
     if (drawerQueryInput) drawerQueryInput.focus();
   }
 
-  function addMessage(target, text, className) {
-    if (!target) return;
-    const row = document.createElement('div');
-    row.className = className;
-    row.textContent = text;
-    target.appendChild(row);
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
   }
 
-  function addMetrics(target, metrics) {
-    if (!target || !metrics || !metrics.length) return;
-    const wrap = document.createElement('div');
-    wrap.className = 'chat-metrics';
-    metrics.slice(0, 6).forEach(function (m) {
-      const chip = document.createElement('div');
-      chip.className = 'chat-metric-chip';
-      chip.innerHTML =
-        '<span class="metric-label">' + (m.campaign ? m.campaign.split(' ')[0] + ' · ' : '') + m.label + '</span>' +
-        '<span class="metric-value">' + m.value + '</span>' +
-        '<span class="metric-delta">' + (m.delta || '') + '</span>';
-      wrap.appendChild(chip);
-    });
-    target.appendChild(wrap);
-  }
+  function renderAnswerCard(target, data) {
+    const card = el('article', 'chat-answer-card');
+    const formatted = data.formatted || {};
+    const headline = formatted.headline || data.answer || 'No answer available.';
+    const bullets = formatted.bullets || [];
+    const nextStep = formatted.next_step;
 
-  function addRecs(target, recs) {
-    if (!target || !recs || !recs.length) return;
-    addMessage(
-      target,
-      'Actions: ' + recs.map(function (r) { return r.title || r; }).join(' · '),
-      'chat-drawer-message chat-recs'
-    );
+    card.appendChild(el('div', 'chat-answer-kicker', 'Insight'));
+    card.appendChild(el('h3', 'chat-answer-headline', headline));
+
+    if (bullets.length) {
+      const list = el('ul', 'chat-answer-list');
+      bullets.forEach(function (point) {
+        list.appendChild(el('li', null, point));
+      });
+      card.appendChild(list);
+    }
+
+    if (data.metrics && data.metrics.length) {
+      const metricsWrap = el('div', 'chat-metrics');
+      data.metrics.slice(0, 6).forEach(function (m) {
+        const chip = el('div', 'chat-metric-chip');
+        chip.appendChild(el('span', 'metric-label', (m.campaign ? m.campaign.split(' ')[0] + ' · ' : '') + m.label));
+        chip.appendChild(el('span', 'metric-value', m.value));
+        chip.appendChild(el('span', 'metric-delta', m.delta || ''));
+        metricsWrap.appendChild(chip);
+      });
+      card.appendChild(el('div', 'chat-section-label', 'Key metrics'));
+      card.appendChild(metricsWrap);
+    }
+
+    if (data.campaigns && data.campaigns.length) {
+      const refs = el('div', 'chat-ref-row');
+      data.campaigns.forEach(function (c) {
+        const chip = el('span', 'chat-ref-chip', c.title + (c.stores && c.stores.length ? ' · ' + c.stores.map(function (s) { return s.split(' ')[0]; }).join('/') : ''));
+        refs.appendChild(chip);
+      });
+      card.appendChild(el('div', 'chat-section-label', 'Referenced'));
+      card.appendChild(refs);
+    }
+
+    if (nextStep || (data.recommendations && data.recommendations.length)) {
+      card.appendChild(el('div', 'chat-section-label', 'Recommended next step'));
+      if (nextStep) {
+        card.appendChild(el('p', 'chat-next-step', nextStep));
+      }
+      if (data.recommendations && data.recommendations.length) {
+        const recList = el('ul', 'chat-answer-list chat-rec-list');
+        data.recommendations.slice(0, 3).forEach(function (r) {
+          recList.appendChild(el('li', null, r.title || r));
+        });
+        card.appendChild(recList);
+      }
+    }
+
+    target.appendChild(card);
   }
 
   function askQuestion(query) {
@@ -50,13 +82,11 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!q || !drawerOutput) return;
 
     openDrawer();
-    addMessage(drawerOutput, q, 'chat-output-user');
+    drawerOutput.appendChild(el('div', 'chat-output-user', q));
     drawerOutput.scrollTop = drawerOutput.scrollHeight;
     if (drawerQueryInput) drawerQueryInput.value = '';
 
-    const thinking = document.createElement('div');
-    thinking.className = 'chat-drawer-message';
-    thinking.textContent = 'Pulling campaign metrics…';
+    const thinking = el('div', 'chat-drawer-message chat-thinking', 'Preparing a concise metric summary…');
     drawerOutput.appendChild(thinking);
 
     fetch('/api/chat', {
@@ -67,18 +97,16 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (response) { return response.json(); })
       .then(function (data) {
         thinking.remove();
-        addMessage(drawerOutput, data.answer || 'No answer available.', 'chat-drawer-message');
-        addMetrics(drawerOutput, data.metrics);
-        addRecs(drawerOutput, data.recommendations);
+        renderAnswerCard(drawerOutput, data);
         drawerOutput.scrollTop = drawerOutput.scrollHeight;
       })
       .catch(function () {
         thinking.remove();
-        addMessage(
-          drawerOutput,
-          'Chat is unavailable right now. Use By month / Families / Stores tabs for metrics.',
-          'chat-drawer-message'
-        );
+        drawerOutput.appendChild(el(
+          'div',
+          'chat-drawer-message',
+          'Chat is unavailable right now. Use By month / Families / Stores tabs for metrics.'
+        ));
       });
   }
 
@@ -110,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Browse tabs
   const tabs = document.getElementById('browseTabs');
   if (tabs) {
     tabs.querySelectorAll('.browse-tab').forEach(function (tab) {
@@ -127,7 +154,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // August brand filter
   const filter = document.getElementById('brandFilter');
   if (filter) {
     filter.querySelectorAll('.filter-chip').forEach(function (chip) {
@@ -136,14 +162,12 @@ document.addEventListener('DOMContentLoaded', function () {
         chip.classList.add('active');
         const brand = chip.getAttribute('data-brand');
         document.querySelectorAll('.august-card').forEach(function (card) {
-          const show = brand === 'all' || card.getAttribute('data-brand') === brand;
-          card.hidden = !show;
+          card.hidden = !(brand === 'all' || card.getAttribute('data-brand') === brand);
         });
       });
     });
   }
 
-  // All-campaigns month filter
   const campaignFilters = document.getElementById('campaignFilters');
   if (campaignFilters) {
     campaignFilters.querySelectorAll('.filter-chip').forEach(function (chip) {
@@ -158,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Store filter
   const storeFilter = document.getElementById('storeFilter');
   if (storeFilter) {
     storeFilter.querySelectorAll('.filter-chip').forEach(function (chip) {
