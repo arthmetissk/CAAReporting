@@ -1,10 +1,34 @@
 """Structured May–August 2026 campaign knowledge for dashboard + chat."""
 
 STORES = {
-    "SW1": {"name": "Smokers Warehouse 1", "short": "SW1 Akwesasne", "brand": "Smokers Warehouse", "location": "Akwesasne"},
-    "SW2": {"name": "Smokers Warehouse 2", "short": "SW2 Ft. Covington", "brand": "Smokers Warehouse", "location": "Ft. Covington"},
-    "TXP": {"name": "Twinleaf Express", "short": "TXP Express", "brand": "Twinleaf", "location": "Express / Ft. Covington"},
-    "TGC": {"name": "Twinleaf Gas & Convenience", "short": "TGC Gas & Conv.", "brand": "Twinleaf", "location": "Akwesasne"},
+    "SW1": {
+        "name": "Smokers Warehouse 1",
+        "short": "SW1 Akwesasne",
+        "brand": "Smokers Warehouse",
+        "location": "Akwesasne",
+        "address": "8 NY-37, Akwesasne, NY 13655",
+    },
+    "SW2": {
+        "name": "Smokers Warehouse 2",
+        "short": "SW2 Fort Covington",
+        "brand": "Smokers Warehouse",
+        "location": "Fort Covington",
+        "address": "2381 Chateaugay St, Fort Covington, NY 12937",
+    },
+    "TXP": {
+        "name": "Twinleaf Express",
+        "short": "TXP Express",
+        "brand": "Twinleaf",
+        "location": "Fort Covington",
+        "address": "2369 Chateaugay St, Fort Covington, NY 12937",
+    },
+    "TGC": {
+        "name": "Twinleaf Gas and Convenience",
+        "short": "TGC Gas & Conv.",
+        "brand": "Twinleaf",
+        "location": "Akwesasne",
+        "address": "18 NY-37, Akwesasne, NY 13655",
+    },
 }
 
 BRANDS = {

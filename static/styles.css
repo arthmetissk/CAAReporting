@@ -1284,10 +1284,28 @@ body::before {
 .sidebar-stores {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   font-size: 12px;
   color: var(--muted);
   line-height: 1.35;
+}
+
+.sidebar-stores strong {
+  color: var(--sage-dark);
+  margin-right: 4px;
+}
+
+.store-address,
+.store-address-line {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted2);
+  line-height: 1.35;
+}
+
+.store-address-line {
+  margin: 0 0 10px;
 }
 
 .sidebar-stores strong {

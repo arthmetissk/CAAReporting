@@ -4,7 +4,7 @@
 <section class="dashboard-head">
   <div>
     <span class="section-kicker">May–August 2026 · Twinleaf + Smokers Warehouse</span>
-    <h1>Campaign Stories, Families & Store Detail</h1>
+    <h1>Campaign Summary 2026</h1>
     <p class="prepared-by">Prepared by: Arthur Elliott</p>
     <p class="page-lead">{{ executive_blurb }}</p>
   </div>
@@ -132,6 +132,7 @@
       </div>
       <h2 class="report-name">{{ store.name }}</h2>
       <p class="report-summary">{{ store.location }}</p>
+      <p class="store-address-line">{{ store.address }}</p>
       <div class="month-campaign-links">
         {% for c in all_campaigns if key in c.stores %}
         <a class="mini-link" href="/support-report/{{ c.id }}" target="_blank">{{ c.month }} · {{ c.title }}</a>
